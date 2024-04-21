@@ -1,3 +1,5 @@
+import 'package:adogcao/pages/cadastro_page.dart';
+import 'package:adogcao/pages/tela_inicial_page.dart';
 import 'package:flutter/material.dart';
 import 'pages/login_page.dart';
 void main() {
@@ -12,7 +14,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginPage()
+       routes: {
+        '/cadastro': (context) => CadastroPage(),
+        '/login': (context) => LoginPage(),
+        // '/home': (context) => HomePage(),
+      },
+      home: TelaInicialPage()
       );
   }
 }

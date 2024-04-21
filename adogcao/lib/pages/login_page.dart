@@ -95,12 +95,17 @@ class _LoginPageState extends State<LoginPage> {
                         style: TextStyle(color: Colors.grey[700]),
                       ),
                       const SizedBox(width: 4),
-                      const Text(
-                        'Cadastre-se agora',
-                        style: TextStyle(
+                       GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, '/cadastro');
+                        },
+                        child: Text(
+                          'Cadastre-se agora',
+                          style: TextStyle(
                           color: Colors.blue,
                           fontWeight: FontWeight.bold,
                         ),
+                      ),
                       ),
                     ],
                   )
