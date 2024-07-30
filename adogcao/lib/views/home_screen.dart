@@ -3,7 +3,7 @@ import '../models/animal.dart';
 import '../controllers/favorite_controller.dart';
 import '../widgets/animal_card.dart';
 import 'favorite_animals_screen.dart';
-import 'animal_details_screen.dart';
+// import 'animal_details_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
