@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'views/registration_screen.dart';
 import 'views/login_screen.dart';
 import 'widgets/pet_avatar.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  try {
+    await Firebase.initializeApp();
+    print("Firebase Initialized");
+  } catch (e) {
+    print("Error initializing Firebase: $e");
+  }
   runApp(AdoptionApp());
 }
 

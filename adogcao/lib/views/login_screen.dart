@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../controllers/login_controller.dart';
 import 'home_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Certifique-se de adicionar esta importação
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -9,6 +10,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final LoginController _controller = LoginController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Text('Email', style: TextStyle(color: Colors.grey.shade500)),
                   SizedBox(height: 3),
                   TextField(
+                    controller: _emailController,
                     decoration: InputDecoration(
                       hintText: 'Digite seu email',
                       hintStyle: TextStyle(color: Colors.white),
@@ -86,6 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Text('Senha', style: TextStyle(color: Colors.grey.shade500)),
                   SizedBox(height: 3),
                   TextField(
+                    controller: _passwordController,
                     decoration: InputDecoration(
                       hintText: 'Digite sua senha',
                       hintStyle: TextStyle(color: Colors.white),
@@ -138,21 +143,37 @@ class _LoginScreenState extends State<LoginScreen> {
                   Center(
                     child: ElevatedButton(
                       onPressed: _controller.agreeToTerms
-                          ? () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => HomeScreen()));
+                          ? () async {
+                              String email = _emailController.text;
+                              String password = _passwordController.text;
+                              try {
+                                UserCredential? userCredential = await _controller.loginUser(
+                                  email: email,
+                                  password: password,
+                                );
+                                if (userCredential != null) {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => HomeScreen(),
+                                    ),
+                                  );
+                                }
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Erro ao fazer login: $e'),
+                                  ),
+                                );
+                              }
                             }
                           : null,
-                      child:
-                          Text('Entrar', style: TextStyle(color: Colors.white)),
+                      child: Text('Entrar', style: TextStyle(color: Colors.white)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: _controller.agreeToTerms
                             ? Colors.blue
                             : Colors.blue,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 220, vertical: 35),
+                        padding: EdgeInsets.symmetric(horizontal: 220, vertical: 35),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),

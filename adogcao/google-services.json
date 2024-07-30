@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "385452235226",
+    "project_id": "adogcao",
+    "storage_bucket": "adogcao.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385452235226:android:6b641d525cd402c72c08e3",
+        "android_client_info": {
+          "package_name": "com.adogcao"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxPl-FFlHaAtqws0ZET3n3xZWGx7l7Dxc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
