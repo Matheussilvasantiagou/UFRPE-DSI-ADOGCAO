@@ -7,7 +7,17 @@ import 'widgets/pet_avatar.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
-    await Firebase.initializeApp();
+    await Firebase.initializeApp(
+      options: FirebaseOptions(
+        apiKey: "AIzaSyBvdUkpspWIeK_DweVK2UwPaDbKI0ifc0I",
+        authDomain: "adogcao-9dd8c.firebaseapp.com",
+        projectId: "adogcao-9dd8c",
+        storageBucket: "adogcao-9dd8c.appspot.com",
+        messagingSenderId: "172314211734",
+        appId: "1:172314211734:web:abcd1234efgh5678ijkl90",
+        measurementId: "G-XXXXXXXXXX",
+      ),
+    );
     print("Firebase Initialized");
   } catch (e) {
     print("Error initializing Firebase: $e");
