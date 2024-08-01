@@ -230,7 +230,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue,
                           padding:
-                              EdgeInsets.symmetric(horizontal: 220, vertical: 35),
+                              EdgeInsets.symmetric(horizontal: 212, vertical: 35),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),

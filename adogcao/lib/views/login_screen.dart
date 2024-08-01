@@ -116,34 +116,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: TextStyle(color: Colors.white),
                   ),
                   SizedBox(height: 25),
-                  Row(
-                    children: [
-                      Checkbox(
-                        value: _controller.agreeToTerms,
-                        onChanged: (value) {
-                          setState(() {
-                            _controller.toggleAgreeToTerms(value!);
-                          });
-                        },
-                      ),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            // Ação para exibir os termos de uso
-                          },
-                          child: Text(
-                            'Eu li e concordo com os termos de uso',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
                   SizedBox(height: 70),
                   Center(
                     child: ElevatedButton(
-                      onPressed: _controller.agreeToTerms
-                          ? () async {
+                      onPressed: () async {
                               String email = _emailController.text;
                               String password = _passwordController.text;
                               try {
@@ -166,8 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                 );
                               }
-                            }
-                          : null,
+                            },
                       child: Text('Entrar', style: TextStyle(color: Colors.white)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: _controller.agreeToTerms

@@ -15,7 +15,7 @@ class LoginController {
       );
       return userCredential;
     } catch (e) {
-      throw e; // Propaga o erro para ser tratado na tela de login
+      throw "Usuário e/ou senha inválidos"; // Propaga o erro para ser tratado na tela de login
     }
   }
 }
