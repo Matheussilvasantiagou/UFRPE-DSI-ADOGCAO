@@ -12,6 +12,30 @@ class _LoginScreenState extends State<LoginScreen> {
   final LoginController _controller = LoginController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  String? _emailError;
+  String? _senhaError;
+
+  void _validateEmail() {
+    setState(() {
+      String email = _emailController.text;
+      if (email.isEmpty) {
+        _emailError = 'Email é obrigatório';
+      } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) {
+        _emailError = 'Por favor, insira um email válido';
+      } else {
+        _emailError = null;
+      }
+    });
+  }
+
+  void _validateSenha() {
+    setState(() {
+      String senha = _passwordController.text;
+      if (senha.isEmpty) {
+        _senhaError = 'Senha é obrigatório';
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,6 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     controller: _emailController,
                     decoration: InputDecoration(
                       hintText: 'Digite seu email',
+                      errorText: _emailError,
                       hintStyle: TextStyle(color: Colors.white),
                       filled: true,
                       fillColor: Colors.grey.shade800,
@@ -93,6 +118,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     controller: _passwordController,
                     decoration: InputDecoration(
                       hintText: 'Digite sua senha',
+                      errorText: _senhaError,
                       hintStyle: TextStyle(color: Colors.white),
                       filled: true,
                       fillColor: Colors.grey.shade800,
@@ -123,11 +149,13 @@ class _LoginScreenState extends State<LoginScreen> {
                               String email = _emailController.text;
                               String password = _passwordController.text;
                               try {
+                                _validateEmail();
+                                _validateSenha();
                                 UserCredential? userCredential = await _controller.loginUser(
                                   email: email,
                                   password: password,
                                 );
-                                if (userCredential != null) {
+                                if (_emailError == null && userCredential != null) {
                                   Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
