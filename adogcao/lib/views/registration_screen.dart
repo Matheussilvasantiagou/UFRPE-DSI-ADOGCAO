@@ -13,6 +13,74 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
+
+  String? _emailError;
+  String? _passwordError;
+  String? _nameError;
+  String? _confirmPasswordError;
+  String? _phoneError;
+
+  void _validateEmail() {
+    setState(() {
+      String email = _emailController.text;
+      if (email.isEmpty) {
+        _emailError = 'Email é obrigatório';
+      } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) {
+        _emailError = 'Por favor, insira um email válido';
+      } else {
+        _emailError = null;
+      }
+    });
+  }
+
+  void _validateSenha() {
+    setState(() {
+      String senha = _passwordController.text;
+      String confirmacao = _confirmPasswordController.text;
+      if (senha.isEmpty) {
+        _passwordError = 'Senha é obrigatório';
+      }
+      if (confirmacao.isEmpty) {
+        _confirmPasswordError = 'Confirmação de senha é obrigatório';
+      }
+      if (senha != confirmacao) {
+        _passwordError = 'Senhas devem ser iguais';
+        _confirmPasswordError = _passwordError;
+      }
+      if (senha.length < 6) {
+        _passwordError = 'A senha deve ter pelo menos 6 caracteres';
+      }
+      else {
+        _passwordError = null;
+        _confirmPasswordError = _passwordError;
+      }
+    });
+  }
+
+  void _validateName() {
+    setState(() {
+      String name = _nameController.text;
+      if (name.isEmpty) {
+        _nameError = 'Nome é obrigatório';
+      }
+      else {
+        _nameError = null;
+      }
+    });
+  }
+
+  void _validateTelefone() {
+    setState(() {
+      String phone = _phoneController.text;
+      if (phone.isEmpty) {
+        _phoneError = 'Telefone é obrigatório';
+      }
+      else {
+        _phoneError = null;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,6 +136,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       controller: _nameController,
                       decoration: InputDecoration(
                         hintText: 'Nome',
+                        errorText: _nameError,
                         hintStyle: TextStyle(color: Colors.white),
                         filled: true,
                         fillColor: Colors.grey.shade800,
@@ -94,6 +163,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       controller: _emailController,
                       decoration: InputDecoration(
                         hintText: 'E-mail',
+                        errorText: _emailError,
                         hintStyle: TextStyle(color: Colors.white),
                         filled: true,
                         fillColor: Colors.grey.shade800,
@@ -120,6 +190,35 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       controller: _passwordController,
                       decoration: InputDecoration(
                         hintText: 'Senha',
+                        errorText: _passwordError,
+                        hintStyle: TextStyle(color: Colors.white),
+                        filled: true,
+                        fillColor: Colors.grey.shade800,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide:
+                              BorderSide(color: Colors.grey.shade600, width: 1),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide:
+                              BorderSide(color: Colors.grey.shade600, width: 1),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide:
+                              BorderSide(color: Colors.grey.shade600, width: 1),
+                        ),
+                      ),
+                      obscureText: true,
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    SizedBox(height: 25),
+                    TextField(
+                      controller: _confirmPasswordController,
+                      decoration: InputDecoration(
+                        hintText: 'Confirmar senha',
+                        errorText: _confirmPasswordError,
                         hintStyle: TextStyle(color: Colors.white),
                         filled: true,
                         fillColor: Colors.grey.shade800,
@@ -147,6 +246,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       controller: _phoneController,
                       decoration: InputDecoration(
                         hintText: 'Número de telefone',
+                        errorText: _phoneError,
                         hintStyle: TextStyle(color: Colors.white),
                         filled: true,
                         fillColor: Colors.grey.shade800,
@@ -201,6 +301,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           String email = _emailController.text;
                           String password = _passwordController.text;
                           String phoneNumber = _phoneController.text;
+                          _validateEmail();
+                          _validateName();
+                          _validateSenha();
+                          _validateTelefone();
 
                           try {
                             // Registrar o usuário no Firebase
