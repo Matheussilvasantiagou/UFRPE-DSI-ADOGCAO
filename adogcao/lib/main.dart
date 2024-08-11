@@ -121,7 +121,7 @@ class AdoptionScreen extends StatelessWidget {
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/cadastro');
+                  Navigator.pushNamed(context, '/login');  // Alterado para '/login'
                 },
                 child: Text('Entrar', style: TextStyle(color: Colors.white)),
                 style: ElevatedButton.styleFrom(

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/animal.dart';
 import '../controllers/favorite_controller.dart';
 import '../widgets/animal_card.dart';
 import 'favorite_animals_screen.dart';
-// import 'animal_details_screen.dart';
+import 'cadastrar_abrigo_screen.dart'; // Import da tela de cadastro de abrigo
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -12,10 +14,45 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final FavoriteController _favoriteController = FavoriteController();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  bool isVolunteer = false;
+  bool isLoading = true;
+  String userName = ''; // Variável para armazenar o nome do usuário
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserDetails();
+  }
+
+  Future<void> fetchUserDetails() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+
+      setState(() {
+        isVolunteer = userDoc['isVolunteer'] ?? false;
+        userName = userDoc['name'] ?? 'Usuário'; // Obtendo o nome do usuário
+        isLoading = false;
+      });
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Center(child: CircularProgressIndicator());
+    }
+
     return Scaffold(
+      key: _scaffoldKey,
       body: Stack(
         children: [
           Container(
@@ -89,44 +126,108 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.black,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.grey,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.filter_list, color: Colors.white),
-            label: 'Filtrar',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite, color: Colors.white),
-            label: 'Favoritos',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings, color: Colors.white),
-            label: 'Configurações',
-          ),
-        ],
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              Navigator.pushNamed(context, '/filter');
-              break;
-            case 1:
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => FavoriteAnimalsScreen(
-                      favoriteAnimals: _favoriteController.favoriteAnimals),
-                ),
-              );
-              break;
-            case 2:
-              Navigator.pushNamed(context, '/settings');
-              break;
-          }
-        },
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.black,
+        shape: CircularNotchedRectangle(),
+        notchMargin: 8.0,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            if (isVolunteer)
+              IconButton(
+                icon: Icon(Icons.menu, color: Colors.white),
+                onPressed: () => _scaffoldKey.currentState!.openDrawer(),
+              ),
+            IconButton(
+              icon: Icon(Icons.filter_list, color: Colors.white),
+              onPressed: () {
+                Navigator.pushNamed(context, '/filter');
+              },
+            ),
+            if (!isVolunteer)
+              IconButton(
+                icon: Icon(Icons.favorite, color: Colors.white),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => FavoriteAnimalsScreen(
+                        favoriteAnimals: _favoriteController.favoriteAnimals,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            IconButton(
+              icon: Icon(Icons.settings, color: Colors.white),
+              onPressed: () {
+                Navigator.pushNamed(context, '/settings');
+              },
+            ),
+          ],
+        ),
       ),
+      drawer: isVolunteer
+          ? Drawer(
+              child: Container(
+                color: Color.fromARGB(255, 0, 13, 32),
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: <Widget>[
+                    DrawerHeader(
+                      decoration: BoxDecoration(
+                        color: Colors.blueGrey.shade900,
+                      ),
+                      child: Text(
+                        'Olá, $userName', // Exibe o nome do usuário logado
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.pets, color: Colors.white),
+                      title: Text('Meus pets', style: TextStyle(color: Colors.white)),
+                      onTap: () {
+                        Navigator.pushNamed(context, '/meusPets');
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.add_circle_outline, color: Colors.white),
+                      title: Text('Cadastrar pet',
+                          style: TextStyle(color: Colors.white)),
+                      onTap: () {
+                        Navigator.pushNamed(context, '/cadastrarPet');
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.home, color: Colors.white),
+                      title: Text('Meus abrigos',
+                          style: TextStyle(color: Colors.white)),
+                      onTap: () {
+                        Navigator.pushNamed(context, '/meusAbrigos');
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.add_business, color: Colors.white),
+                      title: Text('Cadastrar abrigo',
+                          style: TextStyle(color: Colors.white)),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CadastrarAbrigoScreen(), // Navega para a tela de cadastro de abrigo
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            )
+          : null,
     );
   }
 }

@@ -21,6 +21,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   String? _confirmPasswordError;
   String? _phoneError;
 
+  bool isVolunteer = false;
+  bool isAdotante = false;
+
   void _validateEmail() {
     setState(() {
       String email = _emailController.text;
@@ -39,19 +42,18 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       String senha = _passwordController.text;
       String confirmacao = _confirmPasswordController.text;
       if (senha.isEmpty) {
-        _passwordError = 'Senha é obrigatório';
+        _passwordError = 'Senha é obrigatória';
       }
       if (confirmacao.isEmpty) {
-        _confirmPasswordError = 'Confirmação de senha é obrigatório';
+        _confirmPasswordError = 'Confirmação de senha é obrigatória';
       }
       if (senha != confirmacao) {
-        _passwordError = 'Senhas devem ser iguais';
+        _passwordError = 'As senhas devem ser iguais';
         _confirmPasswordError = _passwordError;
       }
       if (senha.length < 6) {
         _passwordError = 'A senha deve ter pelo menos 6 caracteres';
-      }
-      else {
+      } else {
         _passwordError = null;
         _confirmPasswordError = _passwordError;
       }
@@ -63,8 +65,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       String name = _nameController.text;
       if (name.isEmpty) {
         _nameError = 'Nome é obrigatório';
-      }
-      else {
+      } else {
         _nameError = null;
       }
     });
@@ -75,10 +76,25 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       String phone = _phoneController.text;
       if (phone.isEmpty) {
         _phoneError = 'Telefone é obrigatório';
-      }
-      else {
+      } else {
         _phoneError = null;
       }
+    });
+  }
+
+  void _setVolunteer(bool? value) {
+    setState(() {
+      isVolunteer = value ?? false;
+      isAdotante = !isVolunteer; // Garantir que apenas um checkbox esteja marcado
+      _controller.toggleVolunteer(isVolunteer);
+    });
+  }
+
+  void _setAdotante(bool? value) {
+    setState(() {
+      isAdotante = value ?? false;
+      isVolunteer = !isAdotante; // Garantir que apenas um checkbox esteja marcado
+      _controller.toggleVolunteer(isVolunteer);
     });
   }
 
@@ -272,19 +288,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        Checkbox(
+                          value: isVolunteer,
+                          onChanged: _setVolunteer,
+                        ),
                         Text(
                           'Voluntário',
                           style: TextStyle(color: Colors.white),
                         ),
-                        Switch(
-                          value: _controller.isVolunteer,
-                          onChanged: (value) {
-                            setState(() {
-                              _controller.toggleVolunteer(value);
-                            });
-                          },
-                          activeColor: Colors.blue,
-                          inactiveThumbColor: Colors.grey,
+                        Checkbox(
+                          value: isAdotante,
+                          onChanged: _setAdotante,
                         ),
                         Text(
                           'Adotante',
@@ -305,6 +319,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           _validateName();
                           _validateSenha();
                           _validateTelefone();
+
+                          // Verificar se o perfil foi selecionado
+                          if (!isVolunteer && !isAdotante) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Por favor, selecione um perfil: Voluntário ou Adotante.'),
+                              ),
+                            );
+                            return;
+                          }
 
                           try {
                             // Registrar o usuário no Firebase
