@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_application_1/session/UserSession.dart';
 import '../models/animal.dart';
 import '../controllers/favorite_controller.dart';
 import '../widgets/animal_card.dart';
@@ -89,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   child: Center(
                     child: Text(
-                      'Encontre o animal mais próximo de você',
+                      'Encontre o animal mais próximo de você ${UserSession.instance.isVolunteer}',
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 24,
@@ -186,6 +187,21 @@ class _HomeScreenState extends State<HomeScreen> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+                      
+                    ),
+                    DrawerHeader(
+                      decoration: BoxDecoration(
+                        color: Colors.blueGrey.shade900,
+                      ),
+                      child: Text(
+                        'Perfil: ${UserSession.instance.isVolunteer?'Voluntário':'Adotante'}', // Exibe o nome do usuário logado
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      
                     ),
                     ListTile(
                       leading: Icon(Icons.pets, color: Colors.white),
