@@ -13,7 +13,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   String? _emailError;
   String? _passwordError;
@@ -85,7 +86,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   void _setVolunteer(bool? value) {
     setState(() {
       isVolunteer = value ?? false;
-      isAdotante = !isVolunteer; // Garantir que apenas um checkbox esteja marcado
+      isAdotante =
+          !isVolunteer; // Garantir que apenas um checkbox esteja marcado
       _controller.toggleVolunteer(isVolunteer);
     });
   }
@@ -93,7 +95,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   void _setAdotante(bool? value) {
     setState(() {
       isAdotante = value ?? false;
-      isVolunteer = !isAdotante; // Garantir que apenas um checkbox esteja marcado
+      isVolunteer =
+          !isAdotante; // Garantir que apenas um checkbox esteja marcado
       _controller.toggleVolunteer(isVolunteer);
     });
   }
@@ -324,7 +327,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           if (!isVolunteer && !isAdotante) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('Por favor, selecione um perfil: Voluntário ou Adotante.'),
+                                content: Text(
+                                    'Por favor, selecione um perfil: Voluntário ou Adotante.'),
                               ),
                             );
                             return;
@@ -342,7 +346,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             // Navegar para a tela de login após o registro
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => LoginScreen()),
+                              MaterialPageRoute(
+                                  builder: (context) => LoginScreen()),
                             );
                           } catch (e) {
                             // Tratar erros de registro
@@ -353,12 +358,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             );
                           }
                         },
-                        child: Text('Registrar',
-                            style: TextStyle(color: Colors.white)),
+                        child: Text(
+                          'Registrar',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16),
+                        ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue,
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 212, vertical: 35),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 40,
+                              vertical: 20),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),

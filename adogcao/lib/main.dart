@@ -121,12 +121,18 @@ class AdoptionScreen extends StatelessWidget {
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/login');  // Alterado para '/login'
+                  Navigator.pushNamed(context, '/login');
                 },
-                child: Text('Entrar', style: TextStyle(color: Colors.white)),
+                child: Text(
+                  'Entrar',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16), // Definindo o tamanho da fonte
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
-                  padding: EdgeInsets.symmetric(horizontal: 220, vertical: 35),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: 40, vertical: 20), // Ajuste do padding
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),

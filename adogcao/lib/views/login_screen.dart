@@ -146,37 +146,44 @@ class _LoginScreenState extends State<LoginScreen> {
                   Center(
                     child: ElevatedButton(
                       onPressed: () async {
-                              String email = _emailController.text;
-                              String password = _passwordController.text;
-                              try {
-                                _validateEmail();
-                                _validateSenha();
-                                UserCredential? userCredential = await _controller.loginUser(
-                                  email: email,
-                                  password: password,
-                                );
-                                if (_emailError == null && userCredential != null) {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => HomeScreen(),
-                                    ),
-                                  );
-                                }
-                              } catch (e) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Erro ao fazer login: $e'),
-                                  ),
-                                );
-                              }
-                            },
-                      child: Text('Entrar', style: TextStyle(color: Colors.white)),
+                        String email = _emailController.text;
+                        String password = _passwordController.text;
+                        try {
+                          _validateEmail();
+                          _validateSenha();
+                          UserCredential? userCredential =
+                              await _controller.loginUser(
+                            email: email,
+                            password: password,
+                          );
+                          if (_emailError == null && userCredential != null) {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => HomeScreen(),
+                              ),
+                            );
+                          }
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Erro ao fazer login: $e'),
+                            ),
+                          );
+                        }
+                      },
+                      child: Text(
+                        'Entrar',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16),
+                      ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: _controller.agreeToTerms
                             ? Colors.blue
                             : Colors.blue,
-                        padding: EdgeInsets.symmetric(horizontal: 220, vertical: 35),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 40, vertical: 20),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
