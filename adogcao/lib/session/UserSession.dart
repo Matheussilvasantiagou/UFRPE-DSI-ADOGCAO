@@ -9,9 +9,12 @@ class UserSession {
   String? userId;
   String? userEmail;
   bool isVolunteer = false;
+  String? userName;
 
   void logout() {
     userId = null;
     userEmail = null;
+    userName = null;
+    isVolunteer = false;
   }
 }
