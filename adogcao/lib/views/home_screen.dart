@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_application_1/controllers/login_controller.dart';
 import 'package:flutter_application_1/session/UserSession.dart';
+import 'package:flutter_application_1/views/login_screen.dart';
 import '../models/animal.dart';
 import '../controllers/favorite_controller.dart';
 import '../widgets/animal_card.dart';
@@ -15,6 +17,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final FavoriteController _favoriteController = FavoriteController();
+  final LoginController _loginController = LoginController();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool isVolunteer = false;
   bool isLoading = true;
@@ -35,8 +38,8 @@ class _HomeScreenState extends State<HomeScreen> {
           .get();
 
       setState(() {
-        isVolunteer = userDoc['isVolunteer'] ?? false;
-        userName = userDoc['name'] ?? 'Usuário'; // Obtendo o nome do usuário
+        isVolunteer = UserSession.instance.isVolunteer ?? false;
+        userName = UserSession.instance.userName ?? 'Usuário'; // Obtendo o nome do usuário
         isLoading = false;
       });
     } else {
@@ -90,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   child: Center(
                     child: Text(
-                      'Encontre o animal mais próximo de você ${UserSession.instance.isVolunteer}',
+                      'Encontre o animal mais próximo de você',
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 24,
@@ -239,6 +242,19 @@ class _HomeScreenState extends State<HomeScreen> {
                         );
                       },
                     ),
+                    ListTile(
+                      leading: Icon(Icons.logout_rounded, color: Colors.white),
+                      title: Text('Sair',
+                          style: TextStyle(color: Colors.white)),
+                      onTap: () {
+                        _loginController.signOut();
+                        Navigator.push(context,
+                         MaterialPageRoute(
+                            builder: (context) => LoginScreen(), // Navega para a tela de cadastro de abrigo
+                          ),
+                          );
+                      },
+                    )
                   ],
                 ),
               ),

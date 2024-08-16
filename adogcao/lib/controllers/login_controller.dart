@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class LoginController {
   bool agreeToTerms = false;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   void toggleAgreeToTerms(bool value) {
     agreeToTerms = value;
@@ -13,7 +14,7 @@ class LoginController {
   Future<UserCredential?> loginUser({required String email, required String password}) async {
     try {
       CollectionReference users = _firestore.collection('users');
-      final UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+      final UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -29,6 +30,8 @@ class LoginController {
           var userData = querySnapshot.docs.first.data();
           UserSession.instance.userId = userData['uid'];
           UserSession.instance.isVolunteer = userData['isVolunteer'];
+          UserSession.instance.userName = userData['name'];
+
         }
         UserSession.instance.userEmail = userCredential.user?.email;
         
@@ -37,6 +40,15 @@ class LoginController {
       return userCredential;
     } catch (e) {
       throw "Usuário e/ou senha inválidos"; // Propaga o erro para ser tratado na tela de login
+    }
+  }
+
+  Future<void> signOut() async {
+    try {
+      await _auth.signOut();
+      UserSession.instance.logout();
+    } catch (e) {
+      print(e.toString());
     }
   }
 }
