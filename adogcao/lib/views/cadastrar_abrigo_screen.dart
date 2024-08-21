@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../controllers/abrigo_controller.dart';
+import 'package:flutter_google_places_hoc081098/flutter_google_places_hoc081098.dart';
+import 'package:google_maps_webservice/places.dart';
+import 'package:google_api_headers/google_api_headers.dart';
 
 class CadastrarAbrigoScreen extends StatefulWidget {
   @override
@@ -12,11 +16,34 @@ class _CadastrarAbrigoScreenState extends State<CadastrarAbrigoScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _enderecoController = TextEditingController();
   final TextEditingController _telefoneController = TextEditingController();
+  GoogleMapController? mapController;
+  final LatLng _center = const LatLng(-15.7942, -47.8822);
+  String _address = '';
+  final String _googleApiKey = 'AIzaSyCqvxvqh9AAFxFQN7mRPazAGibBg7RI75o';
 
   String? _nomeError;
   String? _emailError;
   String? _enderecoError;
   String? _telefoneError;
+
+  void _onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+  }
+
+  void _onPlaceSelected(Prediction prediction) async {
+    GoogleMapsPlaces places = GoogleMapsPlaces(
+      apiKey: _googleApiKey,
+      apiHeaders: await GoogleApiHeaders().getHeaders(),
+    );
+    PlacesDetailsResponse detail =
+        await places.getDetailsByPlaceId(prediction.placeId!);
+    final lat = detail.result.geometry!.location.lat;
+    final lng = detail.result.geometry!.location.lng;
+    setState(() {
+      _address = prediction.description!;
+      mapController?.animateCamera(CameraUpdate.newLatLng(LatLng(lat, lng)));
+    });
+  }
 
   void _validateNome() {
     setState(() {
@@ -126,7 +153,8 @@ class _CadastrarAbrigoScreenState extends State<CadastrarAbrigoScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(height: 55),
-                      Text('Nome do abrigo', style: TextStyle(color: Colors.grey.shade500)),
+                      Text('Nome do abrigo',
+                          style: TextStyle(color: Colors.grey.shade500)),
                       SizedBox(height: 3),
                       TextField(
                         controller: _nomeController,
@@ -138,21 +166,25 @@ class _CadastrarAbrigoScreenState extends State<CadastrarAbrigoScreen> {
                           fillColor: Colors.grey.shade800,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
+                            borderSide: BorderSide(
+                                color: Colors.grey.shade600, width: 1),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
+                            borderSide: BorderSide(
+                                color: Colors.grey.shade600, width: 1),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
+                            borderSide: BorderSide(
+                                color: Colors.grey.shade600, width: 1),
                           ),
                         ),
                         style: TextStyle(color: Colors.white),
                       ),
                       SizedBox(height: 25),
-                      Text('Email', style: TextStyle(color: Colors.grey.shade500)),
+                      Text('Email',
+                          style: TextStyle(color: Colors.grey.shade500)),
                       SizedBox(height: 3),
                       TextField(
                         controller: _emailController,
@@ -164,48 +196,84 @@ class _CadastrarAbrigoScreenState extends State<CadastrarAbrigoScreen> {
                           fillColor: Colors.grey.shade800,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
+                            borderSide: BorderSide(
+                                color: Colors.grey.shade600, width: 1),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
+                            borderSide: BorderSide(
+                                color: Colors.grey.shade600, width: 1),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
+                            borderSide: BorderSide(
+                                color: Colors.grey.shade600, width: 1),
                           ),
                         ),
                         style: TextStyle(color: Colors.white),
                         keyboardType: TextInputType.emailAddress,
                       ),
                       SizedBox(height: 25),
-                      Text('Endereço', style: TextStyle(color: Colors.grey.shade500)),
+                      Text('Endereço',
+                          style: TextStyle(color: Colors.grey.shade500)),
                       SizedBox(height: 3),
                       TextField(
                         controller: _enderecoController,
                         decoration: InputDecoration(
-                          hintText: 'Digite o endereço',
-                          errorText: _enderecoError,
+                          hintText: 'Digite o endereço do abrigo',
+                          errorText: _nomeError,
                           hintStyle: TextStyle(color: Colors.white),
                           filled: true,
                           fillColor: Colors.grey.shade800,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
+                            borderSide: BorderSide(
+                                color: Colors.grey.shade600, width: 1),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
+                            borderSide: BorderSide(
+                                color: Colors.grey.shade600, width: 1),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
+                            borderSide: BorderSide(
+                                color: Colors.grey.shade600, width: 1),
                           ),
                         ),
                         style: TextStyle(color: Colors.white),
+                        onTap: () async {
+                          Prediction? p = await PlacesAutocomplete.show(
+                            context: context,
+                            apiKey: _googleApiKey,
+                            mode: Mode.overlay,
+                            language: "pt",
+                            components: [Component(Component.country, "br")],
+                          );
+                          if (p != null) {
+                            _onPlaceSelected(p);
+                            setState(() {
+                              _enderecoController.text =
+                                  p.description.toString();
+                            });
+                          }
+                        },
                       ),
-                      SizedBox(height: 25),
-                      Text('Número de telefone', style: TextStyle(color: Colors.grey.shade500)),
+                      Expanded(
+                        child: GoogleMap(
+                          onMapCreated: _onMapCreated,
+                          initialCameraPosition: CameraPosition(
+                            target: _center,
+                            zoom: 11.0,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text('Endereço: $_address'),
+                      ),
+                      Text('Número de telefone',
+                          style: TextStyle(color: Colors.grey.shade500)),
                       SizedBox(height: 3),
                       TextField(
                         controller: _telefoneController,
@@ -217,15 +285,18 @@ class _CadastrarAbrigoScreenState extends State<CadastrarAbrigoScreen> {
                           fillColor: Colors.grey.shade800,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
+                            borderSide: BorderSide(
+                                color: Colors.grey.shade600, width: 1),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
+                            borderSide: BorderSide(
+                                color: Colors.grey.shade600, width: 1),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
+                            borderSide: BorderSide(
+                                color: Colors.grey.shade600, width: 1),
                           ),
                         ),
                         style: TextStyle(color: Colors.white),
@@ -255,23 +326,27 @@ class _CadastrarAbrigoScreenState extends State<CadastrarAbrigoScreen> {
                                 );
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text('Abrigo cadastrado com sucesso!'),
+                                    content:
+                                        Text('Abrigo cadastrado com sucesso!'),
                                   ),
                                 );
                                 Navigator.pop(context);
                               } catch (e) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text('Erro ao cadastrar abrigo: $e'),
+                                    content:
+                                        Text('Erro ao cadastrar abrigo: $e'),
                                   ),
                                 );
                               }
                             }
                           },
-                          child: Text('Registrar', style: TextStyle(color: Colors.white)),
+                          child: Text('Registrar',
+                              style: TextStyle(color: Colors.white)),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue,
-                            padding: EdgeInsets.symmetric(horizontal: 220, vertical: 35),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 220, vertical: 35),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
