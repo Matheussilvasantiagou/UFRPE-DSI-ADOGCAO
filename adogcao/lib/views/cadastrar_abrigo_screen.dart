@@ -346,7 +346,7 @@ class _CadastrarAbrigoScreenState extends State<CadastrarAbrigoScreen> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue,
                             padding: EdgeInsets.symmetric(
-                                horizontal: 220, vertical: 35),
+                                horizontal: 40, vertical: 20),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),

@@ -9,7 +9,7 @@ import '../controllers/favorite_controller.dart';
 import '../widgets/animal_card.dart';
 import 'favorite_animals_screen.dart';
 import 'cadastrar_abrigo_screen.dart'; // Import da tela de cadastro de abrigo
-
+import 'abrigos_screen.dart';
 class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -222,11 +222,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     ),
                     ListTile(
-                      leading: Icon(Icons.home, color: Colors.white),
-                      title: Text('Meus abrigos',
+                      leading: Icon(Icons.add_business, color: Colors.white),
+                      title: Text('Meus Abrigos',
                           style: TextStyle(color: Colors.white)),
                       onTap: () {
-                        Navigator.pushNamed(context, '/meusAbrigos');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AbrigosScreen(),
+                          ),
+                        );
                       },
                     ),
                     ListTile(
