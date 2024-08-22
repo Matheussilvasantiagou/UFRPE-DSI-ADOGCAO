@@ -40,7 +40,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
       setState(() {
         isVolunteer = UserSession.instance.isVolunteer ?? false;
-        userName = UserSession.instance.userName ?? 'Usuário'; // Obtendo o nome do usuário
+        userName = UserSession.instance.userName ??
+            'Usuário'; // Obtendo o nome do usuário
         isLoading = false;
       });
     } else {
@@ -212,41 +213,40 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: <Widget>[
                     DrawerHeader(
                       decoration: BoxDecoration(
-                        color: Colors.blueGrey.shade900,
+                        color: Color.fromARGB(255, 0, 13, 32),
                       ),
-                      child: Text(
-                        'Olá, $userName', // Exibe o nome do usuário logado
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Olá, $userName', // Exibe o nome do usuário logado
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),                         
+                          Text(
+                            '${isVolunteer ? 'Voluntário' : 'Adotante'}', // Exibe o perfil do usuário
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
                       ),
-                      
-                    ),
-                    DrawerHeader(
-                      decoration: BoxDecoration(
-                        color: Colors.blueGrey.shade900,
-                      ),
-                      child: Text(
-                        'Perfil: ${UserSession.instance.isVolunteer?'Voluntário':'Adotante'}', // Exibe o nome do usuário logado
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      
                     ),
                     ListTile(
                       leading: Icon(Icons.pets, color: Colors.white),
-                      title: Text('Meus pets', style: TextStyle(color: Colors.white)),
+                      title: Text('Meus pets',
+                          style: TextStyle(color: Colors.white)),
                       onTap: () {
                         Navigator.pushNamed(context, '/meusPets');
                       },
                     ),
                     ListTile(
-                      leading: Icon(Icons.add_circle_outline, color: Colors.white),
+                      leading:
+                          Icon(Icons.add_circle_outline, color: Colors.white),
                       title: Text('Cadastrar pet',
                           style: TextStyle(color: Colors.white)),
                       onTap: () {
@@ -274,17 +274,17 @@ class _HomeScreenState extends State<HomeScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => CadastrarAbrigoScreen(), 
+                            builder: (context) => CadastrarAbrigoScreen(),
                           ),
                         );
                       },
                     ),
                     ListTile(
                       leading: Icon(Icons.logout_rounded, color: Colors.white),
-                      title: Text('Sair',
-                          style: TextStyle(color: Colors.white)),
+                      title:
+                          Text('Sair', style: TextStyle(color: Colors.white)),
                       onTap: () {
-                        _confirmLogout(); 
+                        _confirmLogout();
                       },
                     )
                   ],
