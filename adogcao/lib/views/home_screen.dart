@@ -10,6 +10,7 @@ import '../widgets/animal_card.dart';
 import 'favorite_animals_screen.dart';
 import 'cadastrar_abrigo_screen.dart'; // Import da tela de cadastro de abrigo
 import 'abrigos_screen.dart';
+
 class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -47,6 +48,37 @@ class _HomeScreenState extends State<HomeScreen> {
         isLoading = false;
       });
     }
+  }
+
+  void _confirmLogout() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Confirmar saída"),
+          content: Text("Você tem certeza que deseja sair?"),
+          actions: <Widget>[
+            TextButton(
+              child: Text("Cancelar"),
+              onPressed: () {
+                Navigator.of(context).pop(); // Fecha o diálogo
+              },
+            ),
+            TextButton(
+              child: Text("Sair"),
+              onPressed: () {
+                Navigator.of(context).pop(); // Fecha o diálogo
+                _loginController.signOut(); // Realiza o logout
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginScreen()),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -242,7 +274,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => CadastrarAbrigoScreen(), // Navega para a tela de cadastro de abrigo
+                            builder: (context) => CadastrarAbrigoScreen(), 
                           ),
                         );
                       },
@@ -252,12 +284,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       title: Text('Sair',
                           style: TextStyle(color: Colors.white)),
                       onTap: () {
-                        _loginController.signOut();
-                        Navigator.push(context,
-                         MaterialPageRoute(
-                            builder: (context) => LoginScreen(), // Navega para a tela de cadastro de abrigo
-                          ),
-                          );
+                        _confirmLogout(); 
                       },
                     )
                   ],
