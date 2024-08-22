@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Adicione esta linha
 import '../controllers/abrigo_controller.dart';
 import 'package:flutter_google_places_hoc081098/flutter_google_places_hoc081098.dart';
 import 'package:google_maps_webservice/places.dart';
@@ -43,6 +44,7 @@ class AbrigosScreen extends StatelessWidget {
                 child: StreamBuilder(
                   stream: FirebaseFirestore.instance
                       .collection('abrigos')
+                      .where('volunteerId', isEqualTo: FirebaseAuth.instance.currentUser!.uid) // Adiciona o filtro pelo ID do voluntário logado
                       .snapshots(),
                   builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                     if (snapshot.hasError) {
@@ -68,8 +70,7 @@ class AbrigosScreen extends StatelessWidget {
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 20,
-                              ),
-                            
+                            ),
                           ),
                           trailing: ElevatedButton(
                             onPressed: () {
@@ -85,7 +86,7 @@ class AbrigosScreen extends StatelessWidget {
                               backgroundColor: Colors.orange,
                               foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25), 
+                                borderRadius: BorderRadius.circular(25),
                               ),
                             ),
                             child: Text('Ver'),
@@ -294,26 +295,25 @@ class _EditarAbrigoScreenState extends State<EditarAbrigoScreen> {
     super.initState();
     _carregarDadosAbrigo();
   }
-  
 
   void _carregarDadosAbrigo() async {
-  try {
-    DocumentSnapshot snapshot = await getAbrigoById(widget.abrigoId);
-    Map<String, dynamic> dados = snapshot.data() as Map<String, dynamic>;
+    try {
+      DocumentSnapshot snapshot = await getAbrigoById(widget.abrigoId);
+      Map<String, dynamic> dados = snapshot.data() as Map<String, dynamic>;
 
-    setState(() {
-      _nomeController.text = dados['nome'];
-      _emailController.text = dados['email'];
-      _enderecoController.text = dados['endereco'];
-      _telefoneController.text = dados['telefone'];
-    });
-  } catch (e) {
-    print('Erro ao carregar dados do abrigo: $e');
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Erro ao carregar dados do abrigo: $e')),
-    );
+      setState(() {
+        _nomeController.text = dados['nome'];
+        _emailController.text = dados['email'];
+        _enderecoController.text = dados['endereco'];
+        _telefoneController.text = dados['telefone'];
+      });
+    } catch (e) {
+      print('Erro ao carregar dados do abrigo: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao carregar dados do abrigo: $e')),
+      );
+    }
   }
-}
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
@@ -410,7 +410,6 @@ class _EditarAbrigoScreenState extends State<EditarAbrigoScreen> {
       throw e;
     }
   }
-  
 
   @override
   Widget build(BuildContext context) {
@@ -681,8 +680,10 @@ class _EditarAbrigoScreenState extends State<EditarAbrigoScreen> {
                           ),
                           child: Text(
                             'Salvar Alterações',
-                            style: TextStyle(fontSize: 18,
-                            color: Colors.white),
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),
@@ -697,3 +698,5 @@ class _EditarAbrigoScreenState extends State<EditarAbrigoScreen> {
     );
   }
 }
+
+
