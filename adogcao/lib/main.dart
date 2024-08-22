@@ -77,27 +77,23 @@ class AdoptionScreen extends StatelessWidget {
                           'https://p2.trrsf.com/image/fget/cf/774/0/images.terra.com/2024/03/29/1527502278-golden-retriever.jpg'),
                   PetAvatar(
                       name: 'Tom',
-                      imageUrl:
-                          'https://p2.trrsf.com/image/fget/cf/774/0/images.terra.com/2024/03/29/1527502278-golden-retriever.jpg'),
+                      imageUrl: 'lib/images/tom.png'),
                 ],
               ),
               SizedBox(height: 20),
               PetAvatar(
                   name: 'Lua',
-                  imageUrl:
-                      'https://p2.trrsf.com/image/fget/cf/774/0/images.terra.com/2024/03/29/1527502278-golden-retriever.jpg'),
+                  imageUrl: 'lib/images/lua.png'),
               SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   PetAvatar(
                       name: 'Thor',
-                      imageUrl:
-                          'https://p2.trrsf.com/image/fget/cf/774/0/images.terra.com/2024/03/29/1527502278-golden-retriever.jpg'),
+                      imageUrl: 'lib/images/thor.png'),
                   PetAvatar(
                       name: 'Mel',
-                      imageUrl:
-                          'https://p2.trrsf.com/image/fget/cf/774/0/images.terra.com/2024/03/29/1527502278-golden-retriever.jpg'),
+                      imageUrl: 'lib/images/mel.png'),
                 ],
               ),
               SizedBox(height: 50),
