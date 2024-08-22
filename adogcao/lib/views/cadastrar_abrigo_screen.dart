@@ -5,6 +5,7 @@ import 'package:flutter_google_places_hoc081098/flutter_google_places_hoc081098.
 import 'package:google_maps_webservice/places.dart';
 import 'package:google_api_headers/google_api_headers.dart';
 
+
 class CadastrarAbrigoScreen extends StatefulWidget {
   @override
   _CadastrarAbrigoScreenState createState() => _CadastrarAbrigoScreenState();
@@ -17,7 +18,7 @@ class _CadastrarAbrigoScreenState extends State<CadastrarAbrigoScreen> {
   final TextEditingController _enderecoController = TextEditingController();
   final TextEditingController _telefoneController = TextEditingController();
   GoogleMapController? mapController;
-  final LatLng _center = const LatLng(-15.7942, -47.8822);
+  final LatLng _center = const LatLng(-8.017788, -34.944773);
   String _address = '';
   final String _googleApiKey = 'AIzaSyCqvxvqh9AAFxFQN7mRPazAGibBg7RI75o';
 
