@@ -54,6 +54,7 @@ class RegistrationController {
         'phoneNumber': phoneNumber,
         'isVolunteer': isVolunteer,
         'createdAt': FieldValue.serverTimestamp(),
+        'uid': uid
       });
     } catch (e) {
       throw Exception("Erro ao adicionar usuário ao Firestore: $e");
