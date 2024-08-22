@@ -579,6 +579,7 @@ class _EditarAbrigoScreenState extends State<EditarAbrigoScreen> {
                           }
                         },
                       ),
+                      SizedBox(height: 16), // Espaçamento adicionado
                       Expanded(
                         child: GoogleMap(
                           onMapCreated: _onMapCreated,
@@ -698,5 +699,3 @@ class _EditarAbrigoScreenState extends State<EditarAbrigoScreen> {
     );
   }
 }
-
-

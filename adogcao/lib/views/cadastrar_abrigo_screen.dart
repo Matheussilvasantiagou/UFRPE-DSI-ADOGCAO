@@ -5,7 +5,6 @@ import 'package:flutter_google_places_hoc081098/flutter_google_places_hoc081098.
 import 'package:google_maps_webservice/places.dart';
 import 'package:google_api_headers/google_api_headers.dart';
 
-
 class CadastrarAbrigoScreen extends StatefulWidget {
   @override
   _CadastrarAbrigoScreenState createState() => _CadastrarAbrigoScreenState();
@@ -21,6 +20,7 @@ class _CadastrarAbrigoScreenState extends State<CadastrarAbrigoScreen> {
   final LatLng _center = const LatLng(-8.017788, -34.944773);
   String _address = '';
   final String _googleApiKey = 'AIzaSyCqvxvqh9AAFxFQN7mRPazAGibBg7RI75o';
+  Marker? _marker;
 
   String? _nomeError;
   String? _emailError;
@@ -40,9 +40,17 @@ class _CadastrarAbrigoScreenState extends State<CadastrarAbrigoScreen> {
         await places.getDetailsByPlaceId(prediction.placeId!);
     final lat = detail.result.geometry!.location.lat;
     final lng = detail.result.geometry!.location.lng;
+
     setState(() {
       _address = prediction.description!;
       mapController?.animateCamera(CameraUpdate.newLatLng(LatLng(lat, lng)));
+
+      // Atualiza o marcador para o novo endereço selecionado
+      _marker = Marker(
+        markerId: MarkerId('endereco'),
+        position: LatLng(lat, lng),
+        infoWindow: InfoWindow(title: _address),
+      );
     });
   }
 
@@ -260,13 +268,15 @@ class _CadastrarAbrigoScreenState extends State<CadastrarAbrigoScreen> {
                           }
                         },
                       ),
+                      SizedBox(height: 16), // Adicionado espaçamento
                       Expanded(
                         child: GoogleMap(
                           onMapCreated: _onMapCreated,
                           initialCameraPosition: CameraPosition(
                             target: _center,
-                            zoom: 11.0,
+                            zoom: 16.0,
                           ),
+                          markers: _marker != null ? {_marker!} : {},
                         ),
                       ),
                       Padding(

@@ -75,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Navigator.pushNamed(context, '/cadastro');
                     },
                     child: Text(
-                      'Crie uma conta ou Cadastre-se',
+                      'Não possui uma conta? Cadastre-se',
                       style: TextStyle(
                         color: Colors.grey,
                         fontSize: 16,
