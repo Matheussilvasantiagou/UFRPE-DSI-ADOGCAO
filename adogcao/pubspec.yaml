@@ -1,4 +1,4 @@
-name: adogcao
+name: flutter_application_1
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.3.3 <4.0.0'
+  sdk: '>=3.4.4 <4.0.0'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -28,6 +28,13 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  firebase_core: ^3.2.0  # Substitua pela última versão disponível
+  firebase_auth: ^5.1.2   # Substitua pela última versão disponível
+  cloud_firestore: ^5.1.0  # Substitua pela última versão disponível
+  flutter_google_places_hoc081098: ^1.0.0-nullsafety.5
+  google_maps_webservice: ^0.0.20-nullsafety.5
+  google_api_headers: ^1.1.1
+  
   flutter:
     sdk: flutter
 
@@ -35,10 +42,13 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.6
+  geocoding: ^3.0.0
+  google_maps_flutter: ^2.9.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
