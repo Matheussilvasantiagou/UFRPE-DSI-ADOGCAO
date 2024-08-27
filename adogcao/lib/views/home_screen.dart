@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_application_1/controllers/login_controller.dart';
 import 'package:flutter_application_1/session/UserSession.dart';
+import 'package:flutter_application_1/views/edit_user_screen.dart';
 import 'package:flutter_application_1/views/login_screen.dart';
 import '../models/animal.dart';
 import '../controllers/favorite_controller.dart';
@@ -275,6 +276,19 @@ class _HomeScreenState extends State<HomeScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => CadastrarAbrigoScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.person, color: Colors.white),
+                      title: Text('Editar perfil',
+                          style: TextStyle(color: Colors.white)),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditUserScreen(),
                           ),
                         );
                       },

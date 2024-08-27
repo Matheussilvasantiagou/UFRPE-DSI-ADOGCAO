@@ -31,6 +31,7 @@ class LoginController {
           UserSession.instance.userId = userData['uid'];
           UserSession.instance.isVolunteer = userData['isVolunteer'];
           UserSession.instance.userName = userData['name'];
+          UserSession.instance.userPhone = userData['phoneNumber'];
 
         }
         UserSession.instance.userEmail = userCredential.user?.email;
