@@ -10,11 +10,13 @@ class UserSession {
   String? userEmail;
   bool isVolunteer = false;
   String? userName;
+  String? userPhone;
 
   void logout() {
     userId = null;
     userEmail = null;
     userName = null;
     isVolunteer = false;
+    userPhone = null;
   }
 }
