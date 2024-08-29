@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/views/reset_password_screen.dart';
 import '../controllers/login_controller.dart';
 import 'home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Certifique-se de adicionar esta importação
@@ -76,6 +77,24 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     child: Text(
                       'Não possui uma conta? Cadastre-se',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 3),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ResetPasswordScreen(),
+                              ),
+                            );
+                    },
+                    child: Text(
+                      'Esqueci minha senha',
                       style: TextStyle(
                         color: Colors.grey,
                         fontSize: 16,
