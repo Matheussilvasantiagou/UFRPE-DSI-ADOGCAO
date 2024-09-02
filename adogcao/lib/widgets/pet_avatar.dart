@@ -3,36 +3,33 @@ import 'package:flutter/material.dart';
 class PetAvatar extends StatelessWidget {
   final String name;
   final String imageUrl;
+  final bool isAssetImage;
 
-  PetAvatar({required this.name, required this.imageUrl});
+  PetAvatar({
+    required this.name,
+    required this.imageUrl,
+    this.isAssetImage = false,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade900,
-        border: Border.all(color: Colors.grey),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        children: <Widget>[
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Image.network(
-              imageUrl,
-              height: 80,
-              width: 80,
-              fit: BoxFit.cover,
-            ),
+    return Column(
+      children: [
+        CircleAvatar(
+          radius: 50,
+          backgroundImage: isAssetImage
+              ? AssetImage(imageUrl)
+              : NetworkImage(imageUrl) as ImageProvider,
+        ),
+        SizedBox(height: 8),
+        Text(
+          name,
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
           ),
-          SizedBox(height: 8),
-          Text(
-            name,
-            style: TextStyle(color: Colors.white),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
