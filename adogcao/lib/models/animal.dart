@@ -6,6 +6,7 @@ class Animal {
   final String age;
   final String weight;
   final String animalType;
+  double? distance;
 
   Animal({
     required this.name,
