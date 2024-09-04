@@ -80,7 +80,8 @@ class _AnimalDetailsScreenState extends State<AnimalDetailsScreen> {
                                 ),
                               ),
                             ),
-                            if (!widget.isVolunteer) // Exibe o botão de favoritar apenas se não for voluntário
+                            if (!widget
+                                .isVolunteer) // Exibe o botão de favoritar apenas se não for voluntário
                               IconButton(
                                 icon: Icon(
                                   isFavorite
@@ -125,7 +126,7 @@ class _AnimalDetailsScreenState extends State<AnimalDetailsScreen> {
                           widget.animal.description,
                           style: TextStyle(color: Colors.white),
                         ),
-                        SizedBox(height: 50),
+                        SizedBox(height: 250),
                         Center(
                           child: ElevatedButton(
                             onPressed: () {
@@ -134,8 +135,8 @@ class _AnimalDetailsScreenState extends State<AnimalDetailsScreen> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red,
                               padding: EdgeInsets.symmetric(
-                                horizontal: 140,
-                                vertical: 35,
+                                horizontal: 40,
+                                vertical: 24,
                               ),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30),
@@ -161,7 +162,7 @@ class _AnimalDetailsScreenState extends State<AnimalDetailsScreen> {
 
   Widget infoTag(String text, Color color) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       margin: EdgeInsets.symmetric(horizontal: 4.0),
       decoration: BoxDecoration(
         color: color,
