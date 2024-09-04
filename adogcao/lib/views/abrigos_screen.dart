@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // Adicione esta linha
+import 'package:firebase_auth/firebase_auth.dart';
 import '../controllers/abrigo_controller.dart';
 import 'package:flutter_google_places_hoc081098/flutter_google_places_hoc081098.dart';
 import 'package:google_maps_webservice/places.dart';
@@ -413,66 +413,68 @@ class _EditarAbrigoScreenState extends State<EditarAbrigoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color.fromARGB(255, 0, 13, 32).withAlpha(200),
-      body: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.black,
-                  Color.fromARGB(255, 0, 13, 32).withAlpha(200)
-                ],
-              ),
+  return Scaffold(
+    backgroundColor: Color.fromARGB(255, 0, 13, 32).withAlpha(200),
+    resizeToAvoidBottomInset: true, // Adicionado para evitar overlap com teclado
+    body: Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.black,
+                Color.fromARGB(255, 0, 13, 32).withAlpha(200),
+              ],
             ),
           ),
-          Column(
-            children: [
-              Stack(
-                children: [
-                  Container(
-                    height: 150,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade800,
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(50),
-                        bottomRight: Radius.circular(50),
+        ),
+        Column(
+          children: [
+            Stack(
+              children: [
+                Container(
+                  height: 120,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade800,
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(50),
+                      bottomRight: Radius.circular(50),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 50,
+                  left: 20,
+                  child: Row(
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.arrow_back, color: Colors.white),
+                        onPressed: () => Navigator.of(context).pop(),
                       ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 50,
-                    left: 20,
-                    child: Row(
-                      children: [
-                        IconButton(
-                          icon: Icon(Icons.arrow_back, color: Colors.white),
-                          onPressed: () => Navigator.of(context).pop(),
+                      SizedBox(width: 10),
+                      Text(
+                        'Editar Abrigo',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
                         ),
-                        SizedBox(width: 10),
-                        Text(
-                          'Editar Abrigo',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              Expanded(
+                ),
+              ],
+            ),
+            Expanded(
+              child: SingleChildScrollView( // Adicionado para permitir scroll
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(height: 55),
+                      SizedBox(height: 20),
                       Text('Nome do abrigo',
                           style: TextStyle(color: Colors.grey.shade500)),
                       SizedBox(height: 3),
@@ -580,7 +582,8 @@ class _EditarAbrigoScreenState extends State<EditarAbrigoScreen> {
                         },
                       ),
                       SizedBox(height: 16), // Espaçamento adicionado
-                      Expanded(
+                      SizedBox(
+                        height: 200, // Defina um tamanho fixo para o mapa
                         child: GoogleMap(
                           onMapCreated: _onMapCreated,
                           initialCameraPosition: CameraPosition(
@@ -592,8 +595,7 @@ class _EditarAbrigoScreenState extends State<EditarAbrigoScreen> {
                                   Marker(
                                     markerId: MarkerId('endereco'),
                                     position: _center,
-                                    infoWindow:
-                                        InfoWindow(title: _address),
+                                    infoWindow: InfoWindow(title: _address),
                                   ),
                                 }
                               : {},
@@ -656,7 +658,8 @@ class _EditarAbrigoScreenState extends State<EditarAbrigoScreen> {
                                 // Exibe uma mensagem de sucesso
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text('Abrigo atualizado com sucesso!'),
+                                    content:
+                                        Text('Abrigo atualizado com sucesso!'),
                                   ),
                                 );
                                 // Volta para a tela anterior
@@ -665,7 +668,8 @@ class _EditarAbrigoScreenState extends State<EditarAbrigoScreen> {
                                 // Exibe uma mensagem de erro
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text('Erro ao atualizar abrigo: $e'),
+                                    content:
+                                        Text('Erro ao atualizar abrigo: $e'),
                                   ),
                                 );
                               }
@@ -692,10 +696,12 @@ class _EditarAbrigoScreenState extends State<EditarAbrigoScreen> {
                   ),
                 ),
               ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+            ),
+          ],
+        ),
+      ]
+    ),
+  );
 }
+}
+
