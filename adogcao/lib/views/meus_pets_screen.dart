@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/animal.dart'; // Certifique-se de que o caminho esteja correto
 import 'animal_details_screen.dart'; // Certifique-se de que o caminho esteja correto
+import 'edit_animal.dart';
 
 class PetsScreen extends StatelessWidget {
   @override
@@ -41,7 +42,8 @@ class PetsScreen extends StatelessWidget {
                 child: StreamBuilder(
                   stream: FirebaseFirestore.instance
                       .collection('pets')
-                      .where('userId', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                      .where('userId',
+                          isEqualTo: FirebaseAuth.instance.currentUser!.uid)
                       .snapshots(),
                   builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                     if (snapshot.hasError) {
@@ -54,7 +56,8 @@ class PetsScreen extends StatelessWidget {
                     }
 
                     if (snapshot.data!.docs.isEmpty) {
-                      return Center(child: Text('Nenhum pet cadastrado ainda.'));
+                      return Center(
+                          child: Text('Nenhum pet cadastrado ainda.'));
                     }
 
                     final pets = snapshot.data!.docs;
@@ -73,36 +76,61 @@ class PetsScreen extends StatelessWidget {
                               fontSize: 20,
                             ),
                           ),
-                          trailing: ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AnimalDetailsScreen(
-                                    animal: Animal(
-                                      name: pet['name'],
-                                      imageUrl: pet['imageUrl'],
-                                      location: pet['shelterId'],
-                                      description: pet['description'],
-                                      age: pet['age'],
-                                      weight: pet['weight'],
-                                      animalType: pet['animalType'],
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => AnimalDetailsScreen(
+                                        animal: Animal(
+                                          name: pet['name'],
+                                          imageUrl: pet['imageUrl'],
+                                          location: pet['shelterId'],
+                                          description: pet['description'],
+                                          age: pet['age'],
+                                          weight: pet['weight'],
+                                          animalType: pet['animalType'],
+                                        ),
+                                        isFavorite: false,
+                                        toggleFavorite: (Animal animal) {},
+                                        isVolunteer:
+                                            true, // Assumindo que é um voluntário
+                                      ),
                                     ),
-                                    isFavorite: false,
-                                    toggleFavorite: (Animal animal) {},
-                                    isVolunteer: true, // Assumindo que é um voluntário
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.orange,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(25),
                                   ),
                                 ),
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.orange,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25),
+                                child: Text('Ver'),
                               ),
-                            ),
-                            child: Text('Ver'),
+                              SizedBox(width: 10),
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => EditAnimalScreen(),
+                                    ),
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blue,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(25),
+                                  ),
+                                ),
+                                child: Text('Editar'),
+                              ),
+                            ],
                           ),
                         );
                       },
