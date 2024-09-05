@@ -56,8 +56,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-
-
   void _confirmLogout() {
     showDialog(
       context: context,
@@ -90,7 +88,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<Position> _getCurrentLocation() async {
-    return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    return await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
   }
 
   Future<Location> _getCoordinatesFromAddress(String address) async {
@@ -102,23 +101,23 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  double _calculateDistance(double startLatitude, double startLongitude, double endLatitude, double endLongitude) {
-    return Geolocator.distanceBetween(startLatitude, startLongitude, endLatitude, endLongitude);
+  double _calculateDistance(double startLatitude, double startLongitude,
+      double endLatitude, double endLongitude) {
+    return Geolocator.distanceBetween(
+        startLatitude, startLongitude, endLatitude, endLongitude);
   }
 
   Future<List<Animal>> _sortPetsByDistance(List<Animal> pets) async {
-  
-  var currentPosition =  await _getCurrentLocation();
+    var currentPosition = await _getCurrentLocation();
 
-  for (var pet in pets) {
+    for (var pet in pets) {
+      // var querySnapshot = await FirebaseFirestore.instance
+      //     .collection('abrigos')
+      //     .where('nome', isEqualTo: pet.location)
+      //     .get();
 
-    // var querySnapshot = await FirebaseFirestore.instance
-    //     .collection('abrigos')
-    //     .where('nome', isEqualTo: pet.location)
-    //     .get();
-
-    // if (querySnapshot.docs.isNotEmpty) {
-    //   var abrigoData = querySnapshot.docs.first.data();
+      // if (querySnapshot.docs.isNotEmpty) {
+      //   var abrigoData = querySnapshot.docs.first.data();
 
       // var endereco = abrigoData['endereco'].toString();
 
@@ -128,18 +127,17 @@ class _HomeScreenState extends State<HomeScreen> {
         currentPosition.longitude,
         location.latitude,
         location.longitude,
-    );
+      );
 
-    //}
- 
+      //}
+    }
+
+    pets.sort((a, b) => a.distance!.compareTo(b.distance!));
+
+    setState(() {});
+
+    return pets;
   }
-
-  pets.sort((a, b) => a.distance!.compareTo(b.distance!));
-
-  setState(() {});
-
-  return pets;
-}
 
   @override
   Widget build(BuildContext context) {
@@ -183,7 +181,8 @@ class _HomeScreenState extends State<HomeScreen> {
               var pets = snapshot.data!.docs.map((doc) {
                 return Animal(
                   name: doc['name'],
-                  location: doc['shelterId'], // ou outra propriedade que represente o local
+                  location: doc[
+                      'shelterId'], // ou outra propriedade que represente o local
                   imageUrl: doc['imageUrl'],
                   description: doc['description'],
                   age: doc['age'],
@@ -198,44 +197,39 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   children: [
                     GestureDetector(
-                      onTap: (){
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => PetsProximosScreen()
-                          )
-                        );
-                      },
-                      child: Container(
-                      margin: EdgeInsets.all(16.0),
-                      padding: EdgeInsets.all(16.0),
-                      height: 250,
-                      decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        borderRadius: BorderRadius.circular(16),
-                        image: DecorationImage(
-                          image: NetworkImage(
-                              'https://p2.trrsf.com/image/fget/cf/774/0/images.terra.com/2024/03/29/1527502278-golden-retriever.jpg'),
-                          fit: BoxFit.cover,
-                          colorFilter: ColorFilter.mode(
-                            Colors.black.withOpacity(0.5),
-                            BlendMode.darken,
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => PetsProximosScreen()));
+                        },
+                        child: Container(
+                          margin: EdgeInsets.all(16.0),
+                          padding: EdgeInsets.all(16.0),
+                          height: 250,
+                          decoration: BoxDecoration(
+                            color: Colors.transparent,
+                            borderRadius: BorderRadius.circular(16),
+                            image: DecorationImage(
+                              image: NetworkImage(
+                                  'https://p2.trrsf.com/image/fget/cf/774/0/images.terra.com/2024/03/29/1527502278-golden-retriever.jpg'),
+                              fit: BoxFit.cover,
+                              colorFilter: ColorFilter.mode(
+                                Colors.black.withOpacity(0.5),
+                                BlendMode.darken,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                      child: Center(
-                        child: Text(
-                          'Encontre o animal mais próximo de você',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.center,
-                        )
-                      ),
-                    )
-                    )
-                    ,
+                          child: Center(
+                              child: Text(
+                            'Encontre o animal mais próximo de você',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,
+                          )),
+                        )),
                     GridView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
@@ -294,12 +288,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 },
               ),
-            IconButton(
-              icon: Icon(Icons.settings, color: Colors.white),
-              onPressed: () {
-                Navigator.pushNamed(context, '/settings');
-              },
-            ),
           ],
         ),
       ),
@@ -349,8 +337,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     ),
                     ListTile(
-                      leading: Icon(Icons.add_circle_outline,
-                          color: Colors.white),
+                      leading:
+                          Icon(Icons.add_circle_outline, color: Colors.white),
                       title: Text('Cadastrar pet',
                           style: TextStyle(color: Colors.white)),
                       onTap: () {
@@ -402,9 +390,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     ),
                     ListTile(
-                      leading:
-                          Icon(Icons.logout_rounded, color: Colors.white),
-                      title: Text('Sair', style: TextStyle(color: Colors.white)),
+                      leading: Icon(Icons.logout_rounded, color: Colors.white),
+                      title:
+                          Text('Sair', style: TextStyle(color: Colors.white)),
                       onTap: () {
                         _confirmLogout();
                       },
