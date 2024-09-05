@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../models/animal.dart';
 
@@ -128,24 +129,46 @@ class _AnimalDetailsScreenState extends State<AnimalDetailsScreen> {
                         ),
                         SizedBox(height: 250),
                         Center(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              // Ação ao clicar no botão de contato
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 40,
-                                vertical: 24,
+                          child: Column(
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  // Ação ao clicar no botão de contato
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 40,
+                                    vertical: 24,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                ),
+                                child: Text(
+                                  'Entrar em contato',
+                                  style: TextStyle(color: Colors.white),
+                                ),
                               ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
+                              SizedBox(height: 20),
+                              ElevatedButton(
+                                onPressed: () => _confirmAdoption(context),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.green,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 40,
+                                    vertical: 24,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                ),
+                                child: Text(
+                                  'Animal adotado',
+                                  style: TextStyle(color: Colors.white),
+                                ),
                               ),
-                            ),
-                            child: Text(
-                              'Entrar em contato',
-                              style: TextStyle(color: Colors.white),
-                            ),
+                            ],
                           ),
                         ),
                       ],
@@ -171,6 +194,42 @@ class _AnimalDetailsScreenState extends State<AnimalDetailsScreen> {
       child: Text(
         text,
         style: TextStyle(color: Colors.white, fontSize: 16),
+      ),
+    );
+  }
+
+  void _confirmAdoption(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Confirmar Adoção"),
+        content: Text("Tem certeza de que este animal foi adotado?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(), // Fecha o diálogo
+            child: Text("Cancelar"),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              // Exclui o animal da base de dados
+              await FirebaseFirestore.instance
+                  .collection(
+                      'pets') // Certifique-se de que o nome da coleção está correto
+                  .doc(widget.animal.name) // Usa o docId correto do animal
+                  .delete();
+
+              Navigator.of(context).pop(); // Fecha o diálogo
+              Navigator.of(context).pop(); // Retorna à tela anterior
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                    content:
+                        Text('Animal foi marcado como adotado e excluído!')),
+              );
+            },
+            child: Text("Confirmar"),
+          ),
+        ],
       ),
     );
   }
