@@ -6,11 +6,14 @@ class AnimalCard extends StatelessWidget {
   final Animal animal;
   final bool isFavorite;
   final Function toggleFavorite;
+  final bool isVolunteer;
 
-  AnimalCard(
-      {required this.animal,
-      required this.isFavorite,
-      required this.toggleFavorite});
+  AnimalCard({
+    required this.animal,
+    required this.isFavorite,
+    required this.toggleFavorite,
+    required this.isVolunteer,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +26,7 @@ class AnimalCard extends StatelessWidget {
               animal: animal,
               isFavorite: isFavorite,
               toggleFavorite: toggleFavorite,
+              isVolunteer: isVolunteer,
             ),
           ),
         );
@@ -69,18 +73,21 @@ class AnimalCard extends StatelessWidget {
                     ],
                   ),
                   Spacer(),
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: IconButton(
-                      icon: Icon(
-                        isFavorite ? Icons.favorite : Icons.favorite_border,
-                        color: isFavorite ? Colors.red : Colors.white,
+                  if (!isVolunteer)
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: IconButton(
+                        icon: Icon(
+                          isFavorite
+                              ? Icons.favorite
+                              : Icons.favorite_border,
+                          color: isFavorite ? Colors.red : Colors.white,
+                        ),
+                        onPressed: () {
+                          toggleFavorite(animal);
+                        },
                       ),
-                      onPressed: () {
-                        toggleFavorite(animal);
-                      },
                     ),
-                  ),
                 ],
               ),
             ),

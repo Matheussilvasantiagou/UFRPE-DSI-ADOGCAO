@@ -4,8 +4,12 @@ import 'animal_details_screen.dart';
 
 class FavoriteAnimalsScreen extends StatelessWidget {
   final List<Animal> favoriteAnimals;
+  final bool isVolunteer;
 
-  FavoriteAnimalsScreen({required this.favoriteAnimals});
+  FavoriteAnimalsScreen({
+    required this.favoriteAnimals,
+    required this.isVolunteer,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -125,6 +129,7 @@ class FavoriteAnimalsScreen extends StatelessWidget {
                                           toggleFavorite: (animal) {
                                             favoriteAnimals.remove(animal);
                                           },
+                                          isVolunteer: isVolunteer,
                                         ),
                                       ),
                                     );

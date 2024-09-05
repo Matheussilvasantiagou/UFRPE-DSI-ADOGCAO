@@ -72,33 +72,42 @@ class AdoptionScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   PetAvatar(
-                      name: 'Leo',
-                      imageUrl:
-                          'https://p2.trrsf.com/image/fget/cf/774/0/images.terra.com/2024/03/29/1527502278-golden-retriever.jpg'),
+                    name: 'Leo',
+                    imageUrl:
+                        'https://p2.trrsf.com/image/fget/cf/774/0/images.terra.com/2024/03/29/1527502278-golden-retriever.jpg',
+                  ),
                   PetAvatar(
-                      name: 'Tom',
-                      imageUrl: 'lib/images/tom.png'),
+                    name: 'Tom',
+                    imageUrl: 'lib/images/tom.png',
+                    isAssetImage: true,
+                  ),
                 ],
               ),
               SizedBox(height: 20),
               PetAvatar(
-                  name: 'Lua',
-                  imageUrl: 'lib/images/lua.png'),
+                name: 'Lua',
+                imageUrl: 'lib/images/lua.png',
+                isAssetImage: true,
+              ),
               SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   PetAvatar(
-                      name: 'Thor',
-                      imageUrl: 'lib/images/thor.png'),
+                    name: 'Thor',
+                    imageUrl: 'lib/images/thor.png',
+                    isAssetImage: true,
+                  ),
                   PetAvatar(
-                      name: 'Mel',
-                      imageUrl: 'lib/images/mel.png'),
+                    name: 'Mel',
+                    imageUrl: 'lib/images/mel.png',
+                    isAssetImage: true,
+                  ),
                 ],
               ),
               SizedBox(height: 50),
               Text(
-                'Adote o cachorro perfeito para você!',
+                'Adote o animal perfeito para você!',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 20,
@@ -109,7 +118,7 @@ class AdoptionScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Text(
-                  'Explore perfis de cachorros prontos para adoção e use filtros personalizados para encontrar o companheiro ideal. Comece sua jornada de adoção e encontre um amigo para a vida toda!',
+                  'Explore perfis de animais prontos para adoção e use filtros personalizados para encontrar o companheiro ideal. Comece sua jornada de adoção e encontre um amigo para a vida toda!',
                   style: TextStyle(color: Colors.white),
                   textAlign: TextAlign.center,
                 ),

@@ -3,13 +3,19 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_application_1/controllers/login_controller.dart';
 import 'package:flutter_application_1/session/UserSession.dart';
+import 'package:flutter_application_1/views/edit_user_screen.dart';
 import 'package:flutter_application_1/views/login_screen.dart';
+import 'package:flutter_application_1/views/pets_proximos_screen.dart';
+import 'package:geocoding/geocoding.dart';
 import '../models/animal.dart';
 import '../controllers/favorite_controller.dart';
 import '../widgets/animal_card.dart';
 import 'favorite_animals_screen.dart';
-import 'cadastrar_abrigo_screen.dart'; // Import da tela de cadastro de abrigo
+import 'cadastrar_abrigo_screen.dart';
 import 'abrigos_screen.dart';
+import 'cadastrar_pet_screen.dart';
+import 'meus_pets_screen.dart';
+import 'package:geolocator/geolocator.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -22,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool isVolunteer = false;
   bool isLoading = true;
-  String userName = ''; // Variável para armazenar o nome do usuário
+  String userName = '';
 
   @override
   void initState() {
@@ -40,8 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       setState(() {
         isVolunteer = UserSession.instance.isVolunteer ?? false;
-        userName = UserSession.instance.userName ??
-            'Usuário'; // Obtendo o nome do usuário
+        userName = UserSession.instance.userName ?? 'Usuário';
         isLoading = false;
       });
     } else {
@@ -50,6 +55,8 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     }
   }
+
+
 
   void _confirmLogout() {
     showDialog(
@@ -62,14 +69,14 @@ class _HomeScreenState extends State<HomeScreen> {
             TextButton(
               child: Text("Cancelar"),
               onPressed: () {
-                Navigator.of(context).pop(); // Fecha o diálogo
+                Navigator.of(context).pop();
               },
             ),
             TextButton(
               child: Text("Sair"),
               onPressed: () {
-                Navigator.of(context).pop(); // Fecha o diálogo
-                _loginController.signOut(); // Realiza o logout
+                Navigator.of(context).pop();
+                _loginController.signOut();
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => LoginScreen()),
@@ -81,6 +88,58 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
   }
+
+  Future<Position> _getCurrentLocation() async {
+    return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+  }
+
+  Future<Location> _getCoordinatesFromAddress(String address) async {
+    List<Location> locations = await locationFromAddress(address);
+    if (locations.isNotEmpty) {
+      return locations.first;
+    } else {
+      throw Exception('Endereço não encontrado');
+    }
+  }
+
+  double _calculateDistance(double startLatitude, double startLongitude, double endLatitude, double endLongitude) {
+    return Geolocator.distanceBetween(startLatitude, startLongitude, endLatitude, endLongitude);
+  }
+
+  Future<List<Animal>> _sortPetsByDistance(List<Animal> pets) async {
+  
+  var currentPosition =  await _getCurrentLocation();
+
+  for (var pet in pets) {
+
+    // var querySnapshot = await FirebaseFirestore.instance
+    //     .collection('abrigos')
+    //     .where('nome', isEqualTo: pet.location)
+    //     .get();
+
+    // if (querySnapshot.docs.isNotEmpty) {
+    //   var abrigoData = querySnapshot.docs.first.data();
+
+      // var endereco = abrigoData['endereco'].toString();
+
+      Location location = await _getCoordinatesFromAddress("Recife, PE");
+      pet.distance = _calculateDistance(
+        currentPosition.latitude,
+        currentPosition.longitude,
+        location.latitude,
+        location.longitude,
+    );
+
+    //}
+ 
+  }
+
+  pets.sort((a, b) => a.distance!.compareTo(b.distance!));
+
+  setState(() {});
+
+  return pets;
+}
 
   @override
   Widget build(BuildContext context) {
@@ -104,62 +163,101 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          SingleChildScrollView(
-            child: Column(
-              children: [
-                Container(
-                  margin: EdgeInsets.all(16.0),
-                  padding: EdgeInsets.all(16.0),
-                  height: 250,
-                  decoration: BoxDecoration(
-                    color: Colors.transparent,
-                    borderRadius: BorderRadius.circular(16),
-                    image: DecorationImage(
-                      image: NetworkImage(
-                          'https://p2.trrsf.com/image/fget/cf/774/0/images.terra.com/2024/03/29/1527502278-golden-retriever.jpg'),
-                      fit: BoxFit.cover,
-                      colorFilter: ColorFilter.mode(
-                        Colors.black.withOpacity(0.5),
-                        BlendMode.darken,
-                      ),
-                    ),
-                  ),
-                  child: Center(
-                    child: Text(
-                      'Encontre o animal mais próximo de você',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-                GridView.count(
-                  crossAxisCount: 2,
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
+          StreamBuilder(
+            stream: FirebaseFirestore.instance.collection('pets').snapshots(),
+            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.hasError) {
+                return Center(
+                  child: Text('Ocorreu um erro ao carregar os animais.'),
+                );
+              }
+
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              }
+
+              if (snapshot.data!.docs.isEmpty) {
+                return Center(child: Text('Nenhum pet encontrado.'));
+              }
+
+              var pets = snapshot.data!.docs.map((doc) {
+                return Animal(
+                  name: doc['name'],
+                  location: doc['shelterId'], // ou outra propriedade que represente o local
+                  imageUrl: doc['imageUrl'],
+                  description: doc['description'],
+                  age: doc['age'],
+                  weight: doc['weight'],
+                  animalType: doc['animalType'],
+                );
+              }).toList();
+
+              // pets = _sortPetsByDistance(pets);
+
+              return SingleChildScrollView(
+                child: Column(
                   children: [
-                    AnimalCard(
-                      animal: Animal(
-                        name: 'Max',
-                        location: 'Abrigo Abreu e Lima',
-                        imageUrl:
-                            'https://purina.com.br/sites/default/files/styles/webp/public/2023-05/protecao-animal-dia-internacional-dos-direitos-dos-animais.jpg.webp?itok=xWyTy5LD',
+                    GestureDetector(
+                      onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PetsProximosScreen()
+                          )
+                        );
+                      },
+                      child: Container(
+                      margin: EdgeInsets.all(16.0),
+                      padding: EdgeInsets.all(16.0),
+                      height: 250,
+                      decoration: BoxDecoration(
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.circular(16),
+                        image: DecorationImage(
+                          image: NetworkImage(
+                              'https://p2.trrsf.com/image/fget/cf/774/0/images.terra.com/2024/03/29/1527502278-golden-retriever.jpg'),
+                          fit: BoxFit.cover,
+                          colorFilter: ColorFilter.mode(
+                            Colors.black.withOpacity(0.5),
+                            BlendMode.darken,
+                          ),
+                        ),
                       ),
-                      isFavorite: _favoriteController.isFavorite(Animal(
-                        name: 'Max',
-                        location: 'Abrigo Abreu e Lima',
-                        imageUrl:
-                            'https://purina.com.br/sites/default/files/styles/webp/public/2023-05/protecao-animal-dia-internacional-dos-direitos-dos-animais.jpg.webp?itok=xWyTy5LD',
-                      )),
-                      toggleFavorite: _favoriteController.toggleFavorite,
+                      child: Center(
+                        child: Text(
+                          'Encontre o animal mais próximo de você',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
+                        )
+                      ),
+                    )
+                    )
+                    ,
+                    GridView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 0.75,
+                      ),
+                      itemCount: pets.length,
+                      itemBuilder: (context, index) {
+                        return AnimalCard(
+                          animal: pets[index],
+                          isFavorite:
+                              _favoriteController.isFavorite(pets[index]),
+                          toggleFavorite: _favoriteController.toggleFavorite,
+                          isVolunteer: isVolunteer,
+                        );
+                      },
                     ),
-                    // Adicione outros AnimalCard aqui
                   ],
                 ),
-              ],
-            ),
+              );
+            },
           ),
         ],
       ),
@@ -190,6 +288,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     MaterialPageRoute(
                       builder: (context) => FavoriteAnimalsScreen(
                         favoriteAnimals: _favoriteController.favoriteAnimals,
+                        isVolunteer: isVolunteer,
                       ),
                     ),
                   );
@@ -219,15 +318,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Olá, $userName', // Exibe o nome do usuário logado
+                            'Olá, $userName',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
                             ),
-                          ),                         
+                          ),
                           Text(
-                            '${isVolunteer ? 'Voluntário' : 'Adotante'}', // Exibe o perfil do usuário
+                            '${isVolunteer ? 'Voluntário' : 'Adotante'}',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16,
@@ -241,16 +340,26 @@ class _HomeScreenState extends State<HomeScreen> {
                       title: Text('Meus pets',
                           style: TextStyle(color: Colors.white)),
                       onTap: () {
-                        Navigator.pushNamed(context, '/meusPets');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PetsScreen(),
+                          ),
+                        );
                       },
                     ),
                     ListTile(
-                      leading:
-                          Icon(Icons.add_circle_outline, color: Colors.white),
+                      leading: Icon(Icons.add_circle_outline,
+                          color: Colors.white),
                       title: Text('Cadastrar pet',
                           style: TextStyle(color: Colors.white)),
                       onTap: () {
-                        Navigator.pushNamed(context, '/cadastrarPet');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CadastrarPetScreen(),
+                          ),
+                        );
                       },
                     ),
                     ListTile(
@@ -280,9 +389,22 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     ),
                     ListTile(
-                      leading: Icon(Icons.logout_rounded, color: Colors.white),
-                      title:
-                          Text('Sair', style: TextStyle(color: Colors.white)),
+                      leading: Icon(Icons.person, color: Colors.white),
+                      title: Text('Editar perfil',
+                          style: TextStyle(color: Colors.white)),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditUserScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      leading:
+                          Icon(Icons.logout_rounded, color: Colors.white),
+                      title: Text('Sair', style: TextStyle(color: Colors.white)),
                       onTap: () {
                         _confirmLogout();
                       },

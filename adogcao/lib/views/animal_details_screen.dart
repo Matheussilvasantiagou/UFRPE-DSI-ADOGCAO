@@ -5,11 +5,13 @@ class AnimalDetailsScreen extends StatefulWidget {
   final Animal animal;
   final bool isFavorite;
   final Function toggleFavorite;
+  final bool isVolunteer; // Adicionei essa variável
 
   AnimalDetailsScreen({
     required this.animal,
     required this.isFavorite,
     required this.toggleFavorite,
+    required this.isVolunteer, // Recebendo essa variável
   });
 
   @override
@@ -78,20 +80,22 @@ class _AnimalDetailsScreenState extends State<AnimalDetailsScreen> {
                                 ),
                               ),
                             ),
-                            IconButton(
-                              icon: Icon(
-                                isFavorite
-                                    ? Icons.favorite
-                                    : Icons.favorite_border,
-                                color: isFavorite ? Colors.red : Colors.white,
+                            if (!widget
+                                .isVolunteer) // Exibe o botão de favoritar apenas se não for voluntário
+                              IconButton(
+                                icon: Icon(
+                                  isFavorite
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  color: isFavorite ? Colors.red : Colors.white,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    isFavorite = !isFavorite;
+                                  });
+                                  widget.toggleFavorite(widget.animal);
+                                },
                               ),
-                              onPressed: () {
-                                setState(() {
-                                  isFavorite = !isFavorite;
-                                });
-                                widget.toggleFavorite(widget.animal);
-                              },
-                            ),
                           ],
                         ),
                         SizedBox(height: 16),
@@ -112,45 +116,17 @@ class _AnimalDetailsScreenState extends State<AnimalDetailsScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            infoTag('Macho', Colors.red),
-                            infoTag('2 Anos', Colors.orange),
-                            infoTag('7kg', Colors.purple),
-                          ],
-                        ),
-                        SizedBox(height: 50),
-                        Row(
-                          children: [
-                            CircleAvatar(
-                              radius: 40,
-                              backgroundImage: NetworkImage(
-                                'https://www.zarla.com/images/zarla-mia-casa-1x1-2400x2400-20231101-wgghx7rchckw9v4wqgqh.png?crop=1:1,smart&width=250&dpr=2',
-                              ),
-                            ),
-                            SizedBox(width: 16),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Abrigo Abreu e Lima',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                  ),
-                                ),
-                                Text(
-                                  'Informações do abrigo',
-                                  style: TextStyle(color: Colors.grey),
-                                ),
-                              ],
-                            ),
+                            infoTag(widget.animal.animalType, Colors.red),
+                            infoTag('${widget.animal.age} Anos', Colors.orange),
+                            infoTag('${widget.animal.weight}kg', Colors.purple),
                           ],
                         ),
                         SizedBox(height: 50),
                         Text(
-                          'Lorem ipsum dolor sit amet. Et maiores quia ut architecto debitis in dolores dicta id rerum maiores sit recusandae distinctio aut corporis debitis.',
+                          widget.animal.description,
                           style: TextStyle(color: Colors.white),
                         ),
-                        SizedBox(height: 50),
+                        SizedBox(height: 250),
                         Center(
                           child: ElevatedButton(
                             onPressed: () {
@@ -159,8 +135,8 @@ class _AnimalDetailsScreenState extends State<AnimalDetailsScreen> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red,
                               padding: EdgeInsets.symmetric(
-                                horizontal: 140,
-                                vertical: 35,
+                                horizontal: 40,
+                                vertical: 24,
                               ),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30),
@@ -186,7 +162,7 @@ class _AnimalDetailsScreenState extends State<AnimalDetailsScreen> {
 
   Widget infoTag(String text, Color color) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       margin: EdgeInsets.symmetric(horizontal: 4.0),
       decoration: BoxDecoration(
         color: color,
