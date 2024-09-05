@@ -26,6 +26,8 @@ class _CadastrarAbrigoScreenState extends State<CadastrarAbrigoScreen> {
   String? _emailError;
   String? _enderecoError;
   String? _telefoneError;
+  double lat = 0;
+  double lng = 0;
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
@@ -38,8 +40,8 @@ class _CadastrarAbrigoScreenState extends State<CadastrarAbrigoScreen> {
     );
     PlacesDetailsResponse detail =
         await places.getDetailsByPlaceId(prediction.placeId!);
-    final lat = detail.result.geometry!.location.lat;
-    final lng = detail.result.geometry!.location.lng;
+    lat = detail.result.geometry!.location.lat;
+    lng = detail.result.geometry!.location.lng;
 
     setState(() {
       _address = prediction.description!;
@@ -335,6 +337,8 @@ Widget build(BuildContext context) {
                                 email: _emailController.text,
                                 endereco: _enderecoController.text,
                                 telefone: _telefoneController.text,
+                                  lat: lat,
+                                  lng: lng
                               );
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(

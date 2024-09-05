@@ -51,7 +51,7 @@ class _PetsProximosScreenState extends State<PetsProximosScreen> {
   }
 
 void _sortPetsByDistance(List<Animal> pets) async {
-  
+
   var currentPosition =  await _getCurrentLocation();
 
   for (var pet in pets) {
@@ -63,24 +63,30 @@ void _sortPetsByDistance(List<Animal> pets) async {
 
      if (querySnapshot.docs.isNotEmpty) {
        var abrigoData = querySnapshot.docs.first.data();
-
-       var endereco = abrigoData['endereco'].toString();
-
-      Location location = await _getCoordinatesFromAddress(endereco);
-      pet.distance = _calculateDistance(
-        currentPosition.latitude,
-        currentPosition.longitude,
-        location.latitude,
-        location.longitude,
-    );
+       var lat = abrigoData['lat'];
+       var lng = abrigoData['lng'];
+      
+      if(lat != null && lng != null)
+      {
+        pet.distance = _calculateDistance(
+          currentPosition.latitude,
+          currentPosition.longitude,
+          abrigoData['lat'],
+          abrigoData['lng'],
+        );
+      }else{
+        pet.distance = 10000000000000;
+      }
 
     }
  
   }
 
-  pets.sort((a, b) => a.distance!.compareTo(b.distance!));
+  setState(() {
+    pets.sort((a, b) => a.distance!.compareTo(b.distance!));
+  });
 
-  setState(() {});
+  print(pets[0].name);
 
 }
 
@@ -135,11 +141,23 @@ void _sortPetsByDistance(List<Animal> pets) async {
                 );
               }).toList();
 
-              _sortPetsByDistance(pets);
-
               return SingleChildScrollView(
                 child: Column(
                   children: [
+                    ElevatedButton(
+                      onPressed: (){
+                        _sortPetsByDistance(pets);
+                      },
+                    child: Text('Encontrar animais próximos',style: TextStyle(color: Colors.white)),
+                    style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 40, vertical: 20),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                    )
+                  ),
                     GridView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),

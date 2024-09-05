@@ -1,3 +1,4 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -9,6 +10,8 @@ class AbrigoController {
     required String email,
     required String endereco,
     required String telefone,
+    required double lat,
+    required double lng,
   }) async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -18,6 +21,8 @@ class AbrigoController {
           'email': email,
           'endereco': endereco,
           'telefone': telefone,
+          'lat': lat,
+          'lng': lng,
           'volunteerId': user.uid, // Associando o abrigo ao voluntário
           'createdAt': FieldValue.serverTimestamp(),
         });
