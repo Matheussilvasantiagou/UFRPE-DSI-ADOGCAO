@@ -5,15 +5,15 @@ class AnimalSession {
 
   static AnimalSession get instance => _instance;
 
-  String? animalId;
+  String? userId;
   String? animalName;
-  int? animalAge;
-  double? animalWeight;
+  String? animalAge;
+  String? animalWeight;
   String? animalImagePath;
   String? animalType;
 
   void clearSession() {
-    animalId = null;
+    userId = null;
     animalName = null;
     animalAge = null;
     animalWeight = null;
