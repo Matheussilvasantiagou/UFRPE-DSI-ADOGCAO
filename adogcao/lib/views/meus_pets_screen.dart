@@ -66,6 +66,7 @@ class PetsScreen extends StatelessWidget {
                       itemCount: pets.length,
                       itemBuilder: (context, index) {
                         final pet = pets[index];
+                        final docId = pet.id; // Obtenha o docId do Firestore
 
                         return ListTile(
                           leading: Icon(Icons.pets, color: Colors.white),
@@ -117,7 +118,11 @@ class PetsScreen extends StatelessWidget {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => EditAnimalScreen(),
+                                      // Passa o docId para a tela de edição
+                                      builder: (context) => EditAnimalScreen(
+                                        docId:
+                                            docId, // Passando o docId do Firestore
+                                      ),
                                     ),
                                   );
                                 },

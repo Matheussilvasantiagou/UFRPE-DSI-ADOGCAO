@@ -17,6 +17,7 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
   final TextEditingController _idadeController = TextEditingController();
   final TextEditingController _pesoController = TextEditingController();
   final TextEditingController _descricaoController = TextEditingController();
+  bool _isLoading = false;
 
   String? _nomeError;
   String? _idadeError;
@@ -24,7 +25,13 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
   String? _descricaoError;
   String? selectedAnimalType;
   String? selectedShelter;
-  List<String> animalTypes = ['Cachorro', 'Gato', 'Pássaro', 'Coelho', 'Cavalo'];
+  List<String> animalTypes = [
+    'Cachorro',
+    'Gato',
+    'Pássaro',
+    'Coelho',
+    'Cavalo'
+  ];
   List<String> shelters = [];
 
   XFile? _imageFile;
@@ -423,6 +430,10 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
                         Center(
                           child: ElevatedButton(
                             onPressed: () async {
+                              setState(() {
+                                _isLoading =
+                                    true;
+                              });
                               // Validações
                               _validateNome();
                               _validateIdade();
@@ -444,7 +455,8 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
                                     animalType: selectedAnimalType!,
                                     shelterId: selectedShelter!,
                                     description: _descricaoController.text,
-                                    imageUrl: _imageUrl,  // Adiciona a URL da imagem ao cadastro do pet
+                                    imageUrl:
+                                        _imageUrl, // Adiciona a URL da imagem ao cadastro do pet
                                   );
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
@@ -460,6 +472,11 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
                                           Text('Erro ao cadastrar pet: $e'),
                                     ),
                                   );
+                                } finally {
+                                  setState(() {
+                                    _isLoading =
+                                        false;
+                                  });
                                 }
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -481,7 +498,7 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
                               ),
                             ),
                           ),
-                        ),
+                        ),                        
                       ],
                     ),
                   ),
@@ -489,6 +506,13 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
               ),
             ],
           ),
+          if (_isLoading)
+                          Container(
+                            color: Colors.black.withOpacity(0.5),
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          ),
         ],
       ),
     );

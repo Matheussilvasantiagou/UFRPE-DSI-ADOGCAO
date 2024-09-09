@@ -5,29 +5,23 @@ import '../session/AnimalSession.dart';
 class EditAnimalController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<void> editAnimal(Map<String, dynamic> updatedFields) async {
+  Future<void> editAnimal(
+      String docId, String name, String age, String weight) async {
     try {
-      if (updatedFields.isNotEmpty) {
-        await _firestore
-            .collection('animals')
-            .doc(AnimalSession.instance.animalId)
-            .update(updatedFields);
-
-        // Atualize a sessão com os novos valores, se fornecidos
-        if (updatedFields.containsKey('name')) {
-          AnimalSession.instance.animalName = updatedFields['name'];
-        }
-        if (updatedFields.containsKey('age')) {
-          AnimalSession.instance.animalAge =
-              int.tryParse(updatedFields['age']) ?? 0;
-        }
-        if (updatedFields.containsKey('weight')) {
-          AnimalSession.instance.animalWeight =
-              double.tryParse(updatedFields['weight']) ?? 0.0;
-        }
+      // Verifica se o docId foi fornecido
+      if (docId.isEmpty) {
+        throw Exception('Document ID não encontrado.');
       }
+
+      // Atualiza o documento do animal usando o docId
+      await _firestore.collection('pets').doc(docId).update({
+        'name': name,
+        'age': age,
+        'weight': weight,
+      });
     } catch (e) {
-      throw Exception("Erro ao editar animal");
+      print('Erro ao salvar dados: ${e.toString()}');
+      throw Exception("Erro ao editar animal: ${e.toString()}");
     }
   }
 }
