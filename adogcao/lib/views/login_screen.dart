@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/views/reset_password_screen.dart';
 import '../controllers/login_controller.dart';
 import 'home_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // Certifique-se de adicionar esta importação
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -15,6 +15,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
   String? _emailError;
   String? _senhaError;
+  bool _isLoading = false;
 
   void _validateEmail() {
     setState(() {
@@ -33,9 +34,49 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       String senha = _passwordController.text;
       if (senha.isEmpty) {
-        _senhaError = 'Senha é obrigatório';
+        _senhaError = 'Senha é obrigatória';
       }
     });
+  }
+
+  Future<void> _login() async {
+    String email = _emailController.text;
+    String password = _passwordController.text;
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+
+      _validateEmail();
+      _validateSenha();
+
+      if (_emailError == null && _senhaError == null) {
+        UserCredential? userCredential = await _controller.loginUser(
+          email: email,
+          password: password,
+        );
+
+        if (userCredential != null) {
+          // Navega para a tela inicial se o login for bem-sucedido
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HomeScreen(),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao fazer login: $e'),
+        ),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -87,11 +128,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   GestureDetector(
                     onTap: () {
                       Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ResetPasswordScreen(),
-                              ),
-                            );
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ResetPasswordScreen(),
+                        ),
+                      );
                     },
                     child: Text(
                       'Esqueci minha senha',
@@ -164,45 +205,20 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(height: 70),
                   Center(
                     child: ElevatedButton(
-                      onPressed: () async {
-                        String email = _emailController.text;
-                        String password = _passwordController.text;
-                        try {
-                          _validateEmail();
-                          _validateSenha();
-                          UserCredential? userCredential =
-                              await _controller.loginUser(
-                            email: email,
-                            password: password,
-                          );
-                          if (_emailError == null && userCredential != null) {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => HomeScreen(),
-                              ),
-                            );
-                          }
-                        } catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Erro ao fazer login: $e'),
-                            ),
-                          );
-                        }
-                      },
+                      onPressed: _login, // Chama a função de login com loading
                       child: Text(
                         'Entrar',
                         style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16),
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: _controller.agreeToTerms
-                            ? Colors.blue
-                            : Colors.blue,
+                        backgroundColor: Colors.blue,
                         padding: EdgeInsets.symmetric(
-                            horizontal: 40, vertical: 20),
+                          horizontal: 40,
+                          vertical: 20,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
@@ -213,6 +229,13 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
           ),
+          if (_isLoading)
+            Container(
+              color: Colors.black.withOpacity(0.5),
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
         ],
       ),
     );
