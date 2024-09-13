@@ -5,6 +5,8 @@ import 'home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -91,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.black,
-                  Color.fromARGB(255, 0, 13, 32).withAlpha(200)
+                  const Color.fromARGB(255, 0, 13, 32).withAlpha(200)
                 ],
               ),
             ),
@@ -103,7 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(
+                  const Text(
                     'Entrar',
                     style: TextStyle(
                       color: Colors.white,
@@ -111,12 +113,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   GestureDetector(
                     onTap: () {
                       Navigator.pushNamed(context, '/cadastro');
                     },
-                    child: Text(
+                    child: const Text(
                       'Não possui uma conta? Cadastre-se',
                       style: TextStyle(
                         color: Colors.grey,
@@ -124,7 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 3),
+                  const SizedBox(height: 3),
                   GestureDetector(
                     onTap: () {
                       Navigator.pushReplacement(
@@ -134,7 +136,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       );
                     },
-                    child: Text(
+                    child: const Text(
                       'Esqueci minha senha',
                       style: TextStyle(
                         color: Colors.grey,
@@ -142,15 +144,15 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 55),
+                  const SizedBox(height: 55),
                   Text('Email', style: TextStyle(color: Colors.grey.shade500)),
-                  SizedBox(height: 3),
+                  const SizedBox(height: 3),
                   TextField(
                     controller: _emailController,
                     decoration: InputDecoration(
                       hintText: 'Digite seu email',
                       errorText: _emailError,
-                      hintStyle: TextStyle(color: Colors.white),
+                      hintStyle: const TextStyle(color: Colors.white),
                       filled: true,
                       fillColor: Colors.grey.shade800,
                       border: OutlineInputBorder(
@@ -169,17 +171,17 @@ class _LoginScreenState extends State<LoginScreen> {
                             BorderSide(color: Colors.grey.shade600, width: 1),
                       ),
                     ),
-                    style: TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.white),
                   ),
-                  SizedBox(height: 25),
+                  const SizedBox(height: 25),
                   Text('Senha', style: TextStyle(color: Colors.grey.shade500)),
-                  SizedBox(height: 3),
+                  const SizedBox(height: 3),
                   TextField(
                     controller: _passwordController,
                     decoration: InputDecoration(
                       hintText: 'Digite sua senha',
                       errorText: _senhaError,
-                      hintStyle: TextStyle(color: Colors.white),
+                      hintStyle: const TextStyle(color: Colors.white),
                       filled: true,
                       fillColor: Colors.grey.shade800,
                       border: OutlineInputBorder(
@@ -199,28 +201,28 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     obscureText: true,
-                    style: TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.white),
                   ),
-                  SizedBox(height: 25),
-                  SizedBox(height: 70),
+                  const SizedBox(height: 25),
+                  const SizedBox(height: 70),
                   Center(
                     child: ElevatedButton(
-                      onPressed: _login, // Chama a função de login com loading
-                      child: Text(
-                        'Entrar',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                        ),
-                      ),
+                      onPressed: _login,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blue,
-                        padding: EdgeInsets.symmetric(
+                        padding: const EdgeInsets.symmetric(
                           horizontal: 40,
                           vertical: 20,
                         ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
+                        ),
+                      ), // Chama a função de login com loading
+                      child: Text(
+                        'Entrar',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
                         ),
                       ),
                     ),
@@ -232,7 +234,7 @@ class _LoginScreenState extends State<LoginScreen> {
           if (_isLoading)
             Container(
               color: Colors.black.withOpacity(0.5),
-              child: Center(
+              child: const Center(
                 child: CircularProgressIndicator(),
               ),
             ),

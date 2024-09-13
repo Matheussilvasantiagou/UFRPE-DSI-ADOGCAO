@@ -8,7 +8,7 @@ class AnimalCard extends StatelessWidget {
   final Function toggleFavorite;
   final bool isVolunteer;
 
-  AnimalCard({
+  const AnimalCard({super.key, 
     required this.animal,
     required this.isFavorite,
     required this.toggleFavorite,
@@ -33,7 +33,7 @@ class AnimalCard extends StatelessWidget {
       },
       child: Card(
         color: Colors.grey.shade800,
-        margin: EdgeInsets.all(8.0),
+        margin: const EdgeInsets.all(8.0),
         child: Stack(
           children: [
             Positioned.fill(
@@ -58,21 +58,21 @@ class AnimalCard extends StatelessWidget {
                 children: [
                   Text(
                     animal.name,
-                    style: TextStyle(
+                    style: const TextStyle(
                         color: Colors.white, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Row(
                     children: [
-                      Icon(Icons.location_on, color: Colors.white, size: 16),
-                      SizedBox(width: 4),
+                      const Icon(Icons.location_on, color: Colors.white, size: 16),
+                      const SizedBox(width: 4),
                       Text(
                         animal.location,
-                        style: TextStyle(color: Colors.grey),
+                        style: const TextStyle(color: Colors.grey),
                       ),
                     ],
                   ),
-                  Spacer(),
+                  const Spacer(),
                   if (!isVolunteer)
                     Align(
                       alignment: Alignment.bottomRight,

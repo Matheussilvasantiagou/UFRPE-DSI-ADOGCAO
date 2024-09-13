@@ -3,6 +3,8 @@ import '../controllers/registration_controller.dart';
 import 'login_screen.dart';
 
 class RegistrationScreen extends StatefulWidget {
+  const RegistrationScreen({super.key});
+
   @override
   _RegistrationScreenState createState() => _RegistrationScreenState();
 }
@@ -113,7 +115,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.black,
-                  Color.fromARGB(255, 0, 13, 32).withAlpha(200)
+                  const Color.fromARGB(255, 0, 13, 32).withAlpha(200)
                 ],
               ),
             ),
@@ -126,7 +128,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
+                    const Text(
                       'Cadastre-se',
                       style: TextStyle(
                         color: Colors.white,
@@ -134,7 +136,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     GestureDetector(
                       onTap: () {
                         Navigator.push(
@@ -142,7 +144,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             MaterialPageRoute(
                                 builder: (context) => LoginScreen()));
                       },
-                      child: Text(
+                      child: const Text(
                         'Já possui uma conta? Login',
                         style: TextStyle(
                           color: Colors.grey,
@@ -150,13 +152,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 55),
+                    const SizedBox(height: 55),
                     TextField(
                       controller: _nameController,
                       decoration: InputDecoration(
                         hintText: 'Nome',
                         errorText: _nameError,
-                        hintStyle: TextStyle(color: Colors.white),
+                        hintStyle: const TextStyle(color: Colors.white),
                         filled: true,
                         fillColor: Colors.grey.shade800,
                         border: OutlineInputBorder(
@@ -175,15 +177,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               BorderSide(color: Colors.grey.shade600, width: 1),
                         ),
                       ),
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                     ),
-                    SizedBox(height: 25),
+                    const SizedBox(height: 25),
                     TextField(
                       controller: _emailController,
                       decoration: InputDecoration(
                         hintText: 'E-mail',
                         errorText: _emailError,
-                        hintStyle: TextStyle(color: Colors.white),
+                        hintStyle: const TextStyle(color: Colors.white),
                         filled: true,
                         fillColor: Colors.grey.shade800,
                         border: OutlineInputBorder(
@@ -202,15 +204,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               BorderSide(color: Colors.grey.shade600, width: 1),
                         ),
                       ),
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                     ),
-                    SizedBox(height: 25),
+                    const SizedBox(height: 25),
                     TextField(
                       controller: _passwordController,
                       decoration: InputDecoration(
                         hintText: 'Senha',
                         errorText: _passwordError,
-                        hintStyle: TextStyle(color: Colors.white),
+                        hintStyle: const TextStyle(color: Colors.white),
                         filled: true,
                         fillColor: Colors.grey.shade800,
                         border: OutlineInputBorder(
@@ -230,15 +232,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         ),
                       ),
                       obscureText: true,
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                     ),
-                    SizedBox(height: 25),
+                    const SizedBox(height: 25),
                     TextField(
                       controller: _confirmPasswordController,
                       decoration: InputDecoration(
                         hintText: 'Confirmar senha',
                         errorText: _confirmPasswordError,
-                        hintStyle: TextStyle(color: Colors.white),
+                        hintStyle: const TextStyle(color: Colors.white),
                         filled: true,
                         fillColor: Colors.grey.shade800,
                         border: OutlineInputBorder(
@@ -258,15 +260,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         ),
                       ),
                       obscureText: true,
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                     ),
-                    SizedBox(height: 25),
+                    const SizedBox(height: 25),
                     TextField(
                       controller: _phoneController,
                       decoration: InputDecoration(
                         hintText: 'Número de telefone',
                         errorText: _phoneError,
-                        hintStyle: TextStyle(color: Colors.white),
+                        hintStyle: const TextStyle(color: Colors.white),
                         filled: true,
                         fillColor: Colors.grey.shade800,
                         border: OutlineInputBorder(
@@ -285,9 +287,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               BorderSide(color: Colors.grey.shade600, width: 1),
                         ),
                       ),
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                     ),
-                    SizedBox(height: 25),
+                    const SizedBox(height: 25),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -295,7 +297,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           value: isVolunteer,
                           onChanged: _setVolunteer,
                         ),
-                        Text(
+                        const Text(
                           'Voluntário',
                           style: TextStyle(color: Colors.white),
                         ),
@@ -303,13 +305,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           value: isAdotante,
                           onChanged: _setAdotante,
                         ),
-                        Text(
+                        const Text(
                           'Adotante',
                           style: TextStyle(color: Colors.white),
                         ),
                       ],
                     ),
-                    SizedBox(height: 70),
+                    const SizedBox(height: 70),
                     Center(
                       child: ElevatedButton(
                         onPressed: () async {
@@ -326,7 +328,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           // Verificar se o perfil foi selecionado
                           if (!isVolunteer && !isAdotante) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
+                              const SnackBar(
                                 content: Text(
                                     'Por favor, selecione um perfil: Voluntário ou Adotante.'),
                               ),
@@ -358,20 +360,20 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             );
                           }
                         },
-                        child: Text(
-                          'Registrar',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16),
-                        ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue,
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                               horizontal: 40,
                               vertical: 20),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
+                        ),
+                        child: Text(
+                          'Registrar',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16),
                         ),
                       ),
                     ),

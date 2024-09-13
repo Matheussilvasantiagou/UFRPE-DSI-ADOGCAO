@@ -4,17 +4,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class DetalhesPetScreen extends StatelessWidget {
   final String petId;
 
-  DetalhesPetScreen({required this.petId});
+  const DetalhesPetScreen({super.key, required this.petId});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 0, 13, 32).withAlpha(200),
+      backgroundColor: const Color.fromARGB(255, 0, 13, 32).withAlpha(200),
       appBar: AppBar(
         backgroundColor: Colors.black,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -29,7 +29,7 @@ class DetalhesPetScreen extends StatelessWidget {
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.black,
-                  Color.fromARGB(255, 0, 13, 32).withAlpha(200),
+                  const Color.fromARGB(255, 0, 13, 32).withAlpha(200),
                 ],
               ),
             ),
@@ -41,12 +41,12 @@ class DetalhesPetScreen extends StatelessWidget {
                 .get(),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
-                return Center(
+                return const Center(
                     child: Text('Erro ao carregar os detalhes do pet.'));
               }
 
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               }
 
               final pet = snapshot.data!;
@@ -57,13 +57,13 @@ class DetalhesPetScreen extends StatelessWidget {
                   children: [
                     Text(
                       pet['nome'],
-                      style: TextStyle(
+                      style: const TextStyle(
                           color: Colors.white,
                           fontSize: 28,
                           fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(height: 16),
-                    Text(
+                    const SizedBox(height: 16),
+                    const Text(
                       'Idade:',
                       style: TextStyle(
                           color: Colors.orange,
@@ -72,10 +72,10 @@ class DetalhesPetScreen extends StatelessWidget {
                     ),
                     Text(
                       pet['idade'],
-                      style: TextStyle(color: Colors.white, fontSize: 16),
+                      style: const TextStyle(color: Colors.white, fontSize: 16),
                     ),
-                    SizedBox(height: 16),
-                    Text(
+                    const SizedBox(height: 16),
+                    const Text(
                       'Peso:',
                       style: TextStyle(
                           color: Colors.orange,
@@ -84,10 +84,10 @@ class DetalhesPetScreen extends StatelessWidget {
                     ),
                     Text(
                       pet['peso'],
-                      style: TextStyle(color: Colors.white, fontSize: 16),
+                      style: const TextStyle(color: Colors.white, fontSize: 16),
                     ),
-                    SizedBox(height: 16),
-                    Text(
+                    const SizedBox(height: 16),
+                    const Text(
                       'Descrição:',
                       style: TextStyle(
                           color: Colors.orange,
@@ -96,7 +96,7 @@ class DetalhesPetScreen extends StatelessWidget {
                     ),
                     Text(
                       pet['descricao'],
-                      style: TextStyle(color: Colors.white, fontSize: 16),
+                      style: const TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   ],
                 ),

@@ -3,6 +3,8 @@ import 'package:flutter_application_1/controllers/reset_password_controller.dart
 import 'package:flutter_application_1/views/login_screen.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
+  const ResetPasswordScreen({super.key});
+
   @override
   _ResetPasswordScreenState createState() => _ResetPasswordScreenState();
 }
@@ -32,7 +34,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 0, 13, 32).withAlpha(200),
+      backgroundColor: const Color.fromARGB(255, 0, 13, 32).withAlpha(200),
       body: Stack(
         children: [
           Container(
@@ -42,7 +44,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.black,
-                  Color.fromARGB(255, 0, 13, 32).withAlpha(200)
+                  const Color.fromARGB(255, 0, 13, 32).withAlpha(200)
                 ],
               ),
             ),
@@ -55,7 +57,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     height: 150,
                     decoration: BoxDecoration(
                       color: Colors.grey.shade800,
-                      borderRadius: BorderRadius.only(
+                      borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(50),
                         bottomRight: Radius.circular(50),
                       ),
@@ -67,11 +69,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     child: Row(
                       children: [
                         IconButton(
-                          icon: Icon(Icons.arrow_back, color: Colors.white),
+                          icon: const Icon(Icons.arrow_back, color: Colors.white),
                           onPressed: () => Navigator.of(context).pop(),
                         ),
-                        SizedBox(width: 10),
-                        Text(
+                        const SizedBox(width: 10),
+                        const Text(
                           'Recuperação de senha',
                           style: TextStyle(
                             color: Colors.white,
@@ -90,17 +92,17 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(height: 55),
+                      const SizedBox(height: 55),
                       
                       Text('Email cadastrado',
                           style: TextStyle(color: Colors.grey.shade500)),
-                      SizedBox(height: 3),
+                      const SizedBox(height: 3),
                        TextField(
                       controller: _emailController,
                       decoration: InputDecoration(
                         hintText: 'Digite o email',
                         errorText: _emailError,
-                        hintStyle: TextStyle(color: Colors.white),
+                        hintStyle: const TextStyle(color: Colors.white),
                         filled: true,
                         fillColor: Colors.grey.shade800,
                         border: OutlineInputBorder(
@@ -119,9 +121,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                               BorderSide(color: Colors.grey.shade600, width: 1),
                         ),
                       ),
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                     ),
-                      SizedBox(height: 25),
+                      const SizedBox(height: 25),
                       Center(
                         child: ElevatedButton(
                           onPressed: () async {
@@ -142,7 +144,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             );
 
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
+                              const SnackBar(
                                 content: Text('Email de recuperação enviado. Cheque sua caixa de entrada'),
                               ),
                             );
@@ -150,7 +152,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           } catch (e) {
                             // Tratar erros de registro
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
+                              const SnackBar(
                                 content: Text('Erro ao enviar email de recuperação'),
                               ),
                             );
@@ -159,16 +161,16 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                              
           
                           },
-                          child: Text('Enviar',
-                              style: TextStyle(color: Colors.white)),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue,
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 horizontal: 40, vertical: 20),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
                           ),
+                          child: Text('Enviar',
+                              style: TextStyle(color: Colors.white)),
                         ),
                       ),
                     ],

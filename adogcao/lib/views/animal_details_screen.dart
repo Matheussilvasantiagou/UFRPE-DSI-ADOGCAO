@@ -8,7 +8,7 @@ class AnimalDetailsScreen extends StatefulWidget {
   final Function toggleFavorite;
   final bool isVolunteer; // Adicionei essa variável
 
-  AnimalDetailsScreen({
+  const AnimalDetailsScreen({super.key, 
     required this.animal,
     required this.isFavorite,
     required this.toggleFavorite,
@@ -31,7 +31,7 @@ class _AnimalDetailsScreenState extends State<AnimalDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 0, 13, 32).withAlpha(200),
+      backgroundColor: const Color.fromARGB(255, 0, 13, 32).withAlpha(200),
       body: Column(
         children: [
           Stack(
@@ -46,7 +46,7 @@ class _AnimalDetailsScreenState extends State<AnimalDetailsScreen> {
                 top: 40,
                 left: 16,
                 child: IconButton(
-                  icon: Icon(Icons.arrow_back, color: Colors.white),
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
                   onPressed: () {
                     Navigator.pop(context);
                   },
@@ -56,10 +56,10 @@ class _AnimalDetailsScreenState extends State<AnimalDetailsScreen> {
           ),
           Expanded(
             child: Container(
-              padding: EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
                 color: Colors.grey.shade900,
-                borderRadius: BorderRadius.vertical(
+                borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(32),
                 ),
               ),
@@ -74,7 +74,7 @@ class _AnimalDetailsScreenState extends State<AnimalDetailsScreen> {
                             Expanded(
                               child: Text(
                                 widget.animal.name,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 28,
                                   fontWeight: FontWeight.bold,
@@ -99,21 +99,21 @@ class _AnimalDetailsScreenState extends State<AnimalDetailsScreen> {
                               ),
                           ],
                         ),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                         Row(
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.location_on,
                               color: Colors.blue,
                             ),
-                            SizedBox(width: 4),
+                            const SizedBox(width: 4),
                             Text(
                               widget.animal.location,
-                              style: TextStyle(color: Colors.white),
+                              style: const TextStyle(color: Colors.white),
                             ),
                           ],
                         ),
-                        SizedBox(height: 50),
+                        const SizedBox(height: 50),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
@@ -122,12 +122,12 @@ class _AnimalDetailsScreenState extends State<AnimalDetailsScreen> {
                             infoTag('${widget.animal.weight}kg', Colors.purple),
                           ],
                         ),
-                        SizedBox(height: 50),
+                        const SizedBox(height: 50),
                         Text(
                           widget.animal.description,
-                          style: TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                         ),
-                        SizedBox(height: 250),
+                        const SizedBox(height: 250),
                         Center(
                           child: Column(
                             children: [
@@ -137,7 +137,7 @@ class _AnimalDetailsScreenState extends State<AnimalDetailsScreen> {
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.red,
-                                  padding: EdgeInsets.symmetric(
+                                  padding: const EdgeInsets.symmetric(
                                     horizontal: 40,
                                     vertical: 24,
                                   ),
@@ -145,17 +145,17 @@ class _AnimalDetailsScreenState extends State<AnimalDetailsScreen> {
                                     borderRadius: BorderRadius.circular(30),
                                   ),
                                 ),
-                                child: Text(
+                                child: const Text(
                                   'Entrar em contato',
                                   style: TextStyle(color: Colors.white),
                                 ),
                               ),
-                              SizedBox(height: 20),
+                              const SizedBox(height: 20),
                               ElevatedButton(
                                 onPressed: () => _confirmAdoption(context),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.green,
-                                  padding: EdgeInsets.symmetric(
+                                  padding: const EdgeInsets.symmetric(
                                     horizontal: 40,
                                     vertical: 24,
                                   ),
@@ -163,7 +163,7 @@ class _AnimalDetailsScreenState extends State<AnimalDetailsScreen> {
                                     borderRadius: BorderRadius.circular(30),
                                   ),
                                 ),
-                                child: Text(
+                                child: const Text(
                                   'Animal adotado',
                                   style: TextStyle(color: Colors.white),
                                 ),
@@ -185,15 +185,15 @@ class _AnimalDetailsScreenState extends State<AnimalDetailsScreen> {
 
   Widget infoTag(String text, Color color) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-      margin: EdgeInsets.symmetric(horizontal: 4.0),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      margin: const EdgeInsets.symmetric(horizontal: 4.0),
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
         text,
-        style: TextStyle(color: Colors.white, fontSize: 16),
+        style: const TextStyle(color: Colors.white, fontSize: 16),
       ),
     );
   }
@@ -202,12 +202,12 @@ class _AnimalDetailsScreenState extends State<AnimalDetailsScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("Confirmar Adoção"),
-        content: Text("Tem certeza de que este animal foi adotado?"),
+        title: const Text("Confirmar Adoção"),
+        content: const Text("Tem certeza de que este animal foi adotado?"),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(), // Fecha o diálogo
-            child: Text("Cancelar"),
+            child: const Text("Cancelar"),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -222,12 +222,12 @@ class _AnimalDetailsScreenState extends State<AnimalDetailsScreen> {
               Navigator.of(context).pop(); // Retorna à tela anterior
 
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
+                const SnackBar(
                     content:
                         Text('Animal foi marcado como adotado e excluído!')),
               );
             },
-            child: Text("Confirmar"),
+            child: const Text("Confirmar"),
           ),
         ],
       ),

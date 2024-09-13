@@ -8,7 +8,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
     await Firebase.initializeApp(
-      options: FirebaseOptions(
+      options: const FirebaseOptions(
         apiKey: "AIzaSyBvdUkpspWIeK_DweVK2UwPaDbKI0ifc0I",
         authDomain: "adogcao-9dd8c.firebaseapp.com",
         projectId: "adogcao-9dd8c",
@@ -26,6 +26,8 @@ void main() async {
 }
 
 class AdoptionApp extends StatelessWidget {
+  const AdoptionApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -43,6 +45,8 @@ class AdoptionApp extends StatelessWidget {
 }
 
 class AdoptionScreen extends StatelessWidget {
+  const AdoptionScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -54,7 +58,7 @@ class AdoptionScreen extends StatelessWidget {
               end: Alignment.bottomCenter,
               colors: [
                 Colors.black,
-                Color.fromARGB(255, 0, 13, 32).withAlpha(200)
+                const Color.fromARGB(255, 0, 13, 32).withAlpha(200)
               ],
             ),
           ),
@@ -83,13 +87,13 @@ class AdoptionScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               PetAvatar(
                 name: 'Lua',
                 imageUrl: 'lib/images/lua.png',
                 isAssetImage: true,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
@@ -105,8 +109,8 @@ class AdoptionScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: 50),
-              Text(
+              const SizedBox(height: 50),
+              const Text(
                 'Adote o animal perfeito para você!',
                 style: TextStyle(
                   color: Colors.white,
@@ -115,32 +119,32 @@ class AdoptionScreen extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
+              const Padding(
+                padding: EdgeInsets.all(16.0),
                 child: Text(
                   'Explore perfis de animais prontos para adoção e use filtros personalizados para encontrar o companheiro ideal. Comece sua jornada de adoção e encontre um amigo para a vida toda!',
                   style: TextStyle(color: Colors.white),
                   textAlign: TextAlign.center,
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
                   Navigator.pushNamed(context, '/login');
                 },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 40, vertical: 20), // Ajuste do padding
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
                 child: Text(
                   'Entrar',
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: 16), // Definindo o tamanho da fonte
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 40, vertical: 20), // Ajuste do padding
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
                 ),
               ),
             ],
