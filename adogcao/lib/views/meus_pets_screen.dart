@@ -6,10 +6,12 @@ import 'animal_details_screen.dart'; // Certifique-se de que o caminho esteja co
 import 'edit_animal.dart';
 
 class PetsScreen extends StatelessWidget {
+  const PetsScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 0, 13, 32).withAlpha(200),
+      backgroundColor: const Color.fromARGB(255, 0, 13, 32).withAlpha(200),
       body: Stack(
         children: [
           Container(
@@ -19,7 +21,7 @@ class PetsScreen extends StatelessWidget {
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.black,
-                  Color.fromARGB(255, 0, 13, 32).withAlpha(200),
+                  const Color.fromARGB(255, 0, 13, 32).withAlpha(200),
                 ],
               ),
             ),
@@ -27,12 +29,12 @@ class PetsScreen extends StatelessWidget {
           Column(
             children: [
               AppBar(
-                title: Text('Meus Pets'),
+                title: const Text('Meus Pets'),
                 foregroundColor: Colors.white,
                 backgroundColor: Colors.transparent,
                 elevation: 0,
                 leading: IconButton(
-                  icon: Icon(Icons.arrow_back),
+                  icon: const Icon(Icons.arrow_back),
                   onPressed: () {
                     Navigator.pop(context);
                   },
@@ -47,16 +49,16 @@ class PetsScreen extends StatelessWidget {
                       .snapshots(),
                   builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                     if (snapshot.hasError) {
-                      return Center(
+                      return const Center(
                           child: Text('Ocorreu um erro ao carregar os dados.'));
                     }
 
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
+                      return const Center(child: CircularProgressIndicator());
                     }
 
                     if (snapshot.data!.docs.isEmpty) {
-                      return Center(
+                      return const Center(
                           child: Text('Nenhum pet cadastrado ainda.'));
                     }
 
@@ -69,10 +71,10 @@ class PetsScreen extends StatelessWidget {
                         final docId = pet.id; // Obtenha o docId do Firestore
 
                         return ListTile(
-                          leading: Icon(Icons.pets, color: Colors.white),
+                          leading: const Icon(Icons.pets, color: Colors.white),
                           title: Text(
                             pet['name'],
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 20,
                             ),
@@ -110,9 +112,9 @@ class PetsScreen extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(25),
                                   ),
                                 ),
-                                child: Text('Ver'),
+                                child: const Text('Ver'),
                               ),
-                              SizedBox(width: 10),
+                              const SizedBox(width: 10),
                               ElevatedButton(
                                 onPressed: () {
                                   Navigator.push(
@@ -133,7 +135,7 @@ class PetsScreen extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(25),
                                   ),
                                 ),
-                                child: Text('Editar'),
+                                child: const Text('Editar'),
                               ),
                             ],
                           ),

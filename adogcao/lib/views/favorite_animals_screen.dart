@@ -6,7 +6,7 @@ class FavoriteAnimalsScreen extends StatelessWidget {
   final List<Animal> favoriteAnimals;
   final bool isVolunteer;
 
-  FavoriteAnimalsScreen({
+  const FavoriteAnimalsScreen({super.key, 
     required this.favoriteAnimals,
     required this.isVolunteer,
   });
@@ -14,7 +14,7 @@ class FavoriteAnimalsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 0, 13, 32).withAlpha(200),
+      backgroundColor: const Color.fromARGB(255, 0, 13, 32).withAlpha(200),
       body: Stack(
         children: [
           Container(
@@ -24,7 +24,7 @@ class FavoriteAnimalsScreen extends StatelessWidget {
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.black,
-                  Color.fromARGB(255, 0, 13, 32).withAlpha(200)
+                  const Color.fromARGB(255, 0, 13, 32).withAlpha(200)
                 ],
               ),
             ),
@@ -39,7 +39,7 @@ class FavoriteAnimalsScreen extends StatelessWidget {
                         height: 150,
                         decoration: BoxDecoration(
                           color: Colors.grey.shade800,
-                          borderRadius: BorderRadius.only(
+                          borderRadius: const BorderRadius.only(
                             bottomLeft: Radius.circular(50),
                             bottomRight: Radius.circular(50),
                           ),
@@ -51,11 +51,11 @@ class FavoriteAnimalsScreen extends StatelessWidget {
                         child: Row(
                           children: [
                             IconButton(
-                              icon: Icon(Icons.arrow_back, color: Colors.white),
+                              icon: const Icon(Icons.arrow_back, color: Colors.white),
                               onPressed: () => Navigator.of(context).pop(),
                             ),
-                            SizedBox(width: 10),
-                            Text(
+                            const SizedBox(width: 10),
+                            const Text(
                               'Favoritos',
                               style: TextStyle(
                                 color: Colors.white,
@@ -72,14 +72,14 @@ class FavoriteAnimalsScreen extends StatelessWidget {
               ),
               Expanded(
                 child: favoriteAnimals.isEmpty
-                    ? Center(
+                    ? const Center(
                         child: Text(
                           'Nenhum animal favoritado.',
                           style: TextStyle(color: Colors.white),
                         ),
                       )
                     : ListView.builder(
-                        padding: EdgeInsets.symmetric(vertical: 16.0),
+                        padding: const EdgeInsets.symmetric(vertical: 16.0),
                         itemCount: favoriteAnimals.length,
                         itemBuilder: (context, index) {
                           return Padding(
@@ -92,7 +92,7 @@ class FavoriteAnimalsScreen extends StatelessWidget {
                                   backgroundImage: NetworkImage(
                                       favoriteAnimals[index].imageUrl),
                                 ),
-                                SizedBox(width: 20),
+                                const SizedBox(width: 20),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment:
@@ -100,16 +100,16 @@ class FavoriteAnimalsScreen extends StatelessWidget {
                                     children: [
                                       Text(
                                         favoriteAnimals[index].name,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           color: Colors.white,
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      SizedBox(height: 4),
+                                      const SizedBox(height: 4),
                                       Text(
                                         favoriteAnimals[index].location,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           color: Colors.grey,
                                           fontSize: 14,
                                         ),
@@ -136,10 +136,10 @@ class FavoriteAnimalsScreen extends StatelessWidget {
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.orange,
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                         horizontal: 20, vertical: 10),
                                   ),
-                                  child: Text(
+                                  child: const Text(
                                     'Ver',
                                     style: TextStyle(
                                         color: Colors.white, fontSize: 16),

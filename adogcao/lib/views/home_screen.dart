@@ -18,6 +18,8 @@ import 'meus_pets_screen.dart';
 import 'package:geolocator/geolocator.dart';
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -61,17 +63,17 @@ class _HomeScreenState extends State<HomeScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Confirmar saída"),
-          content: Text("Você tem certeza que deseja sair?"),
+          title: const Text("Confirmar saída"),
+          content: const Text("Você tem certeza que deseja sair?"),
           actions: <Widget>[
             TextButton(
-              child: Text("Cancelar"),
+              child: const Text("Cancelar"),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text("Sair"),
+              child: const Text("Sair"),
               onPressed: () {
                 Navigator.of(context).pop();
                 _loginController.signOut();
@@ -142,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator());
     }
 
     return Scaffold(
@@ -156,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.black,
-                  Color.fromARGB(255, 0, 13, 32).withAlpha(200)
+                  const Color.fromARGB(255, 0, 13, 32).withAlpha(200)
                 ],
               ),
             ),
@@ -165,17 +167,17 @@ class _HomeScreenState extends State<HomeScreen> {
             stream: FirebaseFirestore.instance.collection('pets').snapshots(),
             builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasError) {
-                return Center(
+                return const Center(
                   child: Text('Ocorreu um erro ao carregar os animais.'),
                 );
               }
 
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               }
 
               if (snapshot.data!.docs.isEmpty) {
-                return Center(child: Text('Nenhum pet encontrado.'));
+                return const Center(child: Text('Nenhum pet encontrado.'));
               }
 
               var pets = snapshot.data!.docs.map((doc) {
@@ -204,14 +206,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                   builder: (context) => PetsProximosScreen()));
                         },
                         child: Container(
-                          margin: EdgeInsets.all(16.0),
-                          padding: EdgeInsets.all(16.0),
+                          margin: const EdgeInsets.all(16.0),
+                          padding: const EdgeInsets.all(16.0),
                           height: 250,
                           decoration: BoxDecoration(
                             color: Colors.transparent,
                             borderRadius: BorderRadius.circular(16),
                             image: DecorationImage(
-                              image: NetworkImage(
+                              image: const NetworkImage(
                                   'https://p2.trrsf.com/image/fget/cf/774/0/images.terra.com/2024/03/29/1527502278-golden-retriever.jpg'),
                               fit: BoxFit.cover,
                               colorFilter: ColorFilter.mode(
@@ -220,7 +222,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                           ),
-                          child: Center(
+                          child: const Center(
                               child: Text(
                             'Encontre o animal mais próximo de você',
                             style: TextStyle(
@@ -232,8 +234,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         )),
                     GridView.builder(
                       shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         childAspectRatio: 0.75,
                       ),
@@ -257,25 +259,25 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       bottomNavigationBar: BottomAppBar(
         color: Colors.black,
-        shape: CircularNotchedRectangle(),
+        shape: const CircularNotchedRectangle(),
         notchMargin: 8.0,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
             if (isVolunteer)
               IconButton(
-                icon: Icon(Icons.menu, color: Colors.white),
+                icon: const Icon(Icons.menu, color: Colors.white),
                 onPressed: () => _scaffoldKey.currentState!.openDrawer(),
               ),
             IconButton(
-              icon: Icon(Icons.filter_list, color: Colors.white),
+              icon: const Icon(Icons.filter_list, color: Colors.white),
               onPressed: () {
                 Navigator.pushNamed(context, '/filter');
               },
             ),
             if (!isVolunteer)
               IconButton(
-                icon: Icon(Icons.favorite, color: Colors.white),
+                icon: const Icon(Icons.favorite, color: Colors.white),
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -294,12 +296,12 @@ class _HomeScreenState extends State<HomeScreen> {
       drawer: isVolunteer
           ? Drawer(
               child: Container(
-                color: Color.fromARGB(255, 0, 13, 32),
+                color: const Color.fromARGB(255, 0, 13, 32),
                 child: ListView(
                   padding: EdgeInsets.zero,
                   children: <Widget>[
                     DrawerHeader(
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: Color.fromARGB(255, 0, 13, 32),
                       ),
                       child: Column(
@@ -307,15 +309,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           Text(
                             'Olá, $userName',
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           Text(
-                            '${isVolunteer ? 'Voluntário' : 'Adotante'}',
-                            style: TextStyle(
+                            isVolunteer ? 'Voluntário' : 'Adotante',
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 16,
                             ),
@@ -324,8 +326,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     ListTile(
-                      leading: Icon(Icons.pets, color: Colors.white),
-                      title: Text('Meus pets',
+                      leading: const Icon(Icons.pets, color: Colors.white),
+                      title: const Text('Meus pets',
                           style: TextStyle(color: Colors.white)),
                       onTap: () {
                         Navigator.push(
@@ -338,8 +340,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     ListTile(
                       leading:
-                          Icon(Icons.add_circle_outline, color: Colors.white),
-                      title: Text('Cadastrar pet',
+                          const Icon(Icons.add_circle_outline, color: Colors.white),
+                      title: const Text('Cadastrar pet',
                           style: TextStyle(color: Colors.white)),
                       onTap: () {
                         Navigator.push(
@@ -351,8 +353,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     ),
                     ListTile(
-                      leading: Icon(Icons.add_business, color: Colors.white),
-                      title: Text('Meus Abrigos',
+                      leading: const Icon(Icons.add_business, color: Colors.white),
+                      title: const Text('Meus Abrigos',
                           style: TextStyle(color: Colors.white)),
                       onTap: () {
                         Navigator.push(
@@ -364,8 +366,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     ),
                     ListTile(
-                      leading: Icon(Icons.add_business, color: Colors.white),
-                      title: Text('Cadastrar abrigo',
+                      leading: const Icon(Icons.add_business, color: Colors.white),
+                      title: const Text('Cadastrar abrigo',
                           style: TextStyle(color: Colors.white)),
                       onTap: () {
                         Navigator.push(
@@ -377,8 +379,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     ),
                     ListTile(
-                      leading: Icon(Icons.person, color: Colors.white),
-                      title: Text('Editar perfil',
+                      leading: const Icon(Icons.person, color: Colors.white),
+                      title: const Text('Editar perfil',
                           style: TextStyle(color: Colors.white)),
                       onTap: () {
                         Navigator.push(
@@ -390,9 +392,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     ),
                     ListTile(
-                      leading: Icon(Icons.logout_rounded, color: Colors.white),
+                      leading: const Icon(Icons.logout_rounded, color: Colors.white),
                       title:
-                          Text('Sair', style: TextStyle(color: Colors.white)),
+                          const Text('Sair', style: TextStyle(color: Colors.white)),
                       onTap: () {
                         _confirmLogout();
                       },

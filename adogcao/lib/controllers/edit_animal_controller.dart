@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../session/AnimalSession.dart';
 
 class EditAnimalController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

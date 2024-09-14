@@ -19,25 +19,22 @@ class LoginController {
         password: password,
       );
 
-      if(userCredential != null)
-      {
-         var querySnapshot = await FirebaseFirestore.instance
-        .collection('users')
-        .where('uid', isEqualTo: userCredential.user?.uid)
-        .get();
+       var querySnapshot = await FirebaseFirestore.instance
+      .collection('users')
+      .where('uid', isEqualTo: userCredential.user?.uid)
+      .get();
 
-        if (querySnapshot.docs.isNotEmpty) {
-          var userData = querySnapshot.docs.first.data();
-          UserSession.instance.userId = userData['uid'];
-          UserSession.instance.isVolunteer = userData['isVolunteer'];
-          UserSession.instance.userName = userData['name'];
-          UserSession.instance.userPhone = userData['phoneNumber'];
+      if (querySnapshot.docs.isNotEmpty) {
+        var userData = querySnapshot.docs.first.data();
+        UserSession.instance.userId = userData['uid'];
+        UserSession.instance.isVolunteer = userData['isVolunteer'];
+        UserSession.instance.userName = userData['name'];
+        UserSession.instance.userPhone = userData['phoneNumber'];
 
-        }
-        UserSession.instance.userEmail = userCredential.user?.email;
-        
       }
-
+      UserSession.instance.userEmail = userCredential.user?.email;
+      
+    
       return userCredential;
     } catch (e) {
       throw "Usuário e/ou senha inválidos"; // Propaga o erro para ser tratado na tela de login

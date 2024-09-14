@@ -5,6 +5,8 @@ import 'package:flutter_application_1/views/home_screen.dart';
 import 'login_screen.dart';
 
 class EditUserScreen extends StatefulWidget {
+  const EditUserScreen({super.key});
+
   @override
   _EditUserScreenState createState() => _EditUserScreenState();
 }
@@ -67,7 +69,7 @@ class _EditUserScreenState extends State<EditUserScreen> {
     _phoneController.text = UserSession.instance.userPhone!;
     isVolunteer = UserSession.instance.isVolunteer;
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 0, 13, 32).withAlpha(200),
+      backgroundColor: const Color.fromARGB(255, 0, 13, 32).withAlpha(200),
       body: Stack(
         children: [
           Container(
@@ -77,7 +79,7 @@ class _EditUserScreenState extends State<EditUserScreen> {
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.black,
-                  Color.fromARGB(255, 0, 13, 32).withAlpha(200)
+                  const Color.fromARGB(255, 0, 13, 32).withAlpha(200)
                 ],
               ),
             ),
@@ -90,7 +92,7 @@ class _EditUserScreenState extends State<EditUserScreen> {
                     height: 150,
                     decoration: BoxDecoration(
                       color: Colors.grey.shade800,
-                      borderRadius: BorderRadius.only(
+                      borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(50),
                         bottomRight: Radius.circular(50),
                       ),
@@ -102,11 +104,11 @@ class _EditUserScreenState extends State<EditUserScreen> {
                     child: Row(
                       children: [
                         IconButton(
-                          icon: Icon(Icons.arrow_back, color: Colors.white),
+                          icon: const Icon(Icons.arrow_back, color: Colors.white),
                           onPressed: () => Navigator.of(context).pop(),
                         ),
-                        SizedBox(width: 10),
-                        Text(
+                        const SizedBox(width: 10),
+                        const Text(
                           'Edição de perfil',
                           style: TextStyle(
                             color: Colors.white,
@@ -125,16 +127,16 @@ class _EditUserScreenState extends State<EditUserScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(height: 55),
+                      const SizedBox(height: 55),
                       Text('Nome',
                           style: TextStyle(color: Colors.grey.shade500)),
-                      SizedBox(height: 3),
+                      const SizedBox(height: 3),
                     TextField(
                       controller: _nameController,
                       decoration: InputDecoration(
                         hintText: 'Nome',
                         errorText: _nameError,
-                        hintStyle: TextStyle(color: Colors.white),
+                        hintStyle: const TextStyle(color: Colors.white),
                         filled: true,
                         fillColor: Colors.grey.shade800,
                         border: OutlineInputBorder(
@@ -153,18 +155,18 @@ class _EditUserScreenState extends State<EditUserScreen> {
                               BorderSide(color: Colors.grey.shade600, width: 1),
                         ),
                       ),
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                     ),
                       
                       Text('Número de telefone',
                           style: TextStyle(color: Colors.grey.shade500)),
-                      SizedBox(height: 3),
+                      const SizedBox(height: 3),
                        TextField(
                       controller: _phoneController,
                       decoration: InputDecoration(
                         hintText: 'Número de telefone',
                         errorText: _phoneError,
-                        hintStyle: TextStyle(color: Colors.white),
+                        hintStyle: const TextStyle(color: Colors.white),
                         filled: true,
                         fillColor: Colors.grey.shade800,
                         border: OutlineInputBorder(
@@ -183,9 +185,9 @@ class _EditUserScreenState extends State<EditUserScreen> {
                               BorderSide(color: Colors.grey.shade600, width: 1),
                         ),
                       ),
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                     ),
-                      SizedBox(height: 25),
+                      const SizedBox(height: 25),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -193,7 +195,7 @@ class _EditUserScreenState extends State<EditUserScreen> {
                           value: isVolunteer,
                           onChanged: _setVolunteer,
                         ),
-                        Text(
+                        const Text(
                           'Voluntário',
                           style: TextStyle(color: Colors.white),
                         ),
@@ -201,7 +203,7 @@ class _EditUserScreenState extends State<EditUserScreen> {
                           value: isAdotante,
                           onChanged: _setAdotante,
                         ),
-                        Text(
+                        const Text(
                           'Adotante',
                           style: TextStyle(color: Colors.white),
                         ),
@@ -218,7 +220,7 @@ class _EditUserScreenState extends State<EditUserScreen> {
 
                             if (!isVolunteer && !isAdotante) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
+                              const SnackBar(
                                 content: Text(
                                     'Por favor, selecione um perfil: Voluntário ou Adotante.'),
                               ),
@@ -241,7 +243,7 @@ class _EditUserScreenState extends State<EditUserScreen> {
                             );
 
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
+                              const SnackBar(
                                 content: Text('Informações salvas'),
                               ),
                             );
@@ -249,23 +251,23 @@ class _EditUserScreenState extends State<EditUserScreen> {
                           } catch (e) {
                             // Tratar erros de registro
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
+                              const SnackBar(
                                 content: Text('Erro ao editar usuário'),
                               ),
                             );
                           }
           
                           },
-                          child: Text('Salvar',
-                              style: TextStyle(color: Colors.white)),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue,
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 horizontal: 40, vertical: 20),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
                           ),
+                          child: Text('Salvar',
+                              style: TextStyle(color: Colors.white)),
                         ),
                       ),
                     ],

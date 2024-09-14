@@ -9,6 +9,8 @@ import 'package:google_maps_webservice/places.dart';
 import 'package:google_api_headers/google_api_headers.dart';
 
 class CadastrarAbrigoScreen extends StatefulWidget {
+  const CadastrarAbrigoScreen({super.key});
+
   @override
   _CadastrarAbrigoScreenState createState() => _CadastrarAbrigoScreenState();
 }
@@ -39,7 +41,7 @@ class _CadastrarAbrigoScreenState extends State<CadastrarAbrigoScreen> {
   void _onPlaceSelected(Prediction prediction) async {
     GoogleMapsPlaces places = GoogleMapsPlaces(
       apiKey: _googleApiKey,
-      apiHeaders: await GoogleApiHeaders().getHeaders(),
+      apiHeaders: await const GoogleApiHeaders().getHeaders(),
     );
     PlacesDetailsResponse detail =
         await places.getDetailsByPlaceId(prediction.placeId!);
@@ -52,7 +54,7 @@ class _CadastrarAbrigoScreenState extends State<CadastrarAbrigoScreen> {
 
       // Atualiza o marcador para o novo endereço selecionado
       _marker = Marker(
-        markerId: MarkerId('endereco'),
+        markerId: const MarkerId('endereco'),
         position: LatLng(lat, lng),
         infoWindow: InfoWindow(title: _address),
       );
@@ -108,7 +110,7 @@ class _CadastrarAbrigoScreenState extends State<CadastrarAbrigoScreen> {
 @override
 Widget build(BuildContext context) {
   return Scaffold(
-    backgroundColor: Color.fromARGB(255, 0, 13, 32).withAlpha(200),
+    backgroundColor: const Color.fromARGB(255, 0, 13, 32).withAlpha(200),
     resizeToAvoidBottomInset: true,
     body: Stack(
       children: [
@@ -119,7 +121,7 @@ Widget build(BuildContext context) {
               end: Alignment.bottomCenter,
               colors: [
                 Colors.black,
-                Color.fromARGB(255, 0, 13, 32).withAlpha(200)
+                const Color.fromARGB(255, 0, 13, 32).withAlpha(200)
               ],
             ),
           ),
@@ -132,7 +134,7 @@ Widget build(BuildContext context) {
                   height: 120,
                   decoration: BoxDecoration(
                     color: Colors.grey.shade800,
-                    borderRadius: BorderRadius.only(
+                    borderRadius: const BorderRadius.only(
                       bottomLeft: Radius.circular(50),
                       bottomRight: Radius.circular(50),
                     ),
@@ -144,11 +146,11 @@ Widget build(BuildContext context) {
                   child: Row(
                     children: [
                       IconButton(
-                        icon: Icon(Icons.arrow_back, color: Colors.white),
+                        icon: const Icon(Icons.arrow_back, color: Colors.white),
                         onPressed: () => Navigator.of(context).pop(),
                       ),
-                      SizedBox(width: 10),
-                      Text(
+                      const SizedBox(width: 10),
+                      const Text(
                         'Cadastrar Abrigo',
                         style: TextStyle(
                           color: Colors.white,
@@ -167,16 +169,16 @@ Widget build(BuildContext context) {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Text('Nome do abrigo',
                         style: TextStyle(color: Colors.grey.shade500)),
-                    SizedBox(height: 3),
+                    const SizedBox(height: 3),
                     TextField(
                       controller: _nomeController,
                       decoration: InputDecoration(
                         hintText: 'Digite o nome do abrigo',
                         errorText: _nomeError,
-                        hintStyle: TextStyle(color: Colors.white),
+                        hintStyle: const TextStyle(color: Colors.white),
                         filled: true,
                         fillColor: Colors.grey.shade800,
                         border: OutlineInputBorder(
@@ -195,18 +197,18 @@ Widget build(BuildContext context) {
                               color: Colors.grey.shade600, width: 1),
                         ),
                       ),
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                     ),
-                    SizedBox(height: 25),
+                    const SizedBox(height: 25),
                     Text('Email',
                         style: TextStyle(color: Colors.grey.shade500)),
-                    SizedBox(height: 3),
+                    const SizedBox(height: 3),
                     TextField(
                       controller: _emailController,
                       decoration: InputDecoration(
                         hintText: 'Digite o email',
                         errorText: _emailError,
-                        hintStyle: TextStyle(color: Colors.white),
+                        hintStyle: const TextStyle(color: Colors.white),
                         filled: true,
                         fillColor: Colors.grey.shade800,
                         border: OutlineInputBorder(
@@ -225,19 +227,19 @@ Widget build(BuildContext context) {
                               color: Colors.grey.shade600, width: 1),
                         ),
                       ),
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                       keyboardType: TextInputType.emailAddress,
                     ),
-                    SizedBox(height: 25),
+                    const SizedBox(height: 25),
                     Text('Endereço',
                         style: TextStyle(color: Colors.grey.shade500)),
-                    SizedBox(height: 3),
+                    const SizedBox(height: 3),
                     TextField(
                       controller: _enderecoController,
                       decoration: InputDecoration(
                         hintText: 'Digite o endereço do abrigo',
                         errorText: _nomeError,
-                        hintStyle: TextStyle(color: Colors.white),
+                        hintStyle: const TextStyle(color: Colors.white),
                         filled: true,
                         fillColor: Colors.grey.shade800,
                         border: OutlineInputBorder(
@@ -256,7 +258,7 @@ Widget build(BuildContext context) {
                               color: Colors.grey.shade600, width: 1),
                         ),
                       ),
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                       onTap: () async {
                         Prediction? p = await PlacesAutocomplete.show(
                           context: context,
@@ -274,8 +276,8 @@ Widget build(BuildContext context) {
                         }
                       },
                     ),
-                    SizedBox(height: 10),
-                    Container(
+                    const SizedBox(height: 10),
+                    SizedBox(
                       height: 200,
                       child: GoogleMap(
                         onMapCreated: _onMapCreated,
@@ -292,13 +294,13 @@ Widget build(BuildContext context) {
                     ),
                     Text('Número de telefone',
                         style: TextStyle(color: Colors.grey.shade500)),
-                    SizedBox(height: 3),
+                    const SizedBox(height: 3),
                     TextField(
                       controller: _telefoneController,
                       decoration: InputDecoration(
                         hintText: 'Digite o número de telefone',
                         errorText: _telefoneError,
-                        hintStyle: TextStyle(color: Colors.white),
+                        hintStyle: const TextStyle(color: Colors.white),
                         filled: true,
                         fillColor: Colors.grey.shade800,
                         border: OutlineInputBorder(
@@ -317,10 +319,10 @@ Widget build(BuildContext context) {
                               color: Colors.grey.shade600, width: 1),
                         ),
                       ),
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                       keyboardType: TextInputType.phone,
                     ),
-                    SizedBox(height: 25),
+                    const SizedBox(height: 25),
                      Center(
                       child: ElevatedButton(
                         onPressed: () async {
@@ -339,7 +341,7 @@ Widget build(BuildContext context) {
                               // Chama o método para registrar o abrigo
                               await _abrigoController.registrarAbrigo(abrigo);
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
+                                const SnackBar(
                                   content:
                                       Text('Abrigo cadastrado com sucesso!'),
                                 ),
@@ -355,16 +357,16 @@ Widget build(BuildContext context) {
                             }
                           }
                         },
-                        child: Text('Registrar',
-                            style: TextStyle(color: Colors.white)),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue,
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                               horizontal: 40, vertical: 20),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
                         ),
+                        child: Text('Registrar',
+                            style: TextStyle(color: Colors.white)),
                       ),
                     ),
                   ],
