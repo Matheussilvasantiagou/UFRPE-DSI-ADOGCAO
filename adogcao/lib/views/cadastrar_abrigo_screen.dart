@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/models/abrigo.dart';
+import 'package:flutter_application_1/session/UserSession.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../controllers/abrigo_controller.dart';
 import 'package:flutter_google_places_hoc081098/flutter_google_places_hoc081098.dart';
@@ -333,15 +336,10 @@ Widget build(BuildContext context) {
                               _enderecoError == null &&
                               _telefoneError == null) {
                             try {
+
+                              Abrigo abrigo =  Abrigo(nome: _nomeController.text, email: _emailController.text, endereco: _enderecoController.text, telefone: _telefoneController.text, lat: lat, lng: lng, volunteerId: UserSession.instance.userId, createdAt: Timestamp.now());
                               // Chama o método para registrar o abrigo
-                              await _abrigoController.registrarAbrigo(
-                                nome: _nomeController.text,
-                                email: _emailController.text,
-                                endereco: _enderecoController.text,
-                                telefone: _telefoneController.text,
-                                  lat: lat,
-                                  lng: lng
-                              );
+                              await _abrigoController.registrarAbrigo(abrigo);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content:
