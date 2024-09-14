@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_application_1/models/abrigo.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../controllers/abrigo_controller.dart';
@@ -56,7 +57,21 @@ class AbrigosScreen extends StatelessWidget {
                       return Center(child: CircularProgressIndicator());
                     }
 
-                    final abrigos = snapshot.data!.docs;
+                    final abrigos = snapshot.data!.docs.map((doc) {
+                                        return Abrigo(
+                                            nome: doc['nome'],
+                                            email: doc['email'],
+                                            endereco: doc['endereco'],
+                                            lat: doc['lat'],
+                                            lng: doc['lng'],
+                                            telefone: doc['telefone'],
+                                            volunteerId: doc['volunteerId'],
+                                            createdAt: doc['createdAt'],
+                                            id: doc.id,
+                                        );
+                                      }).toList();
+                  
+
 
                     return ListView.builder(
                       itemCount: abrigos.length,
@@ -66,7 +81,7 @@ class AbrigosScreen extends StatelessWidget {
                         return ListTile(
                           leading: Icon(Icons.location_on, color: Colors.white),
                           title: Text(
-                            abrigo['nome'],
+                            abrigo.nome,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 20,
@@ -106,7 +121,7 @@ class AbrigosScreen extends StatelessWidget {
 }
 
 class DetalhesAbrigoScreen extends StatelessWidget {
-  final String abrigoId;
+  final String? abrigoId;
 
   DetalhesAbrigoScreen({required this.abrigoId});
 
@@ -172,14 +187,26 @@ class DetalhesAbrigoScreen extends StatelessWidget {
                 return Center(child: CircularProgressIndicator());
               }
 
-              final abrigo = snapshot.data!;
+              final doc = snapshot.data!;
+              final abrigo = Abrigo(nome: doc['nome'],
+                                            email: doc['email'],
+                                            endereco: doc['endereco'],
+                                            lat: doc['lat'],
+                                            lng: doc['lng'],
+                                            telefone: doc['telefone'],
+                                            volunteerId: doc['volunteerId'],
+                                            createdAt: doc['createdAt'],
+                                            id: doc.id,
+                                        );
+                                            
+                                   
               return Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      abrigo['nome'],
+                      abrigo.nome,
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 28,
@@ -194,7 +221,7 @@ class DetalhesAbrigoScreen extends StatelessWidget {
                           fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      abrigo['email'],
+                      abrigo.email,
                       style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                     SizedBox(height: 16),
@@ -206,7 +233,7 @@ class DetalhesAbrigoScreen extends StatelessWidget {
                           fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      abrigo['endereco'],
+                      abrigo.endereco,
                       style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                     SizedBox(height: 16),
@@ -218,7 +245,7 @@ class DetalhesAbrigoScreen extends StatelessWidget {
                           fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      abrigo['telefone'],
+                      abrigo.telefone,
                       style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   ],
@@ -266,7 +293,7 @@ class DetalhesAbrigoScreen extends StatelessWidget {
 }
 
 class EditarAbrigoScreen extends StatefulWidget {
-  final String abrigoId; // ID do abrigo a ser editado
+  final String? abrigoId; // ID do abrigo a ser editado
 
   EditarAbrigoScreen({required this.abrigoId});
 
@@ -301,11 +328,21 @@ class _EditarAbrigoScreenState extends State<EditarAbrigoScreen> {
       DocumentSnapshot snapshot = await getAbrigoById(widget.abrigoId);
       Map<String, dynamic> dados = snapshot.data() as Map<String, dynamic>;
 
+      final abrigo = Abrigo(nome: dados['nome'],
+                                            email: dados['email'],
+                                            endereco: dados['endereco'],
+                                            lat: dados['lat'],
+                                            lng: dados['lng'],
+                                            telefone: dados['telefone'],
+                                            volunteerId: dados['volunteerId'],
+                                            createdAt: dados['createdAt'],
+                                        );
+
       setState(() {
-        _nomeController.text = dados['nome'];
-        _emailController.text = dados['email'];
-        _enderecoController.text = dados['endereco'];
-        _telefoneController.text = dados['telefone'];
+        _nomeController.text = abrigo.nome;
+        _emailController.text = abrigo.email;
+        _enderecoController.text = abrigo.endereco;
+        _telefoneController.text = abrigo.telefone;
       });
     } catch (e) {
       print('Erro ao carregar dados do abrigo: $e');
@@ -383,7 +420,7 @@ class _EditarAbrigoScreenState extends State<EditarAbrigoScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<void> atualizarAbrigo({
-    required String id,
+    required String? id,
     required String nome,
     required String email,
     required String endereco,
@@ -402,7 +439,7 @@ class _EditarAbrigoScreenState extends State<EditarAbrigoScreen> {
     }
   }
 
-  Future<DocumentSnapshot> getAbrigoById(String id) async {
+  Future<DocumentSnapshot> getAbrigoById(String? id) async {
     try {
       return await _firestore.collection('abrigos').doc(id).get();
     } catch (e) {
