@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_application_1/controllers/filterAnimalController.dart';
 import 'package:flutter_application_1/controllers/login_controller.dart';
 import 'package:flutter_application_1/session/UserSession.dart';
 import 'package:flutter_application_1/views/edit_user_screen.dart';
@@ -31,6 +34,15 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isVolunteer = false;
   bool isLoading = true;
   String userName = '';
+  final TextEditingController _abrigoFilterController = TextEditingController();
+  final TextEditingController _nomeFilterController = TextEditingController();
+  final TextEditingController _tipoFilterController = TextEditingController();
+  final FilterAnimalController _filterAnimalController = FilterAnimalController();
+  final StreamController<List<Animal>> _streamController = StreamController<List<Animal>>();
+  String nome = '';
+  String tipo = '';
+  String abrigo = '';
+  var pets = <Animal>[];
 
   @override
   void initState() {
@@ -141,9 +153,15 @@ class _HomeScreenState extends State<HomeScreen> {
     return pets;
   }
 
+  void filterPets(List<Animal> pets) async{
+    pets = await _filterAnimalController.getFilteredAnimals(nome, tipo, abrigo);
+    _streamController.add(pets);
+  }
+
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
+      filterPets(pets);
       return const Center(child: CircularProgressIndicator());
     }
 
@@ -164,8 +182,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           StreamBuilder(
-            stream: FirebaseFirestore.instance.collection('pets').snapshots(),
-            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            stream: _streamController.stream,
+            builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return const Center(
                   child: Text('Ocorreu um erro ao carregar os animais.'),
@@ -176,23 +194,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 return const Center(child: CircularProgressIndicator());
               }
 
-              if (snapshot.data!.docs.isEmpty) {
+              if (!snapshot.hasData || snapshot.data!.isEmpty) {
                 return const Center(child: Text('Nenhum pet encontrado.'));
               }
 
-              var pets = snapshot.data!.docs.map((doc) {
-                return Animal(
-                  name: doc['name'],
-                  location: doc[
-                      'shelterId'], // ou outra propriedade que represente o local
-                  imageUrl: doc['imageUrl'],
-                  description: doc['description'],
-                  age: doc['age'],
-                  weight: doc['weight'],
-                  animalType: doc['animalType'],
-                );
-              }).toList();
-
+             pets = snapshot.data!;
+              
               // pets = _sortPetsByDistance(pets);
 
               return SingleChildScrollView(
@@ -232,6 +239,60 @@ class _HomeScreenState extends State<HomeScreen> {
                             textAlign: TextAlign.center,
                           )),
                         )),
+                        ExpansionTile(
+              title: Text('Filtros'),
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
+                    controller: _nomeFilterController,
+                    style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                    decoration: InputDecoration(labelText: 'Nome'),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
+                    controller: _tipoFilterController,
+                    style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                    decoration: InputDecoration(labelText: 'Tipo'),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
+                    controller: _abrigoFilterController,
+                    style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                    decoration: InputDecoration(labelText: 'Abrigo'),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Lógica para filtrar os resultados
+                      print('Nome: $nome, Tipo: $tipo, Abrigo: $abrigo');
+                      abrigo = _abrigoFilterController.text;
+                      tipo = _tipoFilterController.text;
+                      nome = _nomeFilterController.text;
+                      filterPets(pets);
+                      setState(() {
+                      });
+                    },
+                    child: Text('Aplicar Filtros'),
+                  ),
+                ),
+              ],
+            ),
                     GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
