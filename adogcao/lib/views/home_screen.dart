@@ -241,6 +241,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         )),
                         ExpansionTile(
               title: Text('Filtros'),
+              textColor: Colors.white,
+              collapsedIconColor: Colors.white,
+              collapsedTextColor: Colors.white,
+              iconColor: Colors.white,
               children: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
