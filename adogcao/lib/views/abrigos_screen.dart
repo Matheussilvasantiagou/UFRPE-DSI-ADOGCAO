@@ -47,7 +47,7 @@ class AbrigosScreen extends StatelessWidget {
                 child: StreamBuilder(
                   stream: FirebaseFirestore.instance
                       .collection('abrigos')
-                      .where('volunteerId', isEqualTo: FirebaseAuth.instance.currentUser!.uid) // Adiciona o filtro pelo ID do voluntário logado
+                      .where('volunteerId', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
                       .snapshots(),
                   builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                     if (snapshot.hasError) {
@@ -60,53 +60,94 @@ class AbrigosScreen extends StatelessWidget {
                     }
 
                     final abrigos = snapshot.data!.docs.map((doc) {
-                                        return Abrigo(
-                                            nome: doc['nome'],
-                                            email: doc['email'],
-                                            endereco: doc['endereco'],
-                                            lat: doc['lat'],
-                                            lng: doc['lng'],
-                                            telefone: doc['telefone'],
-                                            volunteerId: doc['volunteerId'],
-                                            createdAt: doc['createdAt'],
-                                            id: doc.id,
-                                        );
-                                      }).toList();
-                  
-
+                      return Abrigo(
+                        nome: doc['nome'],
+                        email: doc['email'],
+                        endereco: doc['endereco'],
+                        lat: doc['lat'],
+                        lng: doc['lng'],
+                        telefone: doc['telefone'],
+                        volunteerId: doc['volunteerId'],
+                        createdAt: doc['createdAt'],
+                        id: doc.id,
+                      );
+                    }).toList();
 
                     return ListView.builder(
                       itemCount: abrigos.length,
                       itemBuilder: (context, index) {
                         final abrigo = abrigos[index];
 
-                        return ListTile(
-                          leading: const Icon(Icons.location_on, color: Colors.white),
-                          title: Text(
-                            abrigo.nome,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                            ),
-                          ),
-                          trailing: ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => DetalhesAbrigoScreen(
-                                      abrigoId: abrigo.id),
+                        return Card(
+                          color: const Color.fromARGB(255, 0, 13, 32),
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      abrigo.nome,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Row(
+                                      children: [
+                                        IconButton(
+                                          icon: const Icon(Icons.edit, color: Colors.white),
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => EditarAbrigoScreen(
+                                                    abrigoId: abrigo.id),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                        IconButton(
+                                          icon: const Icon(Icons.delete, color: Colors.red),
+                                          onPressed: () {
+                                            _confirmDelete(context, abrigo.id!);
+                                          },
+                                        ),
+                                      ],
+                                    )
+                                  ],
                                 ),
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.orange,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25),
-                              ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  abrigo.email,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  abrigo.endereco,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  'Telefone: ${abrigo.telefone}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
                             ),
-                            child: const Text('Ver'),
                           ),
                         );
                       },
@@ -120,147 +161,8 @@ class AbrigosScreen extends StatelessWidget {
       ),
     );
   }
-}
 
-class DetalhesAbrigoScreen extends StatelessWidget {
-  final String? abrigoId;
-
-  const DetalhesAbrigoScreen({super.key, required this.abrigoId});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 0, 13, 32).withAlpha(200),
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.edit, color: Colors.white),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EditarAbrigoScreen(abrigoId: abrigoId),
-                ),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.delete, color: Colors.red),
-            onPressed: () {
-              _confirmDelete(context);
-            },
-          ),
-        ],
-      ),
-      body: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.black,
-                  const Color.fromARGB(255, 0, 13, 32).withAlpha(200),
-                ],
-              ),
-            ),
-          ),
-          FutureBuilder<DocumentSnapshot>(
-            future: FirebaseFirestore.instance
-                .collection('abrigos')
-                .doc(abrigoId)
-                .get(),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return const Center(
-                    child: Text('Erro ao carregar os detalhes do abrigo.'));
-              }
-
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-
-              final doc = snapshot.data!;
-              final abrigo = Abrigo(nome: doc['nome'],
-                                            email: doc['email'],
-                                            endereco: doc['endereco'],
-                                            lat: doc['lat'],
-                                            lng: doc['lng'],
-                                            telefone: doc['telefone'],
-                                            volunteerId: doc['volunteerId'],
-                                            createdAt: doc['createdAt'],
-                                            id: doc.id,
-                                        );
-                                            
-                                   
-              return Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      abrigo.nome,
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'E-mail:',
-                      style: TextStyle(
-                          color: Colors.orange,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      abrigo.email,
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Endereço:',
-                      style: TextStyle(
-                          color: Colors.orange,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      abrigo.endereco,
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Telefone:',
-                      style: TextStyle(
-                          color: Colors.orange,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      abrigo.telefone,
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _confirmDelete(BuildContext context) {
+  void _confirmDelete(BuildContext context, String abrigoId) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -283,7 +185,6 @@ class DetalhesAbrigoScreen extends StatelessWidget {
                     .delete()
                     .then((_) {
                   Navigator.of(context).pop(); // Fechar o diálogo
-                  Navigator.of(context).pop(); // Voltar para a tela anterior
                 });
               },
             ),
@@ -293,6 +194,7 @@ class DetalhesAbrigoScreen extends StatelessWidget {
     );
   }
 }
+
 
 class EditarAbrigoScreen extends StatefulWidget {
   final String? abrigoId; // ID do abrigo a ser editado
