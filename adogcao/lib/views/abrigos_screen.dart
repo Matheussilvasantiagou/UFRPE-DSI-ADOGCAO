@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_application_1/models/abrigo.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../controllers/abrigo_controller.dart';
@@ -8,10 +9,12 @@ import 'package:google_maps_webservice/places.dart';
 import 'package:google_api_headers/google_api_headers.dart';
 
 class AbrigosScreen extends StatelessWidget {
+  const AbrigosScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 0, 13, 32).withAlpha(200),
+      backgroundColor: const Color.fromARGB(255, 0, 13, 32).withAlpha(200),
       body: Stack(
         children: [
           Container(
@@ -21,7 +24,7 @@ class AbrigosScreen extends StatelessWidget {
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.black,
-                  Color.fromARGB(255, 0, 13, 32).withAlpha(200),
+                  const Color.fromARGB(255, 0, 13, 32).withAlpha(200),
                 ],
               ),
             ),
@@ -29,12 +32,12 @@ class AbrigosScreen extends StatelessWidget {
           Column(
             children: [
               AppBar(
-                title: Text('Meus abrigos'),
+                title: const Text('Meus abrigos'),
                 foregroundColor: Colors.white,
                 backgroundColor: Colors.transparent,
                 elevation: 0,
                 leading: IconButton(
-                  icon: Icon(Icons.arrow_back),
+                  icon: const Icon(Icons.arrow_back),
                   onPressed: () {
                     Navigator.pop(context);
                   },
@@ -44,52 +47,107 @@ class AbrigosScreen extends StatelessWidget {
                 child: StreamBuilder(
                   stream: FirebaseFirestore.instance
                       .collection('abrigos')
-                      .where('volunteerId', isEqualTo: FirebaseAuth.instance.currentUser!.uid) // Adiciona o filtro pelo ID do voluntário logado
+                      .where('volunteerId', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
                       .snapshots(),
                   builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                     if (snapshot.hasError) {
-                      return Center(
+                      return const Center(
                           child: Text('Ocorreu um erro ao carregar os dados.'));
                     }
 
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
+                      return const Center(child: CircularProgressIndicator());
                     }
 
-                    final abrigos = snapshot.data!.docs;
+                    final abrigos = snapshot.data!.docs.map((doc) {
+                      return Abrigo(
+                        nome: doc['nome'],
+                        email: doc['email'],
+                        endereco: doc['endereco'],
+                        lat: doc['lat'],
+                        lng: doc['lng'],
+                        telefone: doc['telefone'],
+                        volunteerId: doc['volunteerId'],
+                        createdAt: doc['createdAt'],
+                        id: doc.id,
+                      );
+                    }).toList();
 
                     return ListView.builder(
                       itemCount: abrigos.length,
                       itemBuilder: (context, index) {
                         final abrigo = abrigos[index];
 
-                        return ListTile(
-                          leading: Icon(Icons.location_on, color: Colors.white),
-                          title: Text(
-                            abrigo['nome'],
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                            ),
-                          ),
-                          trailing: ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => DetalhesAbrigoScreen(
-                                      abrigoId: abrigo.id),
+                        return Card(
+                          color: const Color.fromARGB(255, 0, 13, 32),
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      abrigo.nome,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Row(
+                                      children: [
+                                        IconButton(
+                                          icon: const Icon(Icons.edit, color: Colors.white),
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => EditarAbrigoScreen(
+                                                    abrigoId: abrigo.id),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                        IconButton(
+                                          icon: const Icon(Icons.delete, color: Colors.red),
+                                          onPressed: () {
+                                            _confirmDelete(context, abrigo.id!);
+                                          },
+                                        ),
+                                      ],
+                                    )
+                                  ],
                                 ),
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.orange,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25),
-                              ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  abrigo.email,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  abrigo.endereco,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  'Telefone: ${abrigo.telefone}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
                             ),
-                            child: Text('Ver'),
                           ),
                         );
                       },
@@ -103,150 +161,23 @@ class AbrigosScreen extends StatelessWidget {
       ),
     );
   }
-}
 
-class DetalhesAbrigoScreen extends StatelessWidget {
-  final String abrigoId;
-
-  DetalhesAbrigoScreen({required this.abrigoId});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color.fromARGB(255, 0, 13, 32).withAlpha(200),
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.edit, color: Colors.white),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EditarAbrigoScreen(abrigoId: abrigoId),
-                ),
-              );
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.delete, color: Colors.red),
-            onPressed: () {
-              _confirmDelete(context);
-            },
-          ),
-        ],
-      ),
-      body: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.black,
-                  Color.fromARGB(255, 0, 13, 32).withAlpha(200),
-                ],
-              ),
-            ),
-          ),
-          FutureBuilder<DocumentSnapshot>(
-            future: FirebaseFirestore.instance
-                .collection('abrigos')
-                .doc(abrigoId)
-                .get(),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return Center(
-                    child: Text('Erro ao carregar os detalhes do abrigo.'));
-              }
-
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
-              }
-
-              final abrigo = snapshot.data!;
-              return Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      abrigo['nome'],
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(height: 16),
-                    Text(
-                      'E-mail:',
-                      style: TextStyle(
-                          color: Colors.orange,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      abrigo['email'],
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                    SizedBox(height: 16),
-                    Text(
-                      'Endereço:',
-                      style: TextStyle(
-                          color: Colors.orange,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      abrigo['endereco'],
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                    SizedBox(height: 16),
-                    Text(
-                      'Telefone:',
-                      style: TextStyle(
-                          color: Colors.orange,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      abrigo['telefone'],
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _confirmDelete(BuildContext context) {
+  void _confirmDelete(BuildContext context, String abrigoId) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Confirmação'),
-          content: Text('Você tem certeza que deseja excluir este abrigo?'),
+          title: const Text('Confirmação'),
+          content: const Text('Você tem certeza que deseja excluir este abrigo?'),
           actions: [
             TextButton(
-              child: Text('Cancelar'),
+              child: const Text('Cancelar'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text('Excluir', style: TextStyle(color: Colors.red)),
+              child: const Text('Excluir', style: TextStyle(color: Colors.red)),
               onPressed: () {
                 FirebaseFirestore.instance
                     .collection('abrigos')
@@ -254,7 +185,6 @@ class DetalhesAbrigoScreen extends StatelessWidget {
                     .delete()
                     .then((_) {
                   Navigator.of(context).pop(); // Fechar o diálogo
-                  Navigator.of(context).pop(); // Voltar para a tela anterior
                 });
               },
             ),
@@ -265,10 +195,11 @@ class DetalhesAbrigoScreen extends StatelessWidget {
   }
 }
 
-class EditarAbrigoScreen extends StatefulWidget {
-  final String abrigoId; // ID do abrigo a ser editado
 
-  EditarAbrigoScreen({required this.abrigoId});
+class EditarAbrigoScreen extends StatefulWidget {
+  final String? abrigoId; // ID do abrigo a ser editado
+
+  const EditarAbrigoScreen({super.key, required this.abrigoId});
 
   @override
   _EditarAbrigoScreenState createState() => _EditarAbrigoScreenState();
@@ -301,11 +232,21 @@ class _EditarAbrigoScreenState extends State<EditarAbrigoScreen> {
       DocumentSnapshot snapshot = await getAbrigoById(widget.abrigoId);
       Map<String, dynamic> dados = snapshot.data() as Map<String, dynamic>;
 
+      final abrigo = Abrigo(nome: dados['nome'],
+                                            email: dados['email'],
+                                            endereco: dados['endereco'],
+                                            lat: dados['lat'],
+                                            lng: dados['lng'],
+                                            telefone: dados['telefone'],
+                                            volunteerId: dados['volunteerId'],
+                                            createdAt: dados['createdAt'],
+                                        );
+
       setState(() {
-        _nomeController.text = dados['nome'];
-        _emailController.text = dados['email'];
-        _enderecoController.text = dados['endereco'];
-        _telefoneController.text = dados['telefone'];
+        _nomeController.text = abrigo.nome;
+        _emailController.text = abrigo.email;
+        _enderecoController.text = abrigo.endereco;
+        _telefoneController.text = abrigo.telefone;
       });
     } catch (e) {
       print('Erro ao carregar dados do abrigo: $e');
@@ -322,7 +263,7 @@ class _EditarAbrigoScreenState extends State<EditarAbrigoScreen> {
   void _onPlaceSelected(Prediction prediction) async {
     GoogleMapsPlaces places = GoogleMapsPlaces(
       apiKey: _googleApiKey,
-      apiHeaders: await GoogleApiHeaders().getHeaders(),
+      apiHeaders: await const GoogleApiHeaders().getHeaders(),
     );
     PlacesDetailsResponse detail =
         await places.getDetailsByPlaceId(prediction.placeId!);
@@ -383,7 +324,7 @@ class _EditarAbrigoScreenState extends State<EditarAbrigoScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<void> atualizarAbrigo({
-    required String id,
+    required String? id,
     required String nome,
     required String email,
     required String endereco,
@@ -398,23 +339,23 @@ class _EditarAbrigoScreenState extends State<EditarAbrigoScreen> {
       });
     } catch (e) {
       print('Erro ao atualizar abrigo: $e');
-      throw e;
+      rethrow;
     }
   }
 
-  Future<DocumentSnapshot> getAbrigoById(String id) async {
+  Future<DocumentSnapshot> getAbrigoById(String? id) async {
     try {
       return await _firestore.collection('abrigos').doc(id).get();
     } catch (e) {
       print('Erro ao obter abrigo: $e');
-      throw e;
+      rethrow;
     }
   }
 
   @override
   Widget build(BuildContext context) {
   return Scaffold(
-    backgroundColor: Color.fromARGB(255, 0, 13, 32).withAlpha(200),
+    backgroundColor: const Color.fromARGB(255, 0, 13, 32).withAlpha(200),
     resizeToAvoidBottomInset: true, // Adicionado para evitar overlap com teclado
     body: Stack(
       children: [
@@ -425,7 +366,7 @@ class _EditarAbrigoScreenState extends State<EditarAbrigoScreen> {
               end: Alignment.bottomCenter,
               colors: [
                 Colors.black,
-                Color.fromARGB(255, 0, 13, 32).withAlpha(200),
+                const Color.fromARGB(255, 0, 13, 32).withAlpha(200),
               ],
             ),
           ),
@@ -438,7 +379,7 @@ class _EditarAbrigoScreenState extends State<EditarAbrigoScreen> {
                   height: 120,
                   decoration: BoxDecoration(
                     color: Colors.grey.shade800,
-                    borderRadius: BorderRadius.only(
+                    borderRadius: const BorderRadius.only(
                       bottomLeft: Radius.circular(50),
                       bottomRight: Radius.circular(50),
                     ),
@@ -450,11 +391,11 @@ class _EditarAbrigoScreenState extends State<EditarAbrigoScreen> {
                   child: Row(
                     children: [
                       IconButton(
-                        icon: Icon(Icons.arrow_back, color: Colors.white),
+                        icon: const Icon(Icons.arrow_back, color: Colors.white),
                         onPressed: () => Navigator.of(context).pop(),
                       ),
-                      SizedBox(width: 10),
-                      Text(
+                      const SizedBox(width: 10),
+                      const Text(
                         'Editar Abrigo',
                         style: TextStyle(
                           color: Colors.white,
@@ -474,16 +415,16 @@ class _EditarAbrigoScreenState extends State<EditarAbrigoScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       Text('Nome do abrigo',
                           style: TextStyle(color: Colors.grey.shade500)),
-                      SizedBox(height: 3),
+                      const SizedBox(height: 3),
                       TextField(
                         controller: _nomeController,
                         decoration: InputDecoration(
                           hintText: 'Digite o nome do abrigo',
                           errorText: _nomeError,
-                          hintStyle: TextStyle(color: Colors.white),
+                          hintStyle: const TextStyle(color: Colors.white),
                           filled: true,
                           fillColor: Colors.grey.shade800,
                           border: OutlineInputBorder(
@@ -502,18 +443,18 @@ class _EditarAbrigoScreenState extends State<EditarAbrigoScreen> {
                                 color: Colors.grey.shade600, width: 1),
                           ),
                         ),
-                        style: TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Colors.white),
                       ),
-                      SizedBox(height: 25),
+                      const SizedBox(height: 25),
                       Text('Email',
                           style: TextStyle(color: Colors.grey.shade500)),
-                      SizedBox(height: 3),
+                      const SizedBox(height: 3),
                       TextField(
                         controller: _emailController,
                         decoration: InputDecoration(
                           hintText: 'Digite o email',
                           errorText: _emailError,
-                          hintStyle: TextStyle(color: Colors.white),
+                          hintStyle: const TextStyle(color: Colors.white),
                           filled: true,
                           fillColor: Colors.grey.shade800,
                           border: OutlineInputBorder(
@@ -532,19 +473,19 @@ class _EditarAbrigoScreenState extends State<EditarAbrigoScreen> {
                                 color: Colors.grey.shade600, width: 1),
                           ),
                         ),
-                        style: TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Colors.white),
                         keyboardType: TextInputType.emailAddress,
                       ),
-                      SizedBox(height: 25),
+                      const SizedBox(height: 25),
                       Text('Endereço',
                           style: TextStyle(color: Colors.grey.shade500)),
-                      SizedBox(height: 3),
+                      const SizedBox(height: 3),
                       TextField(
                         controller: _enderecoController,
                         decoration: InputDecoration(
                           hintText: 'Digite o endereço do abrigo',
                           errorText: _enderecoError,
-                          hintStyle: TextStyle(color: Colors.white),
+                          hintStyle: const TextStyle(color: Colors.white),
                           filled: true,
                           fillColor: Colors.grey.shade800,
                           border: OutlineInputBorder(
@@ -563,7 +504,7 @@ class _EditarAbrigoScreenState extends State<EditarAbrigoScreen> {
                                 color: Colors.grey.shade600, width: 1),
                           ),
                         ),
-                        style: TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Colors.white),
                         onTap: () async {
                           Prediction? p = await PlacesAutocomplete.show(
                             context: context,
@@ -581,7 +522,7 @@ class _EditarAbrigoScreenState extends State<EditarAbrigoScreen> {
                           }
                         },
                       ),
-                      SizedBox(height: 16), // Espaçamento adicionado
+                      const SizedBox(height: 16), // Espaçamento adicionado
                       SizedBox(
                         height: 200, // Defina um tamanho fixo para o mapa
                         child: GoogleMap(
@@ -593,7 +534,7 @@ class _EditarAbrigoScreenState extends State<EditarAbrigoScreen> {
                           markers: _address.isNotEmpty
                               ? {
                                   Marker(
-                                    markerId: MarkerId('endereco'),
+                                    markerId: const MarkerId('endereco'),
                                     position: _center,
                                     infoWindow: InfoWindow(title: _address),
                                   ),
@@ -601,16 +542,16 @@ class _EditarAbrigoScreenState extends State<EditarAbrigoScreen> {
                               : {},
                         ),
                       ),
-                      SizedBox(height: 25),
+                      const SizedBox(height: 25),
                       Text('Telefone',
                           style: TextStyle(color: Colors.grey.shade500)),
-                      SizedBox(height: 3),
+                      const SizedBox(height: 3),
                       TextField(
                         controller: _telefoneController,
                         decoration: InputDecoration(
                           hintText: 'Digite o número de telefone',
                           errorText: _telefoneError,
-                          hintStyle: TextStyle(color: Colors.white),
+                          hintStyle: const TextStyle(color: Colors.white),
                           filled: true,
                           fillColor: Colors.grey.shade800,
                           border: OutlineInputBorder(
@@ -629,10 +570,10 @@ class _EditarAbrigoScreenState extends State<EditarAbrigoScreen> {
                                 color: Colors.grey.shade600, width: 1),
                           ),
                         ),
-                        style: TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Colors.white),
                         keyboardType: TextInputType.phone,
                       ),
-                      SizedBox(height: 40),
+                      const SizedBox(height: 40),
                       Center(
                         child: ElevatedButton(
                           onPressed: () async {
@@ -657,7 +598,7 @@ class _EditarAbrigoScreenState extends State<EditarAbrigoScreen> {
 
                                 // Exibe uma mensagem de sucesso
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
+                                  const SnackBar(
                                     content:
                                         Text('Abrigo atualizado com sucesso!'),
                                   ),
@@ -677,13 +618,13 @@ class _EditarAbrigoScreenState extends State<EditarAbrigoScreen> {
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue,
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 horizontal: 50, vertical: 15),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          child: Text(
+                          child: const Text(
                             'Salvar Alterações',
                             style: TextStyle(
                               fontSize: 18,

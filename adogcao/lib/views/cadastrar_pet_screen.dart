@@ -7,6 +7,8 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:typed_data';
 
 class CadastrarPetScreen extends StatefulWidget {
+  const CadastrarPetScreen({super.key});
+
   @override
   _CadastrarPetScreenState createState() => _CadastrarPetScreenState();
 }
@@ -135,7 +137,7 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 0, 13, 32).withAlpha(200),
+      backgroundColor: const Color.fromARGB(255, 0, 13, 32).withAlpha(200),
       body: Stack(
         children: [
           Container(
@@ -145,7 +147,7 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.black,
-                  Color.fromARGB(255, 0, 13, 32).withAlpha(200)
+                  const Color.fromARGB(255, 0, 13, 32).withAlpha(200)
                 ],
               ),
             ),
@@ -158,7 +160,7 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
                     height: 150,
                     decoration: BoxDecoration(
                       color: Colors.grey.shade800,
-                      borderRadius: BorderRadius.only(
+                      borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(50),
                         bottomRight: Radius.circular(50),
                       ),
@@ -170,11 +172,11 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
                     child: Row(
                       children: [
                         IconButton(
-                          icon: Icon(Icons.arrow_back, color: Colors.white),
+                          icon: const Icon(Icons.arrow_back, color: Colors.white),
                           onPressed: () => Navigator.of(context).pop(),
                         ),
-                        SizedBox(width: 10),
-                        Text(
+                        const SizedBox(width: 10),
+                        const Text(
                           'Cadastrar Pet',
                           style: TextStyle(
                             color: Colors.white,
@@ -194,16 +196,16 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(height: 55),
+                        const SizedBox(height: 55),
                         Text('Nome do pet',
                             style: TextStyle(color: Colors.grey.shade500)),
-                        SizedBox(height: 3),
+                        const SizedBox(height: 3),
                         TextField(
                           controller: _nomeController,
                           decoration: InputDecoration(
                             hintText: 'Digite o nome do pet',
                             errorText: _nomeError,
-                            hintStyle: TextStyle(color: Colors.white),
+                            hintStyle: const TextStyle(color: Colors.white),
                             filled: true,
                             fillColor: Colors.grey.shade800,
                             border: OutlineInputBorder(
@@ -222,18 +224,18 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
                                   color: Colors.grey.shade600, width: 1),
                             ),
                           ),
-                          style: TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                         ),
-                        SizedBox(height: 25),
+                        const SizedBox(height: 25),
                         Text('Idade',
                             style: TextStyle(color: Colors.grey.shade500)),
-                        SizedBox(height: 3),
+                        const SizedBox(height: 3),
                         TextField(
                           controller: _idadeController,
                           decoration: InputDecoration(
                             hintText: 'Digite a idade do pet',
                             errorText: _idadeError,
-                            hintStyle: TextStyle(color: Colors.white),
+                            hintStyle: const TextStyle(color: Colors.white),
                             filled: true,
                             fillColor: Colors.grey.shade800,
                             border: OutlineInputBorder(
@@ -252,18 +254,18 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
                                   color: Colors.grey.shade600, width: 1),
                             ),
                           ),
-                          style: TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                         ),
-                        SizedBox(height: 25),
+                        const SizedBox(height: 25),
                         Text('Peso',
                             style: TextStyle(color: Colors.grey.shade500)),
-                        SizedBox(height: 3),
+                        const SizedBox(height: 3),
                         TextField(
                           controller: _pesoController,
                           decoration: InputDecoration(
                             hintText: 'Digite o peso do pet',
                             errorText: _pesoError,
-                            hintStyle: TextStyle(color: Colors.white),
+                            hintStyle: const TextStyle(color: Colors.white),
                             filled: true,
                             fillColor: Colors.grey.shade800,
                             border: OutlineInputBorder(
@@ -282,19 +284,19 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
                                   color: Colors.grey.shade600, width: 1),
                             ),
                           ),
-                          style: TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                         ),
-                        SizedBox(height: 25),
+                        const SizedBox(height: 25),
                         Text('Tipo de animal',
                             style: TextStyle(color: Colors.grey.shade500)),
-                        SizedBox(height: 3),
+                        const SizedBox(height: 3),
                         DropdownButtonFormField<String>(
                           value: selectedAnimalType,
                           items: animalTypes.map((String type) {
                             return DropdownMenuItem<String>(
                               value: type,
                               child: Text(type,
-                                  style: TextStyle(color: Colors.black)),
+                                  style: const TextStyle(color: Colors.black)),
                             );
                           }).toList(),
                           onChanged: (String? newValue) {
@@ -323,17 +325,17 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
                           ),
                           dropdownColor: Colors.white,
                         ),
-                        SizedBox(height: 25),
+                        const SizedBox(height: 25),
                         Text('Abrigo',
                             style: TextStyle(color: Colors.grey.shade500)),
-                        SizedBox(height: 3),
+                        const SizedBox(height: 3),
                         DropdownButtonFormField<String>(
                           value: selectedShelter,
                           items: shelters.map((String shelter) {
                             return DropdownMenuItem<String>(
                               value: shelter,
                               child: Text(shelter,
-                                  style: TextStyle(color: Colors.black)),
+                                  style: const TextStyle(color: Colors.black)),
                             );
                           }).toList(),
                           onChanged: (String? newValue) {
@@ -362,15 +364,15 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
                           ),
                           dropdownColor: Colors.white,
                         ),
-                        SizedBox(height: 25),
+                        const SizedBox(height: 25),
                         Text('Imagem do pet',
                             style: TextStyle(color: Colors.grey.shade500)),
-                        SizedBox(height: 3),
+                        const SizedBox(height: 3),
                         Center(
                           child: Column(
                             children: [
                               if (_imageFile == null)
-                                Text('Nenhuma imagem selecionada.',
+                                const Text('Nenhuma imagem selecionada.',
                                     style: TextStyle(color: Colors.white))
                               else if (kIsWeb && _webImage != null)
                                 Image.memory(
@@ -382,29 +384,29 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
                                   File(_imageFile!.path),
                                   height: 150,
                                 ),
-                              SizedBox(height: 10),
+                              const SizedBox(height: 10),
                               ElevatedButton(
                                 onPressed: () =>
                                     _pickImage(ImageSource.gallery),
-                                child: Text('Escolher da Galeria'),
+                                child: const Text('Escolher da Galeria'),
                               ),
                               ElevatedButton(
                                 onPressed: () => _pickImage(ImageSource.camera),
-                                child: Text('Tirar uma Foto'),
+                                child: const Text('Tirar uma Foto'),
                               ),
                             ],
                           ),
                         ),
-                        SizedBox(height: 25),
+                        const SizedBox(height: 25),
                         Text('Descrição',
                             style: TextStyle(color: Colors.grey.shade500)),
-                        SizedBox(height: 3),
+                        const SizedBox(height: 3),
                         TextField(
                           controller: _descricaoController,
                           decoration: InputDecoration(
                             hintText: 'Digite a descrição do pet',
                             errorText: _descricaoError,
-                            hintStyle: TextStyle(color: Colors.white),
+                            hintStyle: const TextStyle(color: Colors.white),
                             filled: true,
                             fillColor: Colors.grey.shade800,
                             border: OutlineInputBorder(
@@ -423,10 +425,10 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
                                   color: Colors.grey.shade600, width: 1),
                             ),
                           ),
-                          style: TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                           maxLines: 3,
                         ),
-                        SizedBox(height: 70),
+                        const SizedBox(height: 70),
                         Center(
                           child: ElevatedButton(
                             onPressed: () async {
@@ -459,7 +461,7 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
                                         _imageUrl, // Adiciona a URL da imagem ao cadastro do pet
                                   );
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
+                                    const SnackBar(
                                       content:
                                           Text('Pet cadastrado com sucesso!'),
                                     ),
@@ -480,23 +482,23 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
                                 }
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
+                                  const SnackBar(
                                     content: Text(
                                         'Por favor, preencha todos os campos.'),
                                   ),
                                 );
                               }
                             },
-                            child: Text('Registrar',
-                                style: TextStyle(color: Colors.white)),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.blue,
-                              padding: EdgeInsets.symmetric(
+                              padding: const EdgeInsets.symmetric(
                                   horizontal: 40, vertical: 20),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30),
                               ),
                             ),
+                            child: Text('Registrar',
+                                style: TextStyle(color: Colors.white)),
                           ),
                         ),                        
                       ],
@@ -509,7 +511,7 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
           if (_isLoading)
                           Container(
                             color: Colors.black.withOpacity(0.5),
-                            child: Center(
+                            child: const Center(
                               child: CircularProgressIndicator(),
                             ),
                           ),

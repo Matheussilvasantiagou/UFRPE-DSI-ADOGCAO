@@ -17,6 +17,8 @@ import 'meus_pets_screen.dart';
 import 'package:geolocator/geolocator.dart';
 
 class PetsProximosScreen extends StatefulWidget {
+  const PetsProximosScreen({super.key});
+
   @override
   _PetsProximosScreenState createState() => _PetsProximosScreenState();
 }
@@ -93,7 +95,7 @@ void _sortPetsByDistance(List<Animal> pets) async {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator());
     }
 
     return Scaffold(
@@ -107,7 +109,7 @@ void _sortPetsByDistance(List<Animal> pets) async {
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.black,
-                  Color.fromARGB(255, 0, 13, 32).withAlpha(200)
+                  const Color.fromARGB(255, 0, 13, 32).withAlpha(200)
                 ],
               ),
             ),
@@ -116,17 +118,17 @@ void _sortPetsByDistance(List<Animal> pets) async {
             stream: FirebaseFirestore.instance.collection('pets').snapshots(),
             builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasError) {
-                return Center(
+                return const Center(
                   child: Text('Ocorreu um erro ao carregar os animais.'),
                 );
               }
 
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               }
 
               if (snapshot.data!.docs.isEmpty) {
-                return Center(child: Text('Nenhum pet encontrado.'));
+                return const Center(child: Text('Nenhum pet encontrado.'));
               }
 
               var pets = snapshot.data!.docs.map((doc) {
@@ -148,20 +150,20 @@ void _sortPetsByDistance(List<Animal> pets) async {
                       onPressed: (){
                         _sortPetsByDistance(pets);
                       },
-                    child: Text('Encontrar animais próximos',style: TextStyle(color: Colors.white)),
                     style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue,
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 horizontal: 40, vertical: 20),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
-                    )
+                    ),
+                    child: Text('Encontrar animais próximos',style: TextStyle(color: Colors.white))
                   ),
                     GridView.builder(
                       shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         childAspectRatio: 0.75,
                       ),

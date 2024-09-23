@@ -5,7 +5,7 @@ class PetAvatar extends StatelessWidget {
   final String imageUrl;
   final bool isAssetImage;
 
-  PetAvatar({
+  const PetAvatar({super.key, 
     required this.name,
     required this.imageUrl,
     this.isAssetImage = false,
@@ -21,10 +21,10 @@ class PetAvatar extends StatelessWidget {
               ? AssetImage(imageUrl)
               : NetworkImage(imageUrl) as ImageProvider,
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Text(
           name,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
