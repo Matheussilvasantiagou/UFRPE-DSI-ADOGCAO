@@ -1,19 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_application_1/controllers/login_controller.dart';
-import 'package:flutter_application_1/session/UserSession.dart';
-import 'package:flutter_application_1/views/edit_user_screen.dart';
-import 'package:flutter_application_1/views/login_screen.dart';
 import 'package:geocoding/geocoding.dart';
 import '../models/animal.dart';
 import '../controllers/favorite_controller.dart';
 import '../widgets/animal_card.dart';
-import 'favorite_animals_screen.dart';
-import 'cadastrar_abrigo_screen.dart';
-import 'abrigos_screen.dart';
-import 'cadastrar_pet_screen.dart';
-import 'meus_pets_screen.dart';
 import 'package:geolocator/geolocator.dart';
 
 class PetsProximosScreen extends StatefulWidget {
@@ -133,6 +123,7 @@ void _sortPetsByDistance(List<Animal> pets) async {
 
               var pets = snapshot.data!.docs.map((doc) {
                 return Animal(
+                  id: doc.id,
                   name: doc['name'],
                   location: doc['shelterId'], // ou outra propriedade que represente o local
                   imageUrl: doc['imageUrl'],
@@ -140,6 +131,7 @@ void _sortPetsByDistance(List<Animal> pets) async {
                   age: doc['age'],
                   weight: doc['weight'],
                   animalType: doc['animalType'],
+                  userId: doc['userId'], 
                 );
               }).toList();
 
