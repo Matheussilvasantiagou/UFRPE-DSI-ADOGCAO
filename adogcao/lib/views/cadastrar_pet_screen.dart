@@ -433,8 +433,7 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
                           child: ElevatedButton(
                             onPressed: () async {
                               setState(() {
-                                _isLoading =
-                                    true;
+                                _isLoading = true;
                               });
                               // Validações
                               _validateNome();
@@ -457,27 +456,23 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
                                     animalType: selectedAnimalType!,
                                     shelterId: selectedShelter!,
                                     description: _descricaoController.text,
-                                    imageUrl:
-                                        _imageUrl, // Adiciona a URL da imagem ao cadastro do pet
+                                    imageUrl: _imageUrl, // Adiciona a URL da imagem ao cadastro do pet
                                   );
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
-                                      content:
-                                          Text('Pet cadastrado com sucesso!'),
+                                      content: Text('Pet cadastrado com sucesso!'),
                                     ),
                                   );
                                   Navigator.pop(context);
                                 } catch (e) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content:
-                                          Text('Erro ao cadastrar pet: $e'),
+                                      content: Text('Erro ao cadastrar pet: $e'),
                                     ),
                                   );
                                 } finally {
                                   setState(() {
-                                    _isLoading =
-                                        false;
+                                    _isLoading = false;
                                   });
                                 }
                               } else {
@@ -509,12 +504,12 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
             ],
           ),
           if (_isLoading)
-                          Container(
-                            color: Colors.black.withOpacity(0.5),
-                            child: const Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                          ),
+            Container(
+              color: Colors.black.withOpacity(0.5),
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
         ],
       ),
     );

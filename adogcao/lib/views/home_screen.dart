@@ -14,6 +14,7 @@ import 'package:flutter_application_1/views/favorite_animals_screen.dart';
 import 'package:flutter_application_1/widgets/animal_card.dart';
 import 'filter_screen.dart';
 import '../models/animal.dart';
+import 'lar_temporario_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -29,6 +30,9 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isVolunteer = false;
   bool isLoading = true;
   String userName = '';
+  final TextEditingController _abrigoFilterController = TextEditingController();
+  final TextEditingController _nomeFilterController = TextEditingController();
+  final TextEditingController _tipoFilterController = TextEditingController();
   final FilterAnimalController _filterAnimalController =
       FilterAnimalController();
   final StreamController<List<Animal>> _streamController =
@@ -90,6 +94,10 @@ class _HomeScreenState extends State<HomeScreen> {
       peso = weight;
     });
     filterPets(pets);
+
+  void filterPets(List<Animal> pets) async {
+    pets = await _filterAnimalController.getFilteredAnimals(nome, tipo, abrigo);
+    _streamController.add(pets);
   }
 
   @override
@@ -132,6 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
               }
 
               pets = snapshot.data!;
+              // pets = _sortPetsByDistance(pets);
 
               return SingleChildScrollView(
                 child: Column(
@@ -267,6 +276,65 @@ class _HomeScreenState extends State<HomeScreen> {
                               context, 'Cavalo', 'lib/images/horse.png'),
                         ],
                       ),
+                          )),
+                        )),
+                    ExpansionTile(
+                      title: Text('Filtros'),
+                      textColor: Colors.white,
+                      collapsedIconColor: Colors.white,
+                      collapsedTextColor: Colors.white,
+                      iconColor: Colors.white,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextField(
+                            controller: _nomeFilterController,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                            decoration: InputDecoration(labelText: 'Nome'),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextField(
+                            controller: _tipoFilterController,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                            decoration: InputDecoration(labelText: 'Tipo'),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextField(
+                            controller: _abrigoFilterController,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                            decoration: InputDecoration(labelText: 'Abrigo'),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              // Lógica para filtrar os resultados
+                              print(
+                                  'Nome: $nome, Tipo: $tipo, Abrigo: $abrigo');
+                              abrigo = _abrigoFilterController.text;
+                              tipo = _tipoFilterController.text;
+                              nome = _nomeFilterController.text;
+                              filterPets(pets);
+                              setState(() {});
+                            },
+                            child: Text('Aplicar Filtros'),
+                          ),
+                        ),
+                      ],
                     ),
                     GridView.builder(
                       shrinkWrap: true,
@@ -351,6 +419,95 @@ class _HomeScreenState extends State<HomeScreen> {
                         fontSize: 16,
                       ),
                     ),
+                    ListTile(
+                      leading: const Icon(Icons.pets, color: Colors.white),
+                      title: const Text('Meus pets',
+                          style: TextStyle(color: Colors.white)),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PetsScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.add_circle_outline,
+                          color: Colors.white),
+                      title: const Text('Cadastrar pet',
+                          style: TextStyle(color: Colors.white)),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CadastrarPetScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      leading:
+                          const Icon(Icons.add_business, color: Colors.white),
+                      title: const Text('Meus Abrigos',
+                          style: TextStyle(color: Colors.white)),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AbrigosScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      leading:
+                          const Icon(Icons.add_business, color: Colors.white),
+                      title: const Text('Cadastrar abrigo',
+                          style: TextStyle(color: Colors.white)),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CadastrarAbrigoScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.person, color: Colors.white),
+                      title: const Text('Editar perfil',
+                          style: TextStyle(color: Colors.white)),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditUserScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.home, color: Colors.white),
+                      title: const Text('Lar Temporário',
+                          style: TextStyle(color: Colors.white)),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LarTemporarioScreen()),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      leading:
+                          const Icon(Icons.logout_rounded, color: Colors.white),
+                      title: const Text('Sair',
+                          style: TextStyle(color: Colors.white)),
+                      onTap: () {
+                        _confirmLogout();
+                      },
+                    )
                   ],
                 ),
               ),
