@@ -109,6 +109,7 @@ class _CadastrarLarTemporarioScreenState
                       const SizedBox(height: 3),
                       TextField(
                         controller: _capacidadeController,
+                        style: const TextStyle(color: Colors.white),
                         decoration: InputDecoration(
                           hintText: 'Digite a capacidade de animais',
                           hintStyle: const TextStyle(color: Colors.white),
@@ -165,6 +166,7 @@ class _CadastrarLarTemporarioScreenState
                       const SizedBox(height: 3),
                       TextField(
                         controller: _enderecoController,
+                        style: const TextStyle(color: Colors.white),
                         decoration: InputDecoration(
                           hintText: 'Digite o endereço',
                           hintStyle: const TextStyle(color: Colors.white),
