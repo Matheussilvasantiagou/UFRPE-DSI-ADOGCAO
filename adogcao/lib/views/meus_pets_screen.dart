@@ -89,6 +89,7 @@ class PetsScreen extends StatelessWidget {
                                     MaterialPageRoute(
                                       builder: (context) => AnimalDetailsScreen(
                                         animal: Animal(
+                                          id: docId, // Adiciona o ID do documento ao modelo
                                           name: pet['name'],
                                           imageUrl: pet['imageUrl'],
                                           location: pet['shelterId'],
@@ -96,6 +97,7 @@ class PetsScreen extends StatelessWidget {
                                           age: pet['age'],
                                           weight: pet['weight'],
                                           animalType: pet['animalType'],
+                                          userId: pet['userId'],
                                         ),
                                         isFavorite: false,
                                         toggleFavorite: (Animal animal) {},
@@ -122,8 +124,7 @@ class PetsScreen extends StatelessWidget {
                                     MaterialPageRoute(
                                       // Passa o docId para a tela de edição
                                       builder: (context) => EditAnimalScreen(
-                                        docId:
-                                            docId, // Passando o docId do Firestore
+                                        docId: docId, // Passando o docId do Firestore
                                       ),
                                     ),
                                   );

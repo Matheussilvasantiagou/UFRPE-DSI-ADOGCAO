@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../models/animal.dart';
 
 class AnimalDetailsScreen extends StatefulWidget {
@@ -22,11 +23,22 @@ class AnimalDetailsScreen extends StatefulWidget {
 
 class _AnimalDetailsScreenState extends State<AnimalDetailsScreen> {
   late bool isFavorite;
+  bool isOwner = false; // Verifica se o usuário logado é o dono do pet
 
   @override
   void initState() {
     super.initState();
     isFavorite = widget.isFavorite;
+    _checkOwnership();
+  }
+
+  Future<void> _checkOwnership() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        isOwner = user.uid == widget.animal.userId; // Compara userId do pet com o uid do usuário logado
+      });
+    }
   }
 
   @override
@@ -119,8 +131,7 @@ class _AnimalDetailsScreenState extends State<AnimalDetailsScreen> {
                                       widget.animal.location,
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.grey[
-                                            400], // Texto em cinza mais claro
+                                        color: Colors.grey[400], // Texto em cinza mais claro
                                       ),
                                     ),
                                   ],
@@ -173,46 +184,31 @@ class _AnimalDetailsScreenState extends State<AnimalDetailsScreen> {
                                 ),
                                 const SizedBox(
                                     width: 30), // Espaço entre os botões
-                                // Botão de entrar em contato
-                                GestureDetector(
-                                  onTap: () {
-                                    if (widget.isVolunteer) {
+                                // Botão de "Animal Adotado" (somente se o usuário for o dono)
+                                if (isOwner)
+                                  GestureDetector(
+                                    onTap: () {
                                       _confirmAdoption(context);
-                                    } else {
-                                      // Lógica para entrar em contato
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                          content: Text(
-                                              "Entrar em contato com o abrigo."),
-                                        ),
-                                      );
-                                    }
-                                  },
-                                  child: Container(
-                                    height: 50,
-                                    width: 180,
-                                    decoration: BoxDecoration(
-                                      color: widget.isVolunteer
-                                          ? Colors.green
-                                          : const Color(
-                                              0xFF007EA7), // Verde para voluntário e azul para contato
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        widget.isVolunteer
-                                            ? 'Animal Adotado'
-                                            : 'Entrar em contato',
-                                        style: const TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
+                                    },
+                                    child: Container(
+                                      height: 50,
+                                      width: 180,
+                                      decoration: BoxDecoration(
+                                        color: Colors.green, // Verde para voluntário
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: const Center(
+                                        child: Text(
+                                          'Animal Adotado',
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
                               ],
                             ),
                           ),
@@ -273,11 +269,10 @@ class _AnimalDetailsScreenState extends State<AnimalDetailsScreen> {
           ),
           ElevatedButton(
             onPressed: () async {
-              // Exclui o animal da base de dados
+              // Exclui o animal da base de dados usando o ID correto
               await FirebaseFirestore.instance
-                  .collection(
-                      'pets') // Certifique-se de que o nome da coleção está correto
-                  .doc(widget.animal.name) // Usa o docId correto do animal
+                  .collection('pets')
+                  .doc(widget.animal.id) // Usa o ID correto do documento
                   .delete();
 
               Navigator.of(context).pop(); // Fecha o diálogo
