@@ -19,6 +19,7 @@ import 'abrigos_screen.dart';
 import 'cadastrar_pet_screen.dart';
 import 'meus_pets_screen.dart';
 import 'package:geolocator/geolocator.dart';
+import 'lar_temporario_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -37,8 +38,10 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _abrigoFilterController = TextEditingController();
   final TextEditingController _nomeFilterController = TextEditingController();
   final TextEditingController _tipoFilterController = TextEditingController();
-  final FilterAnimalController _filterAnimalController = FilterAnimalController();
-  final StreamController<List<Animal>> _streamController = StreamController<List<Animal>>();
+  final FilterAnimalController _filterAnimalController =
+      FilterAnimalController();
+  final StreamController<List<Animal>> _streamController =
+      StreamController<List<Animal>>();
   String nome = '';
   String tipo = '';
   String abrigo = '';
@@ -153,7 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return pets;
   }
 
-  void filterPets(List<Animal> pets) async{
+  void filterPets(List<Animal> pets) async {
     pets = await _filterAnimalController.getFilteredAnimals(nome, tipo, abrigo);
     _streamController.add(pets);
   }
@@ -198,8 +201,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 return const Center(child: Text('Nenhum pet encontrado.'));
               }
 
-             pets = snapshot.data!;
-              
+              pets = snapshot.data!;
+
               // pets = _sortPetsByDistance(pets);
 
               return SingleChildScrollView(
@@ -239,68 +242,69 @@ class _HomeScreenState extends State<HomeScreen> {
                             textAlign: TextAlign.center,
                           )),
                         )),
-                        ExpansionTile(
-              title: Text('Filtros'),
-              textColor: Colors.white,
-              collapsedIconColor: Colors.white,
-              collapsedTextColor: Colors.white,
-              iconColor: Colors.white,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextField(
-                    controller: _nomeFilterController,
-                    style: TextStyle(
+                    ExpansionTile(
+                      title: Text('Filtros'),
+                      textColor: Colors.white,
+                      collapsedIconColor: Colors.white,
+                      collapsedTextColor: Colors.white,
+                      iconColor: Colors.white,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextField(
+                            controller: _nomeFilterController,
+                            style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold),
-                    decoration: InputDecoration(labelText: 'Nome'),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextField(
-                    controller: _tipoFilterController,
-                    style: TextStyle(
+                            decoration: InputDecoration(labelText: 'Nome'),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextField(
+                            controller: _tipoFilterController,
+                            style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold),
-                    decoration: InputDecoration(labelText: 'Tipo'),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextField(
-                    controller: _abrigoFilterController,
-                    style: TextStyle(
+                            decoration: InputDecoration(labelText: 'Tipo'),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextField(
+                            controller: _abrigoFilterController,
+                            style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold),
-                    decoration: InputDecoration(labelText: 'Abrigo'),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // Lógica para filtrar os resultados
-                      print('Nome: $nome, Tipo: $tipo, Abrigo: $abrigo');
-                      abrigo = _abrigoFilterController.text;
-                      tipo = _tipoFilterController.text;
-                      nome = _nomeFilterController.text;
-                      filterPets(pets);
-                      setState(() {
-                      });
-                    },
-                    child: Text('Aplicar Filtros'),
-                  ),
-                ),
-              ],
-            ),
+                            decoration: InputDecoration(labelText: 'Abrigo'),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              // Lógica para filtrar os resultados
+                              print(
+                                  'Nome: $nome, Tipo: $tipo, Abrigo: $abrigo');
+                              abrigo = _abrigoFilterController.text;
+                              tipo = _tipoFilterController.text;
+                              nome = _nomeFilterController.text;
+                              filterPets(pets);
+                              setState(() {});
+                            },
+                            child: Text('Aplicar Filtros'),
+                          ),
+                        ),
+                      ],
+                    ),
                     GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         childAspectRatio: 0.75,
                       ),
@@ -404,8 +408,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     ),
                     ListTile(
-                      leading:
-                          const Icon(Icons.add_circle_outline, color: Colors.white),
+                      leading: const Icon(Icons.add_circle_outline,
+                          color: Colors.white),
                       title: const Text('Cadastrar pet',
                           style: TextStyle(color: Colors.white)),
                       onTap: () {
@@ -418,7 +422,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     ),
                     ListTile(
-                      leading: const Icon(Icons.add_business, color: Colors.white),
+                      leading:
+                          const Icon(Icons.add_business, color: Colors.white),
                       title: const Text('Meus Abrigos',
                           style: TextStyle(color: Colors.white)),
                       onTap: () {
@@ -431,7 +436,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     ),
                     ListTile(
-                      leading: const Icon(Icons.add_business, color: Colors.white),
+                      leading:
+                          const Icon(Icons.add_business, color: Colors.white),
                       title: const Text('Cadastrar abrigo',
                           style: TextStyle(color: Colors.white)),
                       onTap: () {
@@ -457,9 +463,22 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     ),
                     ListTile(
-                      leading: const Icon(Icons.logout_rounded, color: Colors.white),
-                      title:
-                          const Text('Sair', style: TextStyle(color: Colors.white)),
+                      leading: const Icon(Icons.home, color: Colors.white),
+                      title: const Text('Lar Temporário',
+                          style: TextStyle(color: Colors.white)),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LarTemporarioScreen()),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      leading:
+                          const Icon(Icons.logout_rounded, color: Colors.white),
+                      title: const Text('Sair',
+                          style: TextStyle(color: Colors.white)),
                       onTap: () {
                         _confirmLogout();
                       },
