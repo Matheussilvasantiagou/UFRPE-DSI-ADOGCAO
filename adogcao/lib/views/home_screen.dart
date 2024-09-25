@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,6 +8,7 @@ import 'package:flutter_application_1/session/UserSession.dart';
 import 'package:flutter_application_1/views/edit_user_screen.dart';
 import 'package:flutter_application_1/views/login_screen.dart';
 import 'package:flutter_application_1/views/pets_proximos_screen.dart';
+import 'package:flutter_application_1/views/filter_screen.dart';
 import 'package:geocoding/geocoding.dart';
 import '../models/animal.dart';
 import '../controllers/favorite_controller.dart';
@@ -35,9 +35,8 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isVolunteer = false;
   bool isLoading = true;
   String userName = '';
-  final TextEditingController _abrigoFilterController = TextEditingController();
-  final TextEditingController _nomeFilterController = TextEditingController();
-  final TextEditingController _tipoFilterController = TextEditingController();
+  String selectedCategory = '';
+  final TextEditingController _searchController = TextEditingController();
   final FilterAnimalController _filterAnimalController =
       FilterAnimalController();
   final StreamController<List<Animal>> _streamController =
@@ -47,10 +46,19 @@ class _HomeScreenState extends State<HomeScreen> {
   String abrigo = '';
   var pets = <Animal>[];
 
+  final List<Map<String, dynamic>> categories = [
+    {'icon': 'lib/images/dog.png', 'label': 'Cachorro', 'type': 'dog'},
+    {'icon': 'lib/images/cat.png', 'label': 'Gato', 'type': 'cat'},
+    {'icon': 'lib/images/parrot.png', 'label': 'Pássaro', 'type': 'bird'},
+    {'icon': 'lib/images/rabbit.png', 'label': 'Coelho', 'type': 'rabbit'},
+    {'icon': 'lib/images/horse.png', 'label': 'Cavalo', 'type': 'horse'},
+  ];
+
   @override
   void initState() {
     super.initState();
     fetchUserDetails();
+    filterPets(pets);
   }
 
   Future<void> fetchUserDetails() async {
@@ -128,25 +136,9 @@ class _HomeScreenState extends State<HomeScreen> {
     var currentPosition = await _getCurrentLocation();
 
     for (var pet in pets) {
-      // var querySnapshot = await FirebaseFirestore.instance
-      //     .collection('abrigos')
-      //     .where('nome', isEqualTo: pet.location)
-      //     .get();
-
-      // if (querySnapshot.docs.isNotEmpty) {
-      //   var abrigoData = querySnapshot.docs.first.data();
-
-      // var endereco = abrigoData['endereco'].toString();
-
       Location location = await _getCoordinatesFromAddress("Recife, PE");
-      pet.distance = _calculateDistance(
-        currentPosition.latitude,
-        currentPosition.longitude,
-        location.latitude,
-        location.longitude,
-      );
-
-      //}
+      pet.distance = _calculateDistance(currentPosition.latitude,
+          currentPosition.longitude, location.latitude, location.longitude);
     }
 
     pets.sort((a, b) => a.distance!.compareTo(b.distance!));
@@ -156,15 +148,26 @@ class _HomeScreenState extends State<HomeScreen> {
     return pets;
   }
 
+  void filterByCategory(String category) async {
+    pets = await _filterAnimalController.getFilteredAnimalsByCategory(category);
+    _streamController.add(pets);
+  }
+
   void filterPets(List<Animal> pets) async {
     pets = await _filterAnimalController.getFilteredAnimals(nome, tipo, abrigo);
     _streamController.add(pets);
   }
 
+  void applyFilters(String? nome, String? tipo, String? abrigo) {
+    this.nome = nome ?? '';
+    this.tipo = tipo ?? '';
+    this.abrigo = abrigo ?? '';
+    filterPets(pets);
+  }
+
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      filterPets(pets);
       return const Center(child: CircularProgressIndicator());
     }
 
@@ -203,103 +206,110 @@ class _HomeScreenState extends State<HomeScreen> {
 
               pets = snapshot.data!;
 
-              // pets = _sortPetsByDistance(pets);
-
               return SingleChildScrollView(
                 child: Column(
                   children: [
                     GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => PetsProximosScreen()));
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.all(16.0),
-                          padding: const EdgeInsets.all(16.0),
-                          height: 250,
-                          decoration: BoxDecoration(
-                            color: Colors.transparent,
-                            borderRadius: BorderRadius.circular(16),
-                            image: DecorationImage(
-                              image: const NetworkImage(
-                                  'https://p2.trrsf.com/image/fget/cf/774/0/images.terra.com/2024/03/29/1527502278-golden-retriever.jpg'),
-                              fit: BoxFit.cover,
-                              colorFilter: ColorFilter.mode(
-                                Colors.black.withOpacity(0.5),
-                                BlendMode.darken,
-                              ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PetsProximosScreen(),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.all(16.0),
+                        padding: const EdgeInsets.all(16.0),
+                        height: 250,
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(16),
+                          image: DecorationImage(
+                            image: const NetworkImage(
+                              'https://p2.trrsf.com/image/fget/cf/774/0/images.terra.com/2024/03/29/1527502278-golden-retriever.jpg',
+                            ),
+                            fit: BoxFit.cover,
+                            colorFilter: ColorFilter.mode(
+                              Colors.black.withOpacity(0.5),
+                              BlendMode.darken,
                             ),
                           ),
-                          child: const Center(
-                              child: Text(
+                        ),
+                        child: const Center(
+                          child: Text(
                             'Encontre o animal mais próximo de você',
                             style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold),
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
                             textAlign: TextAlign.center,
-                          )),
-                        )),
-                    ExpansionTile(
-                      title: Text('Filtros'),
-                      textColor: Colors.white,
-                      collapsedIconColor: Colors.white,
-                      collapsedTextColor: Colors.white,
-                      iconColor: Colors.white,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: TextField(
-                            controller: _nomeFilterController,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold),
-                            decoration: InputDecoration(labelText: 'Nome'),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: TextField(
-                            controller: _tipoFilterController,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold),
-                            decoration: InputDecoration(labelText: 'Tipo'),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: TextField(
-                            controller: _abrigoFilterController,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold),
-                            decoration: InputDecoration(labelText: 'Abrigo'),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              // Lógica para filtrar os resultados
-                              print(
-                                  'Nome: $nome, Tipo: $tipo, Abrigo: $abrigo');
-                              abrigo = _abrigoFilterController.text;
-                              tipo = _tipoFilterController.text;
-                              nome = _nomeFilterController.text;
-                              filterPets(pets);
-                              setState(() {});
-                            },
-                            child: Text('Aplicar Filtros'),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
+                    // Widget de construção de categorias com fundo branco
+                    SizedBox(
+                      height: 100,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: categories.length,
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedCategory = categories[index]['type'];
+                                filterByCategory(selectedCategory);
+                              });
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.all(8.0),
+                              decoration: BoxDecoration(
+                                color: selectedCategory ==
+                                        categories[index]['type']
+                                    ? Colors.blueAccent
+                                    : Colors
+                                        .white, // Fundo branco para todas as categorias
+                                borderRadius: BorderRadius.circular(16),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(
+                                        0.1), // Sombra leve para destacar
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    categories[index]['icon'],
+                                    height: 40,
+                                    width: 40,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    categories[index]['label'],
+                                    style: TextStyle(
+                                      color: selectedCategory ==
+                                              categories[index]['type']
+                                          ? Colors.white
+                                          : Colors
+                                              .black, // Cor do texto preta para categorias não selecionadas
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    _buildSearchField(),
                     GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
@@ -341,7 +351,16 @@ class _HomeScreenState extends State<HomeScreen> {
             IconButton(
               icon: const Icon(Icons.filter_list, color: Colors.white),
               onPressed: () {
-                Navigator.pushNamed(context, '/filter');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => FilterScreen(
+                      onApplyFilters: (nome, tipo, abrigo) {
+                        applyFilters(nome, tipo, abrigo);
+                      },
+                    ),
+                  ),
+                );
               },
             ),
             if (!isVolunteer)
@@ -488,6 +507,69 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             )
           : null,
+    );
+  }
+
+  Widget _buildSearchField() {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(30.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.search, color: Colors.grey[500]),
+          const SizedBox(width: 10),
+          Expanded(
+            child: TextField(
+              controller: _searchController,
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+              ),
+              decoration: InputDecoration(
+                hintText: 'Pesquisar animal',
+                hintStyle: TextStyle(
+                  color: Colors.grey[500],
+                  fontSize: 16,
+                ),
+                border: InputBorder.none,
+              ),
+              onChanged: (value) {
+                setState(() {
+                  nome = value;
+                  filterPets(pets);
+                });
+              },
+            ),
+          ),
+          IconButton(
+            icon: Icon(Icons.tune, color: Colors.grey[500]),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => FilterScreen(
+                    onApplyFilters: (nome, tipo, abrigo) {
+                      applyFilters(nome, tipo, abrigo);
+                    },
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }
