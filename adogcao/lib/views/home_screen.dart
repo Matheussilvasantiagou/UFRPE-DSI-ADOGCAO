@@ -257,21 +257,29 @@ class _HomeScreenState extends State<HomeScreen> {
                           return GestureDetector(
                             onTap: () {
                               setState(() {
-                                selectedCategory = categories[index]['type'];
-                                filterByCategory(selectedCategory);
+                                // Verifica se a categoria selecionada é a mesma que já está selecionada
+                                if (selectedCategory ==
+                                    categories[index]['type']) {
+                                  // Se sim, desmarca o filtro
+                                  selectedCategory = '';
+                                  // Carrega todos os pets
+                                  filterPets(pets);
+                                } else {
+                                  // Se não, seleciona a nova categoria
+                                  selectedCategory = categories[index]['type'];
+                                  filterByCategory(selectedCategory);
+                                }
                               });
                             },
                             child: Container(
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 4.0, vertical: 8.0),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8.0, vertical: 4.0),
+                              margin: const EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.all(8.0),
                               decoration: BoxDecoration(
                                 color: selectedCategory ==
                                         categories[index]['type']
                                     ? Colors.blueAccent
                                     : Colors
-                                        .white, // Fundo branco para todas as categorias
+                                        .white, // Fundo branco para categorias não selecionadas
                                 borderRadius: BorderRadius.circular(16),
                                 boxShadow: [
                                   BoxShadow(
@@ -287,10 +295,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                 children: [
                                   Image.asset(
                                     categories[index]['icon'],
-                                    height: 40,
-                                    width: 40,
+                                    height: 30,
+                                    width: 30,
                                   ),
-                                  const SizedBox(height: 8),
+                                  const SizedBox(height: 4),
                                   Text(
                                     categories[index]['label'],
                                     style: TextStyle(
@@ -298,8 +306,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                               categories[index]['type']
                                           ? Colors.white
                                           : Colors
-                                              .black, // Cor do texto preta para categorias não selecionadas
-                                      fontSize: 16,
+                                              .black, // Texto preto para categorias não selecionadas
+                                      fontSize: 12,
                                     ),
                                   ),
                                 ],
@@ -309,6 +317,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         },
                       ),
                     ),
+
                     _buildSearchField(),
                     GridView.builder(
                       shrinkWrap: true,
