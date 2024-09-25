@@ -47,11 +47,11 @@ class _HomeScreenState extends State<HomeScreen> {
   var pets = <Animal>[];
 
   final List<Map<String, dynamic>> categories = [
-    {'icon': 'lib/images/dog.png', 'label': 'Cachorro', 'type': 'dog'},
-    {'icon': 'lib/images/cat.png', 'label': 'Gato', 'type': 'cat'},
-    {'icon': 'lib/images/parrot.png', 'label': 'Pássaro', 'type': 'bird'},
-    {'icon': 'lib/images/rabbit.png', 'label': 'Coelho', 'type': 'rabbit'},
-    {'icon': 'lib/images/horse.png', 'label': 'Cavalo', 'type': 'horse'},
+    {'icon': 'lib/images/dog.png', 'label': 'Cachorro', 'type': 'Cachorro'},
+    {'icon': 'lib/images/cat.png', 'label': 'Gato', 'type': 'Gato'},
+    {'icon': 'lib/images/parrot.png', 'label': 'Pássaro', 'type': 'Pássaro'},
+    {'icon': 'lib/images/rabbit.png', 'label': 'Coelho', 'type': 'Coelho'},
+    {'icon': 'lib/images/horse.png', 'label': 'Cavalo', 'type': 'Cavalo'},
   ];
 
   @override
@@ -198,10 +198,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
-              }
-
-              if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return const Center(child: Text('Nenhum pet encontrado.'));
               }
 
               pets = snapshot.data!;
