@@ -155,7 +155,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void filterPets(List<Animal> pets) async {
-    pets = await _filterAnimalController.getFilteredAnimals(abrigo, idade, peso, nome);
+    pets = await _filterAnimalController.getFilteredAnimals(
+        abrigo, idade, peso, nome);
     _streamController.add(pets);
   }
 
@@ -261,8 +262,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               });
                             },
                             child: Container(
-                              margin: const EdgeInsets.all(8.0),
-                              padding: const EdgeInsets.all(8.0),
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 4.0, vertical: 8.0),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8.0, vertical: 4.0),
                               decoration: BoxDecoration(
                                 color: selectedCategory ==
                                         categories[index]['type']
