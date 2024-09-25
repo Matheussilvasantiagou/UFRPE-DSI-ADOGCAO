@@ -3,7 +3,7 @@ import 'package:flutter_application_1/models/animal.dart';
 
 class FilterAnimalController {
   Future<List<Animal>> getFilteredAnimals(
-      String abrigo, String idade, String peso) async {
+      String abrigo, String idade, String peso, String nome) async {
     Query query = FirebaseFirestore.instance.collection('pets');
 
     if (abrigo.isNotEmpty) {
@@ -14,6 +14,9 @@ class FilterAnimalController {
     }
     if (peso.isNotEmpty) {
       query = query.where('weight', isEqualTo: peso);
+    }
+    if (nome.isNotEmpty) {
+      query = query.where('name', isEqualTo: nome);
     }
 
     QuerySnapshot querySnapshot = await query.get();
