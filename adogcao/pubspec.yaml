@@ -36,3 +36,8 @@ flutter:
     - lib/images/lua.png
     - lib/images/thor.png
     - lib/images/mel.png
+    - lib/images/cat.png
+    - lib/images/dog.png
+    - lib/images/horse.png
+    - lib/images/rabbit.png
+    - lib/images/parrot.png
