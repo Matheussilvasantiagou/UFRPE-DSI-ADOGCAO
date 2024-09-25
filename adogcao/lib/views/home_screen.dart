@@ -44,6 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String abrigo = '';
   String idade = '';
   String peso = '';
+  String nome = '';
   var pets = <Animal>[];
 
   final List<Map<String, dynamic>> categories = [
@@ -154,7 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void filterPets(List<Animal> pets) async {
-    pets = await _filterAnimalController.getFilteredAnimals(abrigo, idade, peso);
+    pets = await _filterAnimalController.getFilteredAnimals(abrigo, idade, peso, nome);
     _streamController.add(pets);
   }
 
@@ -543,6 +544,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               onChanged: (value) {
                 setState(() {
+                  nome = _searchController.text;
                   filterPets(pets);
                 });
               },
