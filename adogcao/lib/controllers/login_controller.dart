@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_application_1/session/UserSession.dart';
+import 'package:adogcao/session/UserSession.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class LoginController {

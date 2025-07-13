@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/views/reset_password_screen.dart';
+import 'package:adogcao/views/reset_password_screen.dart';
 import '../controllers/login_controller.dart';
 import 'home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';

@@ -1,0 +1,99 @@
+{
+  "pets": {
+    "pet1": {
+      "name": "Thor",
+      "imageUrl": "lib/images/thor.png",
+      "location": "Recife, PE",
+      "description": "Thor é um cachorro muito brincalhão e carinhoso. Adora crianças e passeios no parque.",
+      "age": "3 anos",
+      "weight": "25kg",
+      "animalType": "Cachorro",
+      "userId": "exemplo_user_id",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    "pet2": {
+      "name": "Lua",
+      "imageUrl": "lib/images/lua.png",
+      "location": "Olinda, PE",
+      "description": "Lua é uma gata tranquila e independente. Perfeita para apartamentos.",
+      "age": "2 anos",
+      "weight": "4kg",
+      "animalType": "Gato",
+      "userId": "exemplo_user_id",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    "pet3": {
+      "name": "Mel",
+      "imageUrl": "lib/images/mel.png",
+      "location": "Jaboatão, PE",
+      "description": "Mel é uma cadela muito dócil e protetora. Ideal para famílias.",
+      "age": "4 anos",
+      "weight": "30kg",
+      "animalType": "Cachorro",
+      "userId": "exemplo_user_id",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    }
+  },
+  "abrigos": {
+    "abrigo1": {
+      "nome": "Abrigo Amor aos Animais",
+      "email": "contato@amoraosanimais.org",
+      "endereco": "Rua das Flores, 123 - Recife, PE",
+      "telefone": "(81) 99999-9999",
+      "lat": -8.0476,
+      "lng": -34.8770,
+      "volunteerId": "exemplo_volunteer_id",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    "abrigo2": {
+      "nome": "Lar Temporário Recife",
+      "email": "contato@lartemporario.org",
+      "endereco": "Av. Boa Viagem, 456 - Recife, PE",
+      "telefone": "(81) 88888-8888",
+      "lat": -8.1198,
+      "lng": -34.9047,
+      "volunteerId": "exemplo_volunteer_id",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    }
+  },
+  "users": {
+    "user1": {
+      "name": "João Silva",
+      "email": "joao@exemplo.com",
+      "phoneNumber": "(81) 99999-9999",
+      "isVolunteer": true,
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "uid": "user1"
+    },
+    "user2": {
+      "name": "Maria Santos",
+      "email": "maria@exemplo.com",
+      "phoneNumber": "(81) 88888-8888",
+      "isVolunteer": false,
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "uid": "user2"
+    }
+  },
+  "lar_temporario": {
+    "lar1": {
+      "uid": "user1",
+      "nome": "João Silva",
+      "telefone": "(81) 99999-9999",
+      "endereco": "Rua das Palmeiras, 789 - Recife, PE",
+      "latitude": -8.0476,
+      "longitude": -34.8770,
+      "tiposAnimais": ["Cachorro", "Gato"],
+      "capacidade": 5
+    },
+    "lar2": {
+      "uid": "user2",
+      "nome": "Maria Santos",
+      "telefone": "(81) 88888-8888",
+      "endereco": "Av. Conde da Boa Vista, 321 - Recife, PE",
+      "latitude": -8.1198,
+      "longitude": -34.9047,
+      "tiposAnimais": ["Gato"],
+      "capacidade": 3
+    }
+  }
+} 

@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_application_1/session/UserSession.dart';
+import 'package:adogcao/session/UserSession.dart';
 
 class EditUserController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

@@ -16,14 +16,21 @@
   -->
   <base href="$FLUTTER_BASE_HREF">
 
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCqvxvqh9AAFxFQN7mRPazAGibBg7RI75o"></script>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+
+  <!-- Google Maps -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCqvxvqh9AAFxFQN7mRPazAGibBg7RI75o&loading=async"></script>
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="A new Flutter project.">
 
   <!-- iOS meta tags & icons -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="flutter_application_1">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
@@ -33,6 +40,23 @@
 
   <title>flutter_application_1</title>
   <link rel="manifest" href="manifest.json">
+
+  <!-- Firebase Configuration -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCnrIaWPLaTizXxJfcKveVoQJYi-FY3yq4",
+      authDomain: "adogcao-1b54a.firebaseapp.com",
+      projectId: "adogcao-1b54a",
+      storageBucket: "adogcao-1b54a.appspot.com",
+      messagingSenderId: "200884834778",
+      appId: "1:200884834778:web:adogcao-app",
+      measurementId: "G-XXXXXXXXXX" // Opcional
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    console.log("Firebase initialized in HTML");
+  </script>
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>

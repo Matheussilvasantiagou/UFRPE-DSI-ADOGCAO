@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/controllers/edit_user_controller.dart';
-import 'package:flutter_application_1/session/UserSession.dart';
-import 'package:flutter_application_1/views/home_screen.dart';
+import 'package:adogcao/controllers/edit_user_controller.dart';
+import 'package:adogcao/session/UserSession.dart';
+import 'package:adogcao/views/home_screen.dart';
 
 class EditUserScreen extends StatefulWidget {
   const EditUserScreen({super.key});
