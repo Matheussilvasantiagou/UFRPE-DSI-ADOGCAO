@@ -14,11 +14,15 @@ class RegistrationController {
     required String phoneNumber,
   }) async {
     try {
+      print("Tentando registrar usuário: $email");
+      
       // Registra o usuário no Firebase Authentication
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
+
+      print("Usuário criado com sucesso: ${userCredential.user?.uid}");
 
       // Obtém o usuário registrado
       User? user = userCredential.user;
@@ -32,9 +36,32 @@ class RegistrationController {
           phoneNumber,
           isVolunteer,
         );
+        print("Usuário adicionado ao Firestore com sucesso");
       }
+    } on FirebaseAuthException catch (e) {
+      print("Firebase Auth Error: ${e.code} - ${e.message}");
+      String errorMessage = _getFirebaseAuthErrorMessage(e.code);
+      throw Exception(errorMessage);
     } catch (e) {
+      print("Erro geral: $e");
       throw Exception("Erro ao registrar usuário: $e");
+    }
+  }
+
+  String _getFirebaseAuthErrorMessage(String code) {
+    switch (code) {
+      case 'weak-password':
+        return 'A senha é muito fraca. Use pelo menos 6 caracteres.';
+      case 'email-already-in-use':
+        return 'Este email já está sendo usado por outra conta.';
+      case 'invalid-email':
+        return 'O email fornecido é inválido.';
+      case 'operation-not-allowed':
+        return 'O registro com email e senha não está habilitado.';
+      case 'network-request-failed':
+        return 'Erro de conexão. Verifique sua internet.';
+      default:
+        return 'Erro de autenticação: $code';
     }
   }
 
@@ -56,7 +83,11 @@ class RegistrationController {
         'createdAt': FieldValue.serverTimestamp(),
         'uid': uid
       });
+    } on FirebaseException catch (e) {
+      print("Firestore Error: ${e.code} - ${e.message}");
+      throw Exception("Erro ao adicionar usuário ao Firestore: ${e.message}");
     } catch (e) {
+      print("Erro geral no Firestore: $e");
       throw Exception("Erro ao adicionar usuário ao Firestore: $e");
     }
   }

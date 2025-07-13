@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:flutter_application_1/controllers/lar_temporario_controller.dart';
+import 'package:adogcao/controllers/lar_temporario_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
 import 'cadastrar_lar_temporario_screen.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/controllers/filterAnimalController.dart';
+import 'package:adogcao/controllers/filterAnimalController.dart';
 
 class FilterScreen extends StatefulWidget {
   final Function(String?, String?, String?) onApplyFilters;

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../controllers/lar_temporario_controller.dart';
-import 'package:flutter_google_places_hoc081098/flutter_google_places_hoc081098.dart';
-import 'package:google_maps_webservice/places.dart';
 import 'package:google_api_headers/google_api_headers.dart';
 
 class CadastrarLarTemporarioScreen extends StatefulWidget {
@@ -45,20 +43,15 @@ class _CadastrarLarTemporarioScreenState
     });
   }
 
-  void _onPlaceSelected(Prediction prediction) async {
-    GoogleMapsPlaces places = GoogleMapsPlaces(
-      apiKey: _googleApiKey,
-      apiHeaders: await const GoogleApiHeaders().getHeaders(),
-    );
-    
-    PlacesDetailsResponse detail =
-        await places.getDetailsByPlaceId(prediction.placeId!);
-    lat = detail.result.geometry!.location.lat;
-    lng = detail.result.geometry!.location.lng;
+  void _onPlaceSelected(dynamic prediction) async {
+    // TODO: Implementar Google Places quando dependência for resolvida
+    // Por enquanto, usar coordenadas padrão
+    lat = -8.017788;
+    lng = -34.944773;
 
     // Atualize o estado com o novo endereço e a posição
     setState(() {
-      _address = prediction.description!;
+      _address = 'Endereço selecionado';
       _marker = Marker(
         markerId: const MarkerId('endereco'),
         position: LatLng(lat, lng),
@@ -189,20 +182,21 @@ class _CadastrarLarTemporarioScreenState
                           ),
                         ),
                         onTap: () async {
-                          Prediction? p = await PlacesAutocomplete.show(
-                            context: context,
-                            apiKey: _googleApiKey,
-                            mode: Mode.overlay,
-                            language: "pt",
-                            components: [Component(Component.country, "br")],
-                          );
-                          if (p != null) {
-                            _onPlaceSelected(p);
-                            setState(() {
-                              _enderecoController.text =
-                                  p.description.toString();
-                            });
-                          }
+                          // TODO: Implementar Google Places quando dependência for resolvida
+                          // Prediction? p = await PlacesAutocomplete.show(
+                          //   context: context,
+                          //   apiKey: _googleApiKey,
+                          //   mode: Mode.overlay,
+                          //   language: "pt",
+                          //   components: [Component(Component.country, "br")],
+                          // );
+                          // if (p != null) {
+                          //   _onPlaceSelected(p);
+                          //   setState(() {
+                          //     _enderecoController.text =
+                          //         p.description.toString();
+                          //   });
+                          // }
                         },
                       ),
                       const SizedBox(height: 10),

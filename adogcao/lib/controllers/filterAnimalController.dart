@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_application_1/models/animal.dart';
+import 'package:adogcao/models/animal.dart';
 
 class FilterAnimalController {
   Future<List<Animal>> getFilteredAnimals(

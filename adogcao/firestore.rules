@@ -1,0 +1,35 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Regras para usuários
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read: if request.auth != null; // Usuários logados podem ler outros usuários
+    }
+    
+    // Regras para pets/animais
+    match /pets/{petId} {
+      allow read: if true; // Qualquer pessoa pode ver os pets
+      allow create: if request.auth != null; // Usuários logados podem criar pets
+      allow update, delete: if request.auth != null && 
+        (request.auth.uid == resource.data.userId || 
+         request.auth.uid == resource.data.shelterId);
+    }
+    
+    // Regras para abrigos
+    match /abrigos/{abrigoId} {
+      allow read: if true; // Qualquer pessoa pode ver os abrigos
+      allow create: if request.auth != null; // Usuários logados podem criar abrigos
+      allow update, delete: if request.auth != null && 
+        request.auth.uid == resource.data.volunteerId;
+    }
+    
+    // Regras para lar temporário
+    match /lar_temporario/{larId} {
+      allow read: if true; // Qualquer pessoa pode ver lar temporário
+      allow create: if request.auth != null; // Usuários logados podem criar
+      allow update, delete: if request.auth != null && 
+        request.auth.uid == resource.data.userId;
+    }
+  }
+} 

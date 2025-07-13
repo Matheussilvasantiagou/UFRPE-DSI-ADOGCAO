@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/models/abrigo.dart';
-import 'package:flutter_application_1/session/UserSession.dart';
+import 'package:adogcao/models/abrigo.dart';
+import 'package:adogcao/session/UserSession.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../controllers/abrigo_controller.dart';
-import 'package:flutter_google_places_hoc081098/flutter_google_places_hoc081098.dart';
-import 'package:google_maps_webservice/places.dart';
+// Removido: import 'package:flutter_google_places_hoc081098/flutter_google_places_hoc081098.dart';
+// Removido: import 'package:google_maps_webservice/places.dart';
 import 'package:google_api_headers/google_api_headers.dart';
 
 class CadastrarAbrigoScreen extends StatefulWidget {
@@ -38,20 +38,15 @@ class _CadastrarAbrigoScreenState extends State<CadastrarAbrigoScreen> {
     mapController = controller;
   }
 
-  void _onPlaceSelected(Prediction prediction) async {
-    GoogleMapsPlaces places = GoogleMapsPlaces(
-      apiKey: _googleApiKey,
-      apiHeaders: await const GoogleApiHeaders().getHeaders(),
-    );
-    PlacesDetailsResponse detail =
-        await places.getDetailsByPlaceId(prediction.placeId!);
-    lat = detail.result.geometry!.location.lat;
-    lng = detail.result.geometry!.location.lng;
-
+  void _onPlaceSelected(dynamic prediction) async {
+    // TODO: Implementar Google Places quando dependência for resolvida
+    // Por enquanto, apenas atualiza o endereço manualmente
     setState(() {
-      _address = prediction.description!;
-      mapController?.animateCamera(CameraUpdate.newLatLng(LatLng(lat, lng)));
-
+      _address = 'Endereço selecionado';
+      // Usar coordenadas padrão por enquanto
+      lat = -8.017788;
+      lng = -34.944773;
+      
       // Atualiza o marcador para o novo endereço selecionado
       _marker = Marker(
         markerId: const MarkerId('endereco'),
@@ -260,20 +255,21 @@ Widget build(BuildContext context) {
                       ),
                       style: const TextStyle(color: Colors.white),
                       onTap: () async {
-                        Prediction? p = await PlacesAutocomplete.show(
-                          context: context,
-                          apiKey: _googleApiKey,
-                          mode: Mode.overlay,
-                          language: "pt",
-                          components: [Component(Component.country, "br")],
-                        );
-                        if (p != null) {
-                          _onPlaceSelected(p);
-                          setState(() {
-                            _enderecoController.text =
-                                p.description.toString();
-                          });
-                        }
+                        // TODO: Implementar Google Places quando dependência for resolvida
+                        // Prediction? p = await PlacesAutocomplete.show(
+                        //   context: context,
+                        //   apiKey: _googleApiKey,
+                        //   mode: Mode.overlay,
+                        //   language: "pt",
+                        //   components: [Component(Component.country, "br")],
+                        // );
+                        // if (p != null) {
+                        //   _onPlaceSelected(p);
+                        //   setState(() {
+                        //     _enderecoController.text =
+                        //         p.description.toString();
+                        //   });
+                        // }
                       },
                     ),
                     const SizedBox(height: 10),

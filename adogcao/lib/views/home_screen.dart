@@ -2,13 +2,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_application_1/controllers/filterAnimalController.dart';
-import 'package:flutter_application_1/controllers/login_controller.dart';
-import 'package:flutter_application_1/session/UserSession.dart';
-import 'package:flutter_application_1/views/edit_user_screen.dart';
-import 'package:flutter_application_1/views/login_screen.dart';
-import 'package:flutter_application_1/views/pets_proximos_screen.dart';
-import 'package:flutter_application_1/views/filter_screen.dart';
+import 'package:adogcao/controllers/filterAnimalController.dart';
+import 'package:adogcao/controllers/login_controller.dart';
+import 'package:adogcao/session/UserSession.dart';
+import 'package:adogcao/views/edit_user_screen.dart';
+import 'package:adogcao/views/view_profile_screen.dart';
+import 'package:adogcao/views/login_screen.dart';
+import 'package:adogcao/views/pets_proximos_screen.dart';
+import 'package:adogcao/views/filter_screen.dart';
 import 'package:geocoding/geocoding.dart';
 import '../models/animal.dart';
 import '../controllers/favorite_controller.dart';
@@ -58,25 +59,58 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    // Inicializar o stream com uma lista vazia
+    _streamController.add(<Animal>[]);
     fetchUserDetails();
-    filterPets(pets);
+    // Carregar pets após buscar detalhes do usuário
+    _loadPets();
+  }
+
+  Future<void> _loadPets() async {
+    try {
+      await filterPets(pets);
+    } catch (e) {
+      print('Erro ao carregar pets: $e');
+      // Em caso de erro, adicionar lista vazia ao stream
+      _streamController.add(<Animal>[]);
+    }
   }
 
   Future<void> fetchUserDetails() async {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      DocumentSnapshot userDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .get();
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
 
+        if (userDoc.exists) {
+          var userData = userDoc.data() as Map<String, dynamic>;
+          setState(() {
+            isVolunteer = userData['isVolunteer'] ?? false;
+            userName = userData['name'] ?? 'Usuário';
+            isLoading = false;
+          });
+        } else {
+          setState(() {
+            isVolunteer = false;
+            userName = 'Usuário';
+            isLoading = false;
+          });
+        }
+      } else {
+        setState(() {
+          isVolunteer = false;
+          userName = 'Usuário';
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Erro ao buscar detalhes do usuário: $e');
       setState(() {
-        isVolunteer = UserSession.instance.isVolunteer ?? false;
-        userName = UserSession.instance.userName ?? 'Usuário';
-        isLoading = false;
-      });
-    } else {
-      setState(() {
+        isVolunteer = false;
+        userName = 'Usuário';
         isLoading = false;
       });
     }
@@ -149,22 +183,34 @@ class _HomeScreenState extends State<HomeScreen> {
     return pets;
   }
 
-  void filterByCategory(String category) async {
-    pets = await _filterAnimalController.getFilteredAnimalsByCategory(category);
-    _streamController.add(pets);
+  Future<void> filterByCategory(String category) async {
+    try {
+      List<Animal> filteredPets = await _filterAnimalController.getFilteredAnimalsByCategory(category);
+      pets = filteredPets;
+      _streamController.add(filteredPets);
+    } catch (e) {
+      print('Erro ao filtrar por categoria: $e');
+      _streamController.add(<Animal>[]);
+    }
   }
 
-  void filterPets(List<Animal> pets) async {
-    pets = await _filterAnimalController.getFilteredAnimals(
-        abrigo, idade, peso, nome);
-    _streamController.add(pets);
+  Future<void> filterPets(List<Animal> pets) async {
+    try {
+      List<Animal> filteredPets = await _filterAnimalController.getFilteredAnimals(
+          abrigo, idade, peso, nome);
+      this.pets = filteredPets;
+      _streamController.add(filteredPets);
+    } catch (e) {
+      print('Erro ao filtrar pets: $e');
+      _streamController.add(<Animal>[]);
+    }
   }
 
-  void applyFilters(String? abrigo, String? idade, String? peso) {
+  Future<void> applyFilters(String? abrigo, String? idade, String? peso) async {
     this.abrigo = abrigo ?? '';
     this.idade = idade ?? '';
     this.peso = peso ?? '';
-    filterPets(pets);
+    await filterPets(pets);
   }
 
   @override
@@ -175,6 +221,78 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       key: _scaffoldKey,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Text(
+          'Olá, $userName',
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        actions: [
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.person, color: Colors.white),
+            onSelected: (value) {
+              switch (value) {
+                case 'view_profile':
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ViewProfileScreen(),
+                    ),
+                  );
+                  break;
+                case 'edit_profile':
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const EditUserScreen(),
+                    ),
+                  );
+                  break;
+                case 'logout':
+                  _confirmLogout();
+                  break;
+              }
+            },
+            itemBuilder: (BuildContext context) => [
+              const PopupMenuItem<String>(
+                value: 'view_profile',
+                child: Row(
+                  children: [
+                    Icon(Icons.person),
+                    SizedBox(width: 8),
+                    Text('Ver perfil'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem<String>(
+                value: 'edit_profile',
+                child: Row(
+                  children: [
+                    Icon(Icons.edit),
+                    SizedBox(width: 8),
+                    Text('Editar perfil'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem<String>(
+                value: 'logout',
+                child: Row(
+                  children: [
+                    Icon(Icons.logout),
+                    SizedBox(width: 8),
+                    Text('Sair'),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
       body: Stack(
         children: [
           Container(
@@ -189,7 +307,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          StreamBuilder(
+          StreamBuilder<List<Animal>>(
             stream: _streamController.stream,
             builder: (context, snapshot) {
               if (snapshot.hasError) {
@@ -198,7 +316,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               }
 
-              if (snapshot.connectionState == ConnectionState.waiting) {
+              if (!snapshot.hasData) {
                 return const Center(child: CircularProgressIndicator());
               }
 

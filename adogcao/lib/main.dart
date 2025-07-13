@@ -1,28 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
+import 'core/theme/app_theme.dart';
+import 'core/constants/app_constants.dart';
 import 'views/registration_screen.dart';
 import 'views/login_screen.dart';
+import 'views/home_screen.dart';
 import 'widgets/pet_avatar.dart';
+import 'session/UserSession.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
   try {
     await Firebase.initializeApp(
       options: const FirebaseOptions(
-        apiKey: "AIzaSyBvdUkpspWIeK_DweVK2UwPaDbKI0ifc0I",
-        authDomain: "adogcao-9dd8c.firebaseapp.com",
-        projectId: "adogcao-9dd8c",
-        storageBucket: "adogcao-9dd8c.appspot.com",
-        messagingSenderId: "172314211734",
-        appId: "1:172314211734:web:abcd1234efgh5678ijkl90",
+        apiKey: "AIzaSyCnrIaWPLaTizXxJfcKveVoQJYi-FY3yq4",
+        authDomain: "adogcao-1b54a.firebaseapp.com",
+        projectId: "adogcao-1b54a",
+        storageBucket: "adogcao-1b54a.appspot.com",
+        messagingSenderId: "200884834778",
+        appId: "1:200884834778:web:adogcao-app",
         measurementId: "G-XXXXXXXXXX",
       ),
     );
-    print("Firebase Initialized");
+    debugPrint("Firebase inicializado com sucesso");
   } catch (e) {
-    print("Error initializing Firebase: $e");
+    debugPrint("Erro ao inicializar Firebase: $e");
   }
-  runApp(AdoptionApp());
+  
+  // Inicializar a sessão do usuário
+  await UserSession.instance.initialize();
+  
+  runApp(const AdoptionApp());
 }
 
 class AdoptionApp extends StatelessWidget {
@@ -31,126 +41,201 @@ class AdoptionApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: AdoptionScreen(),
-        ),
-      ),
+      title: 'Adogção',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
+      home: const SplashScreen(),
       routes: {
-        '/cadastro': (context) => RegistrationScreen(),
-        '/login': (context) => LoginScreen(),
+        '/cadastro': (context) => const RegistrationScreen(),
+        '/login': (context) => const LoginScreen(),
+        '/home': (context) => const HomeScreen(),
       },
     );
   }
 }
 
-class AdoptionScreen extends StatelessWidget {
-  const AdoptionScreen({super.key});
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen>
+    with TickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: AppConstants.longAnimationDuration,
+      vsync: this,
+    );
+
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    ));
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeOutCubic,
+    ));
+
+    _animationController.forward();
+
+    // Verificar se o usuário já está logado
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted) {
+        if (UserSession.instance.isLoggedIn) {
+          // Se já está logado, vai direto para a home
+          Navigator.pushReplacementNamed(context, '/home');
+        } else {
+          // Se não está logado, vai para a tela de login
+          Navigator.pushReplacementNamed(context, '/login');
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Colors.black,
-                const Color.fromARGB(255, 0, 13, 32).withAlpha(200)
-              ],
+    return Scaffold(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: AppTheme.primaryGradient,
+        ),
+        child: Stack(
+          children: [
+            // Linhas decorativas animadas
+            Positioned.fill(
+              child: CustomPaint(
+                painter: CurvedLinesPainter(),
+              ),
             ),
-          ),
+            
+            // Conteúdo principal
+            Center(
+              child: FadeTransition(
+                opacity: _fadeAnimation,
+                child: SlideTransition(
+                  position: _slideAnimation,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Logo/Ícone do app
+                      Container(
+                        width: 120,
+                        height: 120,
+                        decoration: BoxDecoration(
+                          color: AppTheme.accentColor,
+                          borderRadius: BorderRadius.circular(30),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppTheme.accentColor.withOpacity(0.3),
+                              blurRadius: 20,
+                              offset: const Offset(0, 10),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.pets,
+                          size: 60,
+                          color: Colors.white,
+                        ),
+                      ),
+                      
+                      const SizedBox(height: 40),
+                      
+                      // Título do app
+                      const Text(
+                        'Adogção',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                      
+                      const SizedBox(height: 8),
+                      
+                      // Subtítulo
+                      const Text(
+                        'Encontre seu companheiro perfeito',
+                        style: TextStyle(
+                          color: AppTheme.textSecondary,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      
+                      const SizedBox(height: 60),
+                      
+                      // Avatares dos pets animados
+                      _buildPetAvatars(),
+                      
+                      const SizedBox(height: 40),
+                      
+                      // Indicador de carregamento
+                      const CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        strokeWidth: 3,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
-        Positioned.fill(
-          child: CustomPaint(
-            painter: CurvedLinesPainter(),
-          ),
-        ),
-        Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  PetAvatar(
-                    name: 'Leo',
-                    imageUrl:
-                        'https://p2.trrsf.com/image/fget/cf/774/0/images.terra.com/2024/03/29/1527502278-golden-retriever.jpg',
-                  ),
-                  PetAvatar(
-                    name: 'Tom',
-                    imageUrl: 'lib/images/tom.png',
-                    isAssetImage: true,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              PetAvatar(
-                name: 'Lua',
-                imageUrl: 'lib/images/lua.png',
-                isAssetImage: true,
-              ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  PetAvatar(
-                    name: 'Thor',
-                    imageUrl: 'lib/images/thor.png',
-                    isAssetImage: true,
-                  ),
-                  PetAvatar(
-                    name: 'Mel',
-                    imageUrl: 'lib/images/mel.png',
-                    isAssetImage: true,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 50),
-              const Text(
-                'Adote o animal perfeito para você!',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Text(
-                  'Explore perfis de animais prontos para adoção e use filtros personalizados para encontrar o companheiro ideal. Comece sua jornada de adoção e encontre um amigo para a vida toda!',
-                  style: TextStyle(color: Colors.white),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/login');
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 40, vertical: 20), // Ajuste do padding
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-                child: Text(
-                  'Entrar',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16), // Definindo o tamanho da fonte
-                ),
-              ),
-            ],
-          ),
-        ),
+      ),
+    );
+  }
+
+  Widget _buildPetAvatars() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        _buildAnimatedPetAvatar('Leo', 'https://p2.trrsf.com/image/fget/cf/774/0/images.terra.com/2024/03/29/1527502278-golden-retriever.jpg'),
+        _buildAnimatedPetAvatar('Tom', 'lib/images/tom.png', isAsset: true),
+        _buildAnimatedPetAvatar('Lua', 'lib/images/lua.png', isAsset: true),
       ],
+    );
+  }
+
+  Widget _buildAnimatedPetAvatar(String name, String imageUrl, {bool isAsset = false}) {
+    return TweenAnimationBuilder<double>(
+      duration: Duration(milliseconds: 800 + (name.length * 100)),
+      tween: Tween(begin: 0.0, end: 1.0),
+      builder: (context, value, child) {
+        return Transform.scale(
+          scale: value,
+          child: PetAvatar(
+            name: name,
+            imageUrl: imageUrl,
+            isAssetImage: isAsset,
+          ),
+        );
+      },
     );
   }
 }
@@ -158,38 +243,41 @@ class AdoptionScreen extends StatelessWidget {
 class CurvedLinesPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    Paint paint = Paint()
-      ..color = Colors.grey.withOpacity(0.3)
+    final paint = Paint()
+      ..color = Colors.white.withOpacity(0.1)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
 
-    Path path1 = Path();
-    path1.moveTo(0, size.height * 0.20);
+    // Linha superior
+    final path1 = Path();
+    path1.moveTo(0, size.height * 0.15);
     path1.quadraticBezierTo(
-      size.width / 2,
-      size.height * 0.15,
+      size.width * 0.5,
+      size.height * 0.10,
       size.width,
-      size.height * 0.20,
+      size.height * 0.15,
     );
     canvas.drawPath(path1, paint);
 
-    Path path2 = Path();
-    path2.moveTo(0, size.height * 0.30);
+    // Linha média
+    final path2 = Path();
+    path2.moveTo(0, size.height * 0.25);
     path2.quadraticBezierTo(
-      size.width / 2,
-      size.height * 0.25,
+      size.width * 0.5,
+      size.height * 0.20,
       size.width,
-      size.height * 0.30,
+      size.height * 0.25,
     );
     canvas.drawPath(path2, paint);
 
-    Path path3 = Path();
-    path3.moveTo(0, size.height * 0.40);
+    // Linha inferior
+    final path3 = Path();
+    path3.moveTo(0, size.height * 0.35);
     path3.quadraticBezierTo(
-      size.width / 2,
-      size.height * 0.35,
+      size.width * 0.5,
+      size.height * 0.30,
       size.width,
-      size.height * 0.40,
+      size.height * 0.35,
     );
     canvas.drawPath(path3, paint);
   }
