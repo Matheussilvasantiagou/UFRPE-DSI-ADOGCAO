@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:adogcao/session/UserSession.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EditUserController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -12,12 +13,19 @@ class EditUserController {
     required bool isVolunteer
   }) async {
     try {
+      await editUserToFirestore(
+        name,
+        phoneNumber,
+        isVolunteer,
+      );
 
-        await editUserToFirestore(
-          name,
-          phoneNumber,
-          isVolunteer,
-        );
+      // Atualizar os dados na sessão
+      UserSession.instance.userName = name;
+      UserSession.instance.userPhone = phoneNumber;
+      UserSession.instance.isVolunteer = isVolunteer;
+
+      // Se o usuário escolheu "manter conectado", atualizar os dados salvos localmente
+      await _updateLocalData(name, phoneNumber, isVolunteer);
 
     } catch (e) {
       throw Exception("Erro ao registrar alterações do usuário");
@@ -39,11 +47,27 @@ class EditUserController {
         'isVolunteer': isVolunteer,
         'uid': UserSession.instance.userId
       });
-      UserSession.instance.userName = name;
-      UserSession.instance.userPhone = phoneNumber;
-      UserSession.instance.isVolunteer = isVolunteer;
     } catch (e) {
       throw Exception("Erro ao editar usuário");
+    }
+  }
+
+  Future<void> _updateLocalData(String name, String phoneNumber, bool isVolunteer) async {
+    try {
+      // Verificar se há dados salvos localmente (usuário escolheu "manter conectado")
+      final prefs = await SharedPreferences.getInstance();
+      final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+      
+      if (isLoggedIn) {
+        // Atualizar os dados salvos localmente
+        await prefs.setString('userName', name);
+        await prefs.setString('userPhone', phoneNumber);
+        await prefs.setBool('isVolunteer', isVolunteer);
+      }
+    } catch (e) {
+      // Se houver erro ao atualizar dados locais, apenas logar o erro
+      // mas não falhar a operação principal
+      print('Erro ao atualizar dados locais: $e');
     }
   }
 

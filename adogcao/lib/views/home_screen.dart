@@ -6,6 +6,7 @@ import 'package:adogcao/controllers/filterAnimalController.dart';
 import 'package:adogcao/controllers/login_controller.dart';
 import 'package:adogcao/session/UserSession.dart';
 import 'package:adogcao/views/edit_user_screen.dart';
+import 'package:adogcao/views/view_profile_screen.dart';
 import 'package:adogcao/views/login_screen.dart';
 import 'package:adogcao/views/pets_proximos_screen.dart';
 import 'package:adogcao/views/filter_screen.dart';
@@ -220,6 +221,78 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       key: _scaffoldKey,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Text(
+          'Olá, $userName',
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        actions: [
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.person, color: Colors.white),
+            onSelected: (value) {
+              switch (value) {
+                case 'view_profile':
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ViewProfileScreen(),
+                    ),
+                  );
+                  break;
+                case 'edit_profile':
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const EditUserScreen(),
+                    ),
+                  );
+                  break;
+                case 'logout':
+                  _confirmLogout();
+                  break;
+              }
+            },
+            itemBuilder: (BuildContext context) => [
+              const PopupMenuItem<String>(
+                value: 'view_profile',
+                child: Row(
+                  children: [
+                    Icon(Icons.person),
+                    SizedBox(width: 8),
+                    Text('Ver perfil'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem<String>(
+                value: 'edit_profile',
+                child: Row(
+                  children: [
+                    Icon(Icons.edit),
+                    SizedBox(width: 8),
+                    Text('Editar perfil'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem<String>(
+                value: 'logout',
+                child: Row(
+                  children: [
+                    Icon(Icons.logout),
+                    SizedBox(width: 8),
+                    Text('Sair'),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
       body: Stack(
         children: [
           Container(

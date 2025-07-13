@@ -18,6 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
   String? _emailError;
   String? _senhaError;
   bool _isLoading = false;
+  bool _keepLoggedIn = false; // Nova variável para controlar "manter conectado"
 
   void _validateEmail() {
     setState(() {
@@ -56,6 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
         UserCredential? userCredential = await _controller.loginUser(
           email: email,
           password: password,
+          keepLoggedIn: _keepLoggedIn, // Passar o valor do checkbox
         );
 
         if (userCredential != null) {
@@ -126,24 +128,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 3),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ResetPasswordScreen(),
-                        ),
-                      );
-                    },
-                    child: const Text(
-                      'Esqueci minha senha',
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
                   const SizedBox(height: 55),
                   Text('Email', style: TextStyle(color: Colors.grey.shade500)),
                   const SizedBox(height: 3),
@@ -203,8 +187,54 @@ class _LoginScreenState extends State<LoginScreen> {
                     obscureText: true,
                     style: const TextStyle(color: Colors.white),
                   ),
+                  const SizedBox(height: 8),
+                  // Esqueci minha senha movido para baixo do input de senha
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ResetPasswordScreen(),
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        'Esqueci minha senha',
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontSize: 14,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  // Checkbox "Manter Conectado"
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: _keepLoggedIn,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _keepLoggedIn = value ?? false;
+                          });
+                        },
+                        activeColor: Colors.blue,
+                        checkColor: Colors.white,
+                      ),
+                      const Text(
+                        'Manter conectado',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 25),
-                  const SizedBox(height: 70),
+                  const SizedBox(height: 40),
                   Center(
                     child: ElevatedButton(
                       onPressed: _login,

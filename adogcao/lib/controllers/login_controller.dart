@@ -11,7 +11,11 @@ class LoginController {
     agreeToTerms = value;
   }
 
-  Future<UserCredential?> loginUser({required String email, required String password}) async {
+  Future<UserCredential?> loginUser({
+    required String email, 
+    required String password,
+    required bool keepLoggedIn,
+  }) async {
     try {
       CollectionReference users = _firestore.collection('users');
       final UserCredential userCredential = await _auth.signInWithEmailAndPassword(
@@ -26,15 +30,18 @@ class LoginController {
 
       if (querySnapshot.docs.isNotEmpty) {
         var userData = querySnapshot.docs.first.data();
-        UserSession.instance.userId = userData['uid'];
-        UserSession.instance.isVolunteer = userData['isVolunteer'];
-        UserSession.instance.userName = userData['name'];
-        UserSession.instance.userPhone = userData['phoneNumber'];
-
+        
+        // Usar o novo método saveUserData com a opção de manter conectado
+        await UserSession.instance.saveUserData(
+          userId: userData['uid'],
+          userEmail: userCredential.user?.email ?? '',
+          userName: userData['name'],
+          userPhone: userData['phoneNumber'],
+          isVolunteer: userData['isVolunteer'],
+          keepLoggedIn: keepLoggedIn,
+        );
       }
-      UserSession.instance.userEmail = userCredential.user?.email;
       
-    
       return userCredential;
     } catch (e) {
       throw "Usuário e/ou senha inválidos"; // Propaga o erro para ser tratado na tela de login

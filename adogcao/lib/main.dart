@@ -7,6 +7,7 @@ import 'views/registration_screen.dart';
 import 'views/login_screen.dart';
 import 'views/home_screen.dart';
 import 'widgets/pet_avatar.dart';
+import 'session/UserSession.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,6 +28,9 @@ void main() async {
   } catch (e) {
     debugPrint("Erro ao inicializar Firebase: $e");
   }
+  
+  // Inicializar a sessão do usuário
+  await UserSession.instance.initialize();
   
   runApp(const AdoptionApp());
 }
@@ -91,10 +95,16 @@ class _SplashScreenState extends State<SplashScreen>
 
     _animationController.forward();
 
-    // Navegar para a tela principal após 3 segundos
+    // Verificar se o usuário já está logado
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
-        Navigator.pushReplacementNamed(context, '/login');
+        if (UserSession.instance.isLoggedIn) {
+          // Se já está logado, vai direto para a home
+          Navigator.pushReplacementNamed(context, '/home');
+        } else {
+          // Se não está logado, vai para a tela de login
+          Navigator.pushReplacementNamed(context, '/login');
+        }
       }
     });
   }
