@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:typed_data';
+import 'package:file_picker/file_picker.dart';
 
 class CadastrarPetScreen extends StatefulWidget {
   const CadastrarPetScreen({super.key});
@@ -51,16 +52,21 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
   }
 
   Future<void> _pickImage(ImageSource source) async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: source);
-
-    if (pickedFile != null) {
-      setState(() {
-        _imageFile = pickedFile;
-      });
-
-      if (kIsWeb) {
-        _webImage = await pickedFile.readAsBytes();
+    if (kIsWeb) {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.image);
+      if (result != null && result.files.single.bytes != null) {
+        setState(() {
+          _webImage = result.files.single.bytes;
+          _imageFile = null;
+        });
+      }
+    } else {
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(source: source);
+      if (pickedFile != null) {
+        setState(() {
+          _imageFile = pickedFile;
+        });
       }
     }
   }
@@ -359,10 +365,7 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
                         Center(
                           child: Column(
                             children: [
-                              if (_imageFile == null)
-                                const Text('Nenhuma imagem selecionada.',
-                                    style: TextStyle(color: Colors.white))
-                              else if (kIsWeb && _webImage != null)
+                              if (_webImage != null)
                                 Image.memory(
                                   _webImage!,
                                   height: 150,
