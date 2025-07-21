@@ -62,11 +62,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
         if (userCredential != null) {
           // Navega para a tela inicial se o login for bem-sucedido
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => HomeScreen(),
-            ),
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => HomeScreen()),
+            (Route<dynamic> route) => false,
           );
         }
       }
