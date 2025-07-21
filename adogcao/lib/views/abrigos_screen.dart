@@ -63,10 +63,16 @@ class AbrigosScreen extends StatelessWidget {
                       return Abrigo(
                         nome: doc['nome'],
                         email: doc['email'],
-                        endereco: doc['endereco'],
+                        cep: doc['cep'] ?? '',
+                        rua: doc['rua'] ?? '',
+                        numero: doc['numero'] ?? '',
+                        complemento: doc['complemento'],
+                        bairro: doc['bairro'] ?? '',
+                        cidade: doc['cidade'] ?? '',
+                        estado: doc['estado'] ?? '',
+                        telefone: doc['telefone'],
                         lat: doc['lat'],
                         lng: doc['lng'],
-                        telefone: doc['telefone'],
                         volunteerId: doc['volunteerId'],
                         createdAt: doc['createdAt'],
                         id: doc.id,
@@ -132,7 +138,7 @@ class AbrigosScreen extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 5),
                                 Text(
-                                  abrigo.endereco,
+                                  '${abrigo.rua}, ${abrigo.numero}${abrigo.complemento != null && abrigo.complemento!.isNotEmpty ? ' - ${abrigo.complemento}' : ''}, ${abrigo.bairro}, ${abrigo.cidade} - ${abrigo.estado}, CEP: ${abrigo.cep}',
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 16,
@@ -243,20 +249,27 @@ class _EditarAbrigoScreenState extends State<EditarAbrigoScreen> {
       DocumentSnapshot snapshot = await getAbrigoById(widget.abrigoId);
       Map<String, dynamic> dados = snapshot.data() as Map<String, dynamic>;
 
-      final abrigo = Abrigo(nome: dados['nome'],
-                                            email: dados['email'],
-                                            endereco: dados['endereco'],
-                                            lat: dados['lat'],
-                                            lng: dados['lng'],
-                                            telefone: dados['telefone'],
-                                            volunteerId: dados['volunteerId'],
-                                            createdAt: dados['createdAt'],
-                                        );
+      final abrigo = Abrigo(
+        nome: dados['nome'],
+        email: dados['email'],
+        cep: dados['cep'] ?? '',
+        rua: dados['rua'] ?? '',
+        numero: dados['numero'] ?? '',
+        complemento: dados['complemento'],
+        bairro: dados['bairro'] ?? '',
+        cidade: dados['cidade'] ?? '',
+        estado: dados['estado'] ?? '',
+        telefone: dados['telefone'],
+        lat: dados['lat'],
+        lng: dados['lng'],
+        volunteerId: dados['volunteerId'],
+        createdAt: dados['createdAt'],
+      );
 
       setState(() {
         _nomeController.text = abrigo.nome;
         _emailController.text = abrigo.email;
-        _enderecoController.text = abrigo.endereco;
+        _enderecoController.text = '${abrigo.rua}, ${abrigo.numero}${abrigo.complemento != null && abrigo.complemento!.isNotEmpty ? ' - ${abrigo.complemento}' : ''}, ${abrigo.bairro}, ${abrigo.cidade} - ${abrigo.estado}, CEP: ${abrigo.cep}';
         _telefoneController.text = abrigo.telefone;
       });
     } catch (e) {

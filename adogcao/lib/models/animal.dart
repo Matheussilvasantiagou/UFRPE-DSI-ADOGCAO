@@ -9,11 +9,20 @@ class Animal {
   final String age;
   final String weight;
   final String animalType;
-  final String userId; // Campo para identificar o usuário que cadastrou o animal
+  final String userId;
   double? distance;
 
+  // Novos campos de endereço
+  final String? cep;
+  final String? rua;
+  final String? numero;
+  final String? complemento;
+  final String? bairro;
+  final String? cidade;
+  final String? estado;
+
   Animal({
-    required this.id, // Adiciona o ID do animal
+    required this.id,
     required this.name,
     required this.imageUrl,
     required this.location,
@@ -21,12 +30,19 @@ class Animal {
     required this.age,
     required this.weight,
     required this.animalType,
-    required this.userId, // Adiciona o campo userId
+    required this.userId,
+    this.cep,
+    this.rua,
+    this.numero,
+    this.complemento,
+    this.bairro,
+    this.cidade,
+    this.estado,
   });
 
   factory Animal.fromDocument(DocumentSnapshot doc) {
     return Animal(
-      id: doc.id, // Adiciona o ID do documento
+      id: doc.id,
       name: doc['name'],
       location: doc['shelterId'],
       imageUrl: doc['imageUrl'],
@@ -34,7 +50,14 @@ class Animal {
       age: doc['age'],
       weight: doc['weight'],
       animalType: doc['animalType'],
-      userId: doc['userId'], // Adiciona o userId do documento Firestore
+      userId: doc['userId'],
+      cep: doc['cep'],
+      rua: doc['rua'],
+      numero: doc['numero'],
+      complemento: doc['complemento'],
+      bairro: doc['bairro'],
+      cidade: doc['cidade'],
+      estado: doc['estado'],
     );
   }
 }

@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
+import 'package:adogcao/core/services/cep_service.dart';
 
 class CadastrarPetScreen extends StatefulWidget {
   const CadastrarPetScreen({super.key});
@@ -401,9 +402,6 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
                         Center(
                           child: ElevatedButton(
                             onPressed: () async {
-                              setState(() {
-                                _isLoading = true;
-                              });
                               // Validações
                               _validateNome();
                               _validateIdade();
@@ -415,6 +413,9 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
                                   _pesoError == null &&
                                   selectedAnimalType != null &&
                                   selectedShelter != null) {
+                                setState(() {
+                                  _isLoading = true;
+                                });
                                 try {
                                   await _petController.registerPet(
                                     name: _nomeController.text,

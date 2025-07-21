@@ -13,11 +13,17 @@ class AbrigoController {
         await _firestore.collection('abrigos').add({
           'nome': abrigo.nome,
           'email': abrigo.email,
-          'endereco': abrigo.endereco,
+          'cep': abrigo.cep,
+          'rua': abrigo.rua,
+          'numero': abrigo.numero,
+          'complemento': abrigo.complemento,
+          'bairro': abrigo.bairro,
+          'cidade': abrigo.cidade,
+          'estado': abrigo.estado,
           'telefone': abrigo.telefone,
           'lat': abrigo.lat,
           'lng': abrigo.lng,
-          'volunteerId': abrigo.volunteerId, // Associando o abrigo ao voluntário
+          'volunteerId': abrigo.volunteerId,
           'createdAt': abrigo.createdAt,
         });
       } catch (e) {

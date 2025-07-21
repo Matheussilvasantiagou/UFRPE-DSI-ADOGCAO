@@ -29,7 +29,14 @@ class CadastrarPetController {
     required String animalType,
     required String shelterId,
     String? description,
-    String? imageUrl, 
+    String? imageUrl,
+    String? cep,
+    String? rua,
+    String? numero,
+    String? complemento,
+    String? bairro,
+    String? cidade,
+    String? estado,
   }) async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -42,9 +49,15 @@ class CadastrarPetController {
         'description': description ?? '',
         'imageUrl': imageUrl,
         'userId': user.uid,
+        'cep': cep,
+        'rua': rua,
+        'numero': numero,
+        'complemento': complemento,
+        'bairro': bairro,
+        'cidade': cidade,
+        'estado': estado,
         'timestamp': FieldValue.serverTimestamp(),
       }).then((docRef) {
-        // Adiciona o ID do documento gerado ao pet
         _firestore.collection('pets').doc(docRef.id).update({
           'id': docRef.id,
         });

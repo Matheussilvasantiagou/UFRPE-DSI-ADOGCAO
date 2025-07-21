@@ -1,10 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Abrigo
-{
+class Abrigo {
   final String nome;
   final String email;
-  final String endereco;
+  final String cep;
+  final String rua;
+  final String numero;
+  final String? complemento;
+  final String bairro;
+  final String cidade;
+  final String estado;
   final String telefone;
   final double lat;
   final double lng;
@@ -15,7 +20,13 @@ class Abrigo
   Abrigo({
     required this.nome,
     required this.email,
-    required this.endereco,
+    required this.cep,
+    required this.rua,
+    required this.numero,
+    this.complemento,
+    required this.bairro,
+    required this.cidade,
+    required this.estado,
     required this.telefone,
     required this.lat,
     required this.lng,

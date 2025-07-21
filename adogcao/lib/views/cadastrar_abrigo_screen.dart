@@ -7,6 +7,7 @@ import '../controllers/abrigo_controller.dart';
 // Removido: import 'package:flutter_google_places_hoc081098/flutter_google_places_hoc081098.dart';
 // Removido: import 'package:google_maps_webservice/places.dart';
 import 'package:google_api_headers/google_api_headers.dart';
+import 'package:adogcao/core/services/cep_service.dart';
 
 class CadastrarAbrigoScreen extends StatefulWidget {
   const CadastrarAbrigoScreen({super.key});
@@ -19,7 +20,13 @@ class _CadastrarAbrigoScreenState extends State<CadastrarAbrigoScreen> {
   final AbrigoController _abrigoController = AbrigoController();
   final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _enderecoController = TextEditingController();
+  final TextEditingController _cepController = TextEditingController();
+  final TextEditingController _ruaController = TextEditingController();
+  final TextEditingController _numeroController = TextEditingController();
+  final TextEditingController _complementoController = TextEditingController();
+  final TextEditingController _bairroController = TextEditingController();
+  final TextEditingController _cidadeController = TextEditingController();
+  final TextEditingController _estadoController = TextEditingController();
   final TextEditingController _telefoneController = TextEditingController();
   GoogleMapController? mapController;
   final LatLng _center = const LatLng(-8.017788, -34.944773);
@@ -29,10 +36,16 @@ class _CadastrarAbrigoScreenState extends State<CadastrarAbrigoScreen> {
 
   String? _nomeError;
   String? _emailError;
-  String? _enderecoError;
   String? _telefoneError;
   double lat = 0;
   double lng = 0;
+
+  String? _cepError;
+  String? _ruaError;
+  String? _numeroError;
+  String? _bairroError;
+  String? _cidadeError;
+  String? _estadoError;
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
@@ -58,7 +71,7 @@ class _CadastrarAbrigoScreenState extends State<CadastrarAbrigoScreen> {
 
   void _validateNome() {
     setState(() {
-      String nome = _nomeController.text;
+      String nome = _nomeController.text.trim();
       if (nome.isEmpty) {
         _nomeError = 'Nome do abrigo é obrigatório';
       } else {
@@ -69,7 +82,7 @@ class _CadastrarAbrigoScreenState extends State<CadastrarAbrigoScreen> {
 
   void _validateEmail() {
     setState(() {
-      String email = _emailController.text;
+      String email = _emailController.text.trim();
       if (email.isEmpty) {
         _emailError = 'Email é obrigatório';
       } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) {
@@ -80,25 +93,25 @@ class _CadastrarAbrigoScreenState extends State<CadastrarAbrigoScreen> {
     });
   }
 
-  void _validateEndereco() {
-    setState(() {
-      String endereco = _enderecoController.text;
-      if (endereco.isEmpty) {
-        _enderecoError = 'Endereço é obrigatório';
-      } else {
-        _enderecoError = null;
-      }
-    });
-  }
-
   void _validateTelefone() {
     setState(() {
-      String telefone = _telefoneController.text;
+      String telefone = _telefoneController.text.trim();
       if (telefone.isEmpty) {
         _telefoneError = 'Número de telefone é obrigatório';
       } else {
         _telefoneError = null;
       }
+    });
+  }
+
+  void _validateCamposEndereco() {
+    setState(() {
+      _cepError = _cepController.text.trim().isEmpty ? 'CEP é obrigatório' : null;
+      _ruaError = _ruaController.text.trim().isEmpty ? 'Rua é obrigatória' : null;
+      _numeroError = _numeroController.text.trim().isEmpty ? 'Número é obrigatório' : null;
+      _bairroError = _bairroController.text.trim().isEmpty ? 'Bairro é obrigatório' : null;
+      _cidadeError = _cidadeController.text.trim().isEmpty ? 'Cidade é obrigatória' : null;
+      _estadoError = _estadoController.text.trim().isEmpty ? 'Estado é obrigatório' : null;
     });
   }
 
@@ -226,97 +239,225 @@ Widget build(BuildContext context) {
                       keyboardType: TextInputType.emailAddress,
                     ),
                     const SizedBox(height: 25),
-                    Text('Endereço',
-                        style: TextStyle(color: Colors.grey.shade500)),
-                    const SizedBox(height: 3),
-                    TextField(
-                      controller: _enderecoController,
-                      decoration: InputDecoration(
-                        hintText: 'Digite o endereço do abrigo',
-                        errorText: _nomeError,
-                        hintStyle: const TextStyle(color: Colors.white),
-                        filled: true,
-                        fillColor: Colors.grey.shade800,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                              color: Colors.grey.shade600, width: 1),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                              color: Colors.grey.shade600, width: 1),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                              color: Colors.grey.shade600, width: 1),
-                        ),
-                      ),
-                      style: const TextStyle(color: Colors.white),
-                      onTap: () async {
-                        // TODO: Implementar Google Places quando dependência for resolvida
-                        // Prediction? p = await PlacesAutocomplete.show(
-                        //   context: context,
-                        //   apiKey: _googleApiKey,
-                        //   mode: Mode.overlay,
-                        //   language: "pt",
-                        //   components: [Component(Component.country, "br")],
-                        // );
-                        // if (p != null) {
-                        //   _onPlaceSelected(p);
-                        //   setState(() {
-                        //     _enderecoController.text =
-                        //         p.description.toString();
-                        //   });
-                        // }
-                      },
-                    ),
-                    const SizedBox(height: 10),
-                    SizedBox(
-                      height: 200,
-                      child: GoogleMap(
-                        onMapCreated: _onMapCreated,
-                        initialCameraPosition: CameraPosition(
-                          target: _center,
-                          zoom: 16.0,
-                        ),
-                        markers: _marker != null ? {_marker!} : {},
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text('Endereço: $_address'),
-                    ),
-                    Text('Número de telefone',
-                        style: TextStyle(color: Colors.grey.shade500)),
+                    Text('Telefone', style: TextStyle(color: Colors.grey.shade500)),
                     const SizedBox(height: 3),
                     TextField(
                       controller: _telefoneController,
+                      keyboardType: TextInputType.phone,
                       decoration: InputDecoration(
-                        hintText: 'Digite o número de telefone',
+                        hintText: 'Digite o telefone',
                         errorText: _telefoneError,
                         hintStyle: const TextStyle(color: Colors.white),
                         filled: true,
                         fillColor: Colors.grey.shade800,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                              color: Colors.grey.shade600, width: 1),
+                          borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                              color: Colors.grey.shade600, width: 1),
+                          borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                              color: Colors.grey.shade600, width: 1),
+                          borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
                         ),
                       ),
                       style: const TextStyle(color: Colors.white),
-                      keyboardType: TextInputType.phone,
+                    ),
+                    const SizedBox(height: 25),
+                    Text('CEP', style: TextStyle(color: Colors.grey.shade500)),
+                    const SizedBox(height: 3),
+                    TextField(
+                      controller: _cepController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        hintText: 'Digite o CEP',
+                        errorText: _cepError,
+                        hintStyle: const TextStyle(color: Colors.white),
+                        filled: true,
+                        fillColor: Colors.grey.shade800,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
+                        ),
+                      ),
+                      style: const TextStyle(color: Colors.white),
+                      onChanged: (value) async {
+                        if (value.length == 8) {
+                          final data = await CepService.buscarEndereco(value);
+                          if (data != null) {
+                            _ruaController.text = data['logradouro'] ?? '';
+                            _bairroController.text = data['bairro'] ?? '';
+                            _cidadeController.text = data['localidade'] ?? '';
+                            _estadoController.text = data['uf'] ?? '';
+                          }
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    Text('Rua', style: TextStyle(color: Colors.grey.shade500)),
+                    const SizedBox(height: 3),
+                    TextField(
+                      controller: _ruaController,
+                      decoration: InputDecoration(
+                        hintText: 'Rua',
+                        errorText: _ruaError,
+                        hintStyle: const TextStyle(color: Colors.white),
+                        filled: true,
+                        fillColor: Colors.grey.shade800,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
+                        ),
+                      ),
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    const SizedBox(height: 10),
+                    Text('Número', style: TextStyle(color: Colors.grey.shade500)),
+                    const SizedBox(height: 3),
+                    TextField(
+                      controller: _numeroController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        hintText: 'Número',
+                        errorText: _numeroError,
+                        hintStyle: const TextStyle(color: Colors.white),
+                        filled: true,
+                        fillColor: Colors.grey.shade800,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
+                        ),
+                      ),
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    const SizedBox(height: 10),
+                    Text('Complemento', style: TextStyle(color: Colors.grey.shade500)),
+                    const SizedBox(height: 3),
+                    TextField(
+                      controller: _complementoController,
+                      decoration: InputDecoration(
+                        hintText: 'Complemento (opcional)',
+                        hintStyle: const TextStyle(color: Colors.white),
+                        filled: true,
+                        fillColor: Colors.grey.shade800,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
+                        ),
+                      ),
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    const SizedBox(height: 10),
+                    Text('Bairro', style: TextStyle(color: Colors.grey.shade500)),
+                    const SizedBox(height: 3),
+                    TextField(
+                      controller: _bairroController,
+                      decoration: InputDecoration(
+                        hintText: 'Bairro',
+                        errorText: _bairroError,
+                        hintStyle: const TextStyle(color: Colors.white),
+                        filled: true,
+                        fillColor: Colors.grey.shade800,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
+                        ),
+                      ),
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    const SizedBox(height: 10),
+                    Text('Cidade', style: TextStyle(color: Colors.grey.shade500)),
+                    const SizedBox(height: 3),
+                    TextField(
+                      controller: _cidadeController,
+                      decoration: InputDecoration(
+                        hintText: 'Cidade',
+                        errorText: _cidadeError,
+                        hintStyle: const TextStyle(color: Colors.white),
+                        filled: true,
+                        fillColor: Colors.grey.shade800,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
+                        ),
+                      ),
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    const SizedBox(height: 10),
+                    Text('Estado', style: TextStyle(color: Colors.grey.shade500)),
+                    const SizedBox(height: 3),
+                    TextField(
+                      controller: _estadoController,
+                      decoration: InputDecoration(
+                        hintText: 'Estado',
+                        errorText: _estadoError,
+                        hintStyle: const TextStyle(color: Colors.white),
+                        filled: true,
+                        fillColor: Colors.grey.shade800,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey.shade600, width: 1),
+                        ),
+                      ),
+                      style: const TextStyle(color: Colors.white),
                     ),
                     const SizedBox(height: 25),
                      Center(
@@ -324,16 +465,47 @@ Widget build(BuildContext context) {
                         onPressed: () async {
                           _validateNome();
                           _validateEmail();
-                          _validateEndereco();
                           _validateTelefone();
+                          _validateCamposEndereco();
+
+                          print('DEBUG:');
+                          print('nome: "${_nomeController.text}" erro: $_nomeError');
+                          print('email: "${_emailController.text}" erro: $_emailError');
+                          print('telefone: "${_telefoneController.text}" erro: $_telefoneError');
+                          print('cep: "${_cepController.text}" erro: $_cepError');
+                          print('rua: "${_ruaController.text}" erro: $_ruaError');
+                          print('numero: "${_numeroController.text}" erro: $_numeroError');
+                          print('bairro: "${_bairroController.text}" erro: $_bairroError');
+                          print('cidade: "${_cidadeController.text}" erro: $_cidadeError');
+                          print('estado: "${_estadoController.text}" erro: $_estadoError');
 
                           if (_nomeError == null &&
                               _emailError == null &&
-                              _enderecoError == null &&
-                              _telefoneError == null) {
+                              _telefoneError == null &&
+                              _cepError == null &&
+                              _ruaError == null &&
+                              _numeroError == null &&
+                              _bairroError == null &&
+                              _cidadeError == null &&
+                              _estadoError == null) {
                             try {
 
-                              Abrigo abrigo =  Abrigo(nome: _nomeController.text, email: _emailController.text, endereco: _enderecoController.text, telefone: _telefoneController.text, lat: lat, lng: lng, volunteerId: UserSession.instance.userId, createdAt: Timestamp.now());
+                              Abrigo abrigo = Abrigo(
+                                nome: _nomeController.text.trim(),
+                                email: _emailController.text.trim(),
+                                cep: _cepController.text.trim(),
+                                rua: _ruaController.text.trim(),
+                                numero: _numeroController.text.trim(),
+                                complemento: _complementoController.text.trim(),
+                                bairro: _bairroController.text.trim(),
+                                cidade: _cidadeController.text.trim(),
+                                estado: _estadoController.text.trim(),
+                                telefone: _telefoneController.text.trim(),
+                                lat: lat,
+                                lng: lng,
+                                volunteerId: UserSession.instance.userId,
+                                createdAt: Timestamp.now(),
+                              );
                               // Chama o método para registrar o abrigo
                               await _abrigoController.registrarAbrigo(abrigo);
                               ScaffoldMessenger.of(context).showSnackBar(
@@ -351,6 +523,12 @@ Widget build(BuildContext context) {
                                 ),
                               );
                             }
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Por favor, preencha todos os campos obrigatórios.'),
+                              ),
+                            );
                           }
                         },
                         style: ElevatedButton.styleFrom(
