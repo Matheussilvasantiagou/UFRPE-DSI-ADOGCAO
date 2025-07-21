@@ -353,16 +353,19 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
                         Center(
                           child: Column(
                             children: [
-                              if (_imageFile != null)
+                              if (kIsWeb && _webImage != null)
+                                Image.memory(_webImage!, height: 120)
+                              else if (!kIsWeb && _imageFile != null)
                                 Image.file(File(_imageFile!.path), height: 120)
                               else if (_imageUrl != null && _imageUrl!.isNotEmpty)
-                                Image.file(File(_imageUrl!), height: 120)
+                                kIsWeb
+                                  ? Image.network(_imageUrl!, height: 120)
+                                  : Image.file(File(_imageUrl!), height: 120)
                               else
                                 Image.asset('lib/images/dog.png', height: 120), // imagem padrão local
                               const SizedBox(height: 10),
                               ElevatedButton(
-                                onPressed: () =>
-                                    _pickImage(ImageSource.gallery),
+                                onPressed: () => _pickImage(ImageSource.gallery),
                                 child: const Text('Escolher imagem'),
                               ),
                             ],

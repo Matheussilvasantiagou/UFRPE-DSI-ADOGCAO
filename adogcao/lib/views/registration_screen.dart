@@ -3,6 +3,9 @@ import '../controllers/registration_controller.dart';
 import 'login_screen.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:file_picker/file_picker.dart';
+import 'dart:typed_data';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
@@ -30,6 +33,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   bool isAdotante = false;
 
   File? _imageFile;
+  Uint8List? _webImage;
   String? _imageUrl;
 
   void _validateEmail() {
@@ -109,14 +113,25 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   Future<void> _pickImage() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      setState(() {
-        _imageFile = File(pickedFile.path);
-        _imageUrl = _imageFile!.path; // Salva o caminho local
-      });
+    if (kIsWeb) {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.image);
+      if (result != null && result.files.single.bytes != null) {
+        setState(() {
+          _webImage = result.files.single.bytes;
+          _imageFile = null;
+          _imageUrl = null;
+        });
+      }
+    } else {
+      final ImagePicker picker = ImagePicker();
+      final XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        setState(() {
+          _imageFile = File(pickedFile.path);
+          _webImage = null;
+          _imageUrl = _imageFile!.path;
+        });
+      }
     }
   }
 
@@ -344,10 +359,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     Center(
                       child: Column(
                         children: [
-                          if (_imageFile != null)
-                            Image.file(File(_imageFile!.path), height: 120)
+                          if (kIsWeb && _webImage != null)
+                            Image.memory(_webImage!, height: 120)
+                          else if (!kIsWeb && _imageFile != null)
+                            Image.file(_imageFile!, height: 120)
                           else if (_imageUrl != null && _imageUrl!.isNotEmpty)
-                            Image.file(File(_imageUrl!), height: 120)
+                            kIsWeb
+                              ? Image.network(_imageUrl!, height: 120)
+                              : Image.file(File(_imageUrl!), height: 120)
                           else
                             Image.asset('lib/images/dog.png', height: 120), // imagem padrão local
                           const SizedBox(height: 10),

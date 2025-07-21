@@ -353,6 +353,28 @@ class _EditUserScreenState extends State<EditUserScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 20),
+                      Center(
+                        child: Column(
+                          children: [
+                            if (kIsWeb && _webImage != null)
+                              Image.memory(_webImage!, height: 120)
+                            else if (!kIsWeb && _imageFile != null)
+                              Image.file(File(_imageFile!.path), height: 120)
+                            else if (_imageUrl != null && _imageUrl!.isNotEmpty)
+                              kIsWeb
+                                ? Image.network(_imageUrl!, height: 120)
+                                : Image.file(File(_imageUrl!), height: 120)
+                            else
+                              Image.asset('lib/images/dog.png', height: 120), // imagem padrão local
+                            const SizedBox(height: 10),
+                            ElevatedButton(
+                              onPressed: _pickImage,
+                              child: const Text('Escolher imagem'),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
                       
                       // Informações Básicas
                       _buildSectionTitle('Informações Básicas'),
