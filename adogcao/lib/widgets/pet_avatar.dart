@@ -17,9 +17,9 @@ class PetAvatar extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 50,
-          backgroundImage: isAssetImage
-              ? AssetImage(imageUrl)
-              : NetworkImage(imageUrl) as ImageProvider,
+          backgroundImage: imageUrl.startsWith('http')
+              ? NetworkImage(imageUrl)
+              : AssetImage(imageUrl) as ImageProvider,
         ),
         const SizedBox(height: 8),
         Text(

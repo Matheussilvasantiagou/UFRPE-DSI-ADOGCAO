@@ -13,6 +13,7 @@ class UserSession {
   bool isVolunteer = false;
   String? userName;
   String? userPhone;
+  String? userImageUrl;
   bool _isLoggedIn = false;
 
   // Getters
@@ -29,6 +30,7 @@ class UserSession {
       userName = prefs.getString('userName');
       userPhone = prefs.getString('userPhone');
       isVolunteer = prefs.getBool('isVolunteer') ?? false;
+      userImageUrl = prefs.getString('userImageUrl');
     }
   }
 
@@ -40,6 +42,7 @@ class UserSession {
     required String userPhone,
     required bool isVolunteer,
     required bool keepLoggedIn,
+    required String userImageUrl,
   }) async {
     final prefs = await SharedPreferences.getInstance();
     
@@ -48,6 +51,7 @@ class UserSession {
     this.userName = userName;
     this.userPhone = userPhone;
     this.isVolunteer = isVolunteer;
+    this.userImageUrl = userImageUrl;
     this._isLoggedIn = true;
 
     if (keepLoggedIn) {
@@ -57,6 +61,7 @@ class UserSession {
       await prefs.setString('userName', userName);
       await prefs.setString('userPhone', userPhone);
       await prefs.setBool('isVolunteer', isVolunteer);
+      await prefs.setString('userImageUrl', userImageUrl);
     }
   }
 
@@ -69,6 +74,7 @@ class UserSession {
     await prefs.remove('userName');
     await prefs.remove('userPhone');
     await prefs.remove('isVolunteer');
+    await prefs.remove('userImageUrl');
   }
 
   void logout() {
@@ -77,6 +83,7 @@ class UserSession {
     userName = null;
     isVolunteer = false;
     userPhone = null;
+    userImageUrl = null;
     _isLoggedIn = false;
     clearSavedData();
   }

@@ -119,16 +119,35 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
                 ),
               ],
             ),
-            child: Center(
-              child: Text(
-                _getInitials(),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 36,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
+            child: UserSession.instance.userImageUrl != null && UserSession.instance.userImageUrl!.isNotEmpty
+                ? ClipOval(
+                    child: Image.network(
+                      UserSession.instance.userImageUrl!,
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Center(
+                        child: Text(
+                          _getInitials(),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 36,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                : Center(
+                    child: Text(
+                      _getInitials(),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 36,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
           ),
           const SizedBox(height: 15),
           

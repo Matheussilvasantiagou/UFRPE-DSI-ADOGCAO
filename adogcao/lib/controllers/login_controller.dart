@@ -39,6 +39,7 @@ class LoginController {
           userPhone: userData['phoneNumber'],
           isVolunteer: userData['isVolunteer'],
           keepLoggedIn: keepLoggedIn,
+          userImageUrl: userData['imageUrl'] ?? '',
         );
       }
       

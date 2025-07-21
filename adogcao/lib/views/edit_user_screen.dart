@@ -3,6 +3,12 @@ import 'package:adogcao/controllers/edit_user_controller.dart';
 import 'package:adogcao/session/UserSession.dart';
 import 'package:adogcao/views/home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:io';
+import 'dart:typed_data';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class EditUserScreen extends StatefulWidget {
   const EditUserScreen({super.key});
@@ -33,10 +39,15 @@ class _EditUserScreenState extends State<EditUserScreen> {
   bool _obscureNewPassword = true;
   bool _obscureConfirmPassword = true;
 
+  XFile? _imageFile;
+  Uint8List? _webImage;
+  String? _imageUrl = UserSession.instance.userImageUrl;
+
   @override
   void initState() {
     super.initState();
     _loadUserData();
+    _imageUrl = UserSession.instance.userImageUrl;
   }
 
   void _loadUserData() {
@@ -44,6 +55,49 @@ class _EditUserScreenState extends State<EditUserScreen> {
     _phoneController.text = UserSession.instance.userPhone ?? '';
     isVolunteer = UserSession.instance.isVolunteer;
     isAdotante = !isVolunteer;
+  }
+
+  Future<void> _pickImage() async {
+    if (kIsWeb) {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.image);
+      if (result != null && result.files.single.bytes != null) {
+        setState(() {
+          _webImage = result.files.single.bytes;
+          _imageFile = null;
+        });
+      }
+    } else {
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        setState(() {
+          _imageFile = pickedFile;
+        });
+      }
+    }
+  }
+
+  Future<void> _uploadImage() async {
+    if (_imageFile == null && _webImage == null) return;
+    String fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
+    UploadTask uploadTask;
+    if (kIsWeb && _webImage != null) {
+      uploadTask = FirebaseStorage.instance
+          .ref()
+          .child('users_images')
+          .child(fileName)
+          .putData(_webImage!);
+    } else if (_imageFile != null) {
+      uploadTask = FirebaseStorage.instance
+          .ref()
+          .child('users_images')
+          .child(fileName)
+          .putFile(File(_imageFile!.path));
+    } else {
+      return;
+    }
+    TaskSnapshot snapshot = await uploadTask;
+    _imageUrl = await snapshot.ref.getDownloadURL();
   }
 
   void _validateName() {
@@ -213,10 +267,12 @@ class _EditUserScreenState extends State<EditUserScreen> {
     });
 
     try {
+      await _uploadImage();
       await _controller.editUser(
         name: name,
         phoneNumber: phoneNumber,
         isVolunteer: isVolunteer,
+        imageUrl: _imageUrl ?? '',
       );
 
       if (mounted) {

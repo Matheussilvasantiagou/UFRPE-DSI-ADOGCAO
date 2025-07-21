@@ -5,7 +5,7 @@ class EditAnimalController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<void> editAnimal(
-      String docId, String name, String age, String weight) async {
+      String docId, String name, String age, String weight, String imageUrl) async {
     try {
       // Verifica se o docId foi fornecido
       if (docId.isEmpty) {
@@ -17,6 +17,7 @@ class EditAnimalController {
         'name': name,
         'age': age,
         'weight': weight,
+        'imageUrl': imageUrl,
       });
     } catch (e) {
       print('Erro ao salvar dados: ${e.toString()}');

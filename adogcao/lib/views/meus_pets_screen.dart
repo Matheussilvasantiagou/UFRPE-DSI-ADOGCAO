@@ -81,7 +81,16 @@ class PetsScreen extends StatelessWidget {
                         final userId = pet['userId']?.toString() ?? '';
 
                         return ListTile(
-                          leading: const Icon(Icons.pets, color: Colors.white),
+                          leading: imageUrl.isNotEmpty
+                              ? CircleAvatar(
+                                  backgroundImage: NetworkImage(imageUrl),
+                                  radius: 28,
+                                )
+                              : const CircleAvatar(
+                                  child: Icon(Icons.pets, color: Colors.white),
+                                  backgroundColor: Colors.grey,
+                                  radius: 28,
+                                ),
                           title: Text(
                             name,
                             style: const TextStyle(
