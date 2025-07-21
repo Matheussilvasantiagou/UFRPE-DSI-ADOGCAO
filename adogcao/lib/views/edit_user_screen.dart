@@ -8,7 +8,6 @@ import 'dart:typed_data';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
 class EditUserScreen extends StatefulWidget {
   const EditUserScreen({super.key});
@@ -78,26 +77,15 @@ class _EditUserScreenState extends State<EditUserScreen> {
   }
 
   Future<void> _uploadImage() async {
-    if (_imageFile == null && _webImage == null) return;
-    String fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
-    UploadTask uploadTask;
-    if (kIsWeb && _webImage != null) {
-      uploadTask = FirebaseStorage.instance
-          .ref()
-          .child('users_images')
-          .child(fileName)
-          .putData(_webImage!);
-    } else if (_imageFile != null) {
-      uploadTask = FirebaseStorage.instance
-          .ref()
-          .child('users_images')
-          .child(fileName)
-          .putFile(File(_imageFile!.path));
+    // Não faz upload, apenas salva o caminho local da imagem
+    print('Entrou no _uploadImage (local)');
+    if (_imageFile != null) {
+      _imageUrl = _imageFile!.path; // Salva o caminho local
+      print('Caminho da imagem local salvo: $_imageUrl');
     } else {
-      return;
+      print('Nenhuma imagem selecionada, usando imagem padrão');
+      _imageUrl = '';
     }
-    TaskSnapshot snapshot = await uploadTask;
-    _imageUrl = await snapshot.ref.getDownloadURL();
   }
 
   void _validateName() {

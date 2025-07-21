@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:adogcao/controllers/cadastrar_pet_controller.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:typed_data';
@@ -72,27 +71,15 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
   }
 
   Future<void> _uploadImage() async {
-    if (_imageFile == null) return;
-
-    String fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
-    UploadTask uploadTask;
-
-    if (kIsWeb && _webImage != null) {
-      uploadTask = FirebaseStorage.instance
-          .ref()
-          .child('pets_images')
-          .child(fileName)
-          .putData(_webImage!);
+    // Não faz upload, apenas salva o caminho local da imagem
+    print('Entrou no _uploadImage (local)');
+    if (_imageFile != null) {
+      _imageUrl = _imageFile!.path; // Salva o caminho local
+      print('Caminho da imagem local salvo: $_imageUrl');
     } else {
-      uploadTask = FirebaseStorage.instance
-          .ref()
-          .child('pets_images')
-          .child(fileName)
-          .putFile(File(_imageFile!.path));
+      print('Nenhuma imagem selecionada, usando imagem padrão');
+      _imageUrl = '';
     }
-
-    TaskSnapshot snapshot = await uploadTask;
-    _imageUrl = await snapshot.ref.getDownloadURL();
   }
 
   void _validateNome() {
@@ -365,25 +352,17 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
                         Center(
                           child: Column(
                             children: [
-                              if (_webImage != null)
-                                Image.memory(
-                                  _webImage!,
-                                  height: 150,
-                                )
-                              else if (_imageFile != null)
-                                Image.file(
-                                  File(_imageFile!.path),
-                                  height: 150,
-                                ),
+                              if (_imageFile != null)
+                                Image.file(File(_imageFile!.path), height: 120)
+                              else if (_imageUrl != null && _imageUrl!.isNotEmpty)
+                                Image.file(File(_imageUrl!), height: 120)
+                              else
+                                Image.asset('lib/images/dog.png', height: 120), // imagem padrão local
                               const SizedBox(height: 10),
                               ElevatedButton(
                                 onPressed: () =>
                                     _pickImage(ImageSource.gallery),
-                                child: const Text('Escolher da Galeria'),
-                              ),
-                              ElevatedButton(
-                                onPressed: () => _pickImage(ImageSource.camera),
-                                child: const Text('Tirar uma Foto'),
+                                child: const Text('Escolher imagem'),
                               ),
                             ],
                           ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../controllers/registration_controller.dart';
 import 'login_screen.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
@@ -26,6 +28,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   bool isVolunteer = false;
   bool isAdotante = false;
+
+  File? _imageFile;
+  String? _imageUrl;
 
   void _validateEmail() {
     setState(() {
@@ -101,6 +106,30 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           !isAdotante; // Garantir que apenas um checkbox esteja marcado
       _controller.toggleVolunteer(isVolunteer);
     });
+  }
+
+  Future<void> _pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+        _imageUrl = _imageFile!.path; // Salva o caminho local
+      });
+    }
+  }
+
+  Future<void> _uploadImage() async {
+    // Não faz upload, apenas salva o caminho local da imagem
+    print('Entrou no _uploadImage (local)');
+    if (_imageFile != null) {
+      _imageUrl = _imageFile!.path; // Salva o caminho local
+      print('Caminho da imagem local salvo: $_imageUrl');
+    } else {
+      print('Nenhuma imagem selecionada, usando imagem padrão');
+      _imageUrl = '';
+    }
   }
 
   @override
@@ -310,6 +339,24 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           style: TextStyle(color: Colors.white),
                         ),
                       ],
+                    ),
+                    const SizedBox(height: 70),
+                    Center(
+                      child: Column(
+                        children: [
+                          if (_imageFile != null)
+                            Image.file(File(_imageFile!.path), height: 120)
+                          else if (_imageUrl != null && _imageUrl!.isNotEmpty)
+                            Image.file(File(_imageUrl!), height: 120)
+                          else
+                            Image.asset('lib/images/dog.png', height: 120), // imagem padrão local
+                          const SizedBox(height: 10),
+                          ElevatedButton(
+                            onPressed: _pickImage,
+                            child: const Text('Escolher imagem'),
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 70),
                     Center(

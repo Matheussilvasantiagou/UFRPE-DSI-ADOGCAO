@@ -6,7 +6,6 @@ import 'dart:typed_data';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EditAnimalScreen extends StatefulWidget {
@@ -73,36 +72,15 @@ class _EditAnimalScreenState extends State<EditAnimalScreen> {
   }
 
   Future<void> _uploadImage() async {
-    print('Entrou no _uploadImage');
-    if (_imageFile == null && _webImage == null) {
-      print('Nenhuma imagem selecionada, saindo do upload');
-      return;
-    }
-    String fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
-    UploadTask uploadTask;
-    if (kIsWeb && _webImage != null) {
-      print('Fazendo upload via web');
-      uploadTask = FirebaseStorage.instance
-          .ref()
-          .child('pets_images')
-          .child(fileName)
-          .putData(_webImage!);
-    } else if (_imageFile != null) {
-      print('Fazendo upload via arquivo');
-      uploadTask = FirebaseStorage.instance
-          .ref()
-          .child('pets_images')
-          .child(fileName)
-          .putFile(File(_imageFile!.path));
+    // Não faz upload, apenas salva o caminho local da imagem
+    print('Entrou no _uploadImage (local)');
+    if (_imageFile != null) {
+      _imageUrl = _imageFile!.path; // Salva o caminho local
+      print('Caminho da imagem local salvo: $_imageUrl');
     } else {
-      print('Caiu no else final, saindo do upload');
-      return;
+      print('Nenhuma imagem selecionada, usando imagem padrão');
+      _imageUrl = '';
     }
-    print('Aguardando uploadTask');
-    TaskSnapshot snapshot = await uploadTask;
-    print('Upload finalizado, pegando URL');
-    _imageUrl = await snapshot.ref.getDownloadURL();
-    print('URL da imagem:  [32m [1m [4m$_imageUrl [0m');
   }
 
   @override
@@ -229,14 +207,12 @@ class _EditAnimalScreenState extends State<EditAnimalScreen> {
                       Center(
                         child: Column(
                           children: [
-                            if (_webImage != null)
-                              Image.memory(_webImage!, height: 120)
-                            else if (_imageFile != null)
+                            if (_imageFile != null)
                               Image.file(File(_imageFile!.path), height: 120)
                             else if (_imageUrl != null && _imageUrl!.isNotEmpty)
-                              Image.network(_imageUrl!, height: 120)
+                              Image.file(File(_imageUrl!), height: 120)
                             else
-                              const Text('Nenhuma imagem selecionada.', style: TextStyle(color: Colors.white)),
+                              Image.asset('lib/images/dog.png', height: 120), // imagem padrão local
                             const SizedBox(height: 10),
                             ElevatedButton(
                               onPressed: _pickImage,

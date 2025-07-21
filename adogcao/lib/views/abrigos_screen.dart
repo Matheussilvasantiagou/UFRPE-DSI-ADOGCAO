@@ -178,14 +178,25 @@ class AbrigosScreen extends StatelessWidget {
             ),
             TextButton(
               child: const Text('Excluir', style: TextStyle(color: Colors.red)),
-              onPressed: () {
-                FirebaseFirestore.instance
+              onPressed: () async {
+                // 1. Buscar todos os pets do abrigo
+                final pets = await FirebaseFirestore.instance
+                    .collection('pets')
+                    .where('shelterId', isEqualTo: abrigoId)
+                    .get();
+
+                // 2. Excluir cada pet
+                for (var doc in pets.docs) {
+                  await doc.reference.delete();
+                }
+
+                // 3. Excluir o abrigo
+                await FirebaseFirestore.instance
                     .collection('abrigos')
                     .doc(abrigoId)
-                    .delete()
-                    .then((_) {
-                  Navigator.of(context).pop(); // Fechar o diálogo
-                });
+                    .delete();
+
+                Navigator.of(context).pop(); // Fechar o diálogo
               },
             ),
           ],
