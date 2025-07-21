@@ -46,8 +46,53 @@ class _PetsProximosScreenState extends State<PetsProximosScreen> {
     }
   }
 
-  Future<Position> _getCurrentLocation() async {
-    return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+  Future<Position?> _getCurrentLocation() async {
+    try {
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Serviço de localização está desativado. Ative a localização do dispositivo.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return null;
+      }
+
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Permissão de localização negada.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          return null;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Permissão de localização negada permanentemente. Libere nas configurações do dispositivo.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return null;
+      }
+
+      return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao obter localização: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return null;
+    }
   }
 
   double _calculateDistance(double startLatitude, double startLongitude, double endLatitude, double endLongitude) {
@@ -60,7 +105,14 @@ class _PetsProximosScreenState extends State<PetsProximosScreen> {
     });
 
     try {
-      Position currentPosition = await _getCurrentLocation();
+      Position? currentPosition = await _getCurrentLocation();
+      if (currentPosition == null) {
+        setState(() {
+          isLoading = false;
+        });
+        return;
+      }
+
       List<Animal> petsWithDistance = [];
 
       for (Animal pet in pets) {
