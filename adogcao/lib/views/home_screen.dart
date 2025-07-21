@@ -660,17 +660,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       },
                     ),
                     _buildDrawerItem(
-                      icon: Icons.home,
-                      title: 'Lar Temporário',
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => LarTemporarioScreen()),
-                        );
-                      },
-                    ),
-                    _buildDrawerItem(
                       icon: Icons.logout_rounded,
                       title: 'Sair',
                       onTap: () {
