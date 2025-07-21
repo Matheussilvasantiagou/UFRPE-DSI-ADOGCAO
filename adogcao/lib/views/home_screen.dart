@@ -565,38 +565,40 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           colors: [Color(0xFF3B82F6), Color(0xFF10B981)],
                         ),
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(16),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: const Icon(
+                                Icons.pets,
+                                color: Colors.white,
+                                size: 32,
+                              ),
                             ),
-                            child: const Icon(
-                              Icons.pets,
-                              color: Colors.white,
-                              size: 32,
+                            const SizedBox(height: 16),
+                            Text(
+                              'Olá, $userName',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18, // Tamanho reduzido
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            'Olá, $userName',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
+                            Text(
+                              isVolunteer ? 'Voluntário' : 'Adotante',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
                             ),
-                          ),
-                          Text(
-                            isVolunteer ? 'Voluntário' : 'Adotante',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                     _buildDrawerItem(
@@ -849,34 +851,36 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             ),
                           ],
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? Colors.white.withOpacity(0.2)
-                              : Colors.white.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? Colors.white.withOpacity(0.2)
+                                : Colors.white.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Image.asset(
+                            category['icon'],
+                            height: 24,
+                            width: 24,
+                            color: isSelected ? Colors.white : Colors.white70,
+                          ),
                         ),
-                        child: Image.asset(
-                          category['icon'],
-                          height: 24,
-                          width: 24,
-                          color: isSelected ? Colors.white : Colors.white70,
+                        const SizedBox(height: 8),
+                        Text(
+                          category['label'],
+                          style: TextStyle(
+                            color: isSelected ? Colors.white : Colors.white70,
+                            fontSize: 12,
+                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        category['label'],
-                        style: TextStyle(
-                          color: isSelected ? Colors.white : Colors.white70,
-                          fontSize: 12,
-                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               );
