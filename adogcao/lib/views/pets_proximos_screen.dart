@@ -18,164 +18,288 @@ class _PetsProximosScreenState extends State<PetsProximosScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool isVolunteer = false;
   bool isLoading = false;
-  // String userName = '';
+  List<Animal> sortedPets = [];
+  bool isSorted = false;
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  // }
+  @override
+  void initState() {
+    super.initState();
+    _checkLocationPermission();
+  }
+
+  Future<void> _checkLocationPermission() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return;
+    }
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return;
+    }
+  }
 
   Future<Position> _getCurrentLocation() async {
     return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-  }
-
-  Future<Location> _getCoordinatesFromAddress(String address) async {
-    List<Location> locations = await locationFromAddress(address);
-    if (locations.isNotEmpty) {
-      return locations.first;
-    } else {
-      throw Exception('Endereço não encontrado');
-    }
   }
 
   double _calculateDistance(double startLatitude, double startLongitude, double endLatitude, double endLongitude) {
     return Geolocator.distanceBetween(startLatitude, startLongitude, endLatitude, endLongitude);
   }
 
-void _sortPetsByDistance(List<Animal> pets) async {
+  Future<void> _sortPetsByDistance(List<Animal> pets) async {
+    setState(() {
+      isLoading = true;
+    });
 
-  var currentPosition =  await _getCurrentLocation();
+    try {
+      Position currentPosition = await _getCurrentLocation();
+      List<Animal> petsWithDistance = [];
 
-  for (var pet in pets) {
+      for (Animal pet in pets) {
+        try {
+          // Buscar o abrigo pelo shelterId
+          DocumentSnapshot abrigoDoc = await FirebaseFirestore.instance
+              .collection('abrigos')
+              .doc(pet.location) // Assumindo que location é o ID do abrigo
+              .get();
 
-    var querySnapshot = await FirebaseFirestore.instance
-         .collection('abrigos')
-         .where('nome', isEqualTo: pet.location)
-         .get();
+          if (abrigoDoc.exists) {
+            Map<String, dynamic> abrigoData = abrigoDoc.data() as Map<String, dynamic>;
+            double? lat = abrigoData['lat']?.toDouble();
+            double? lng = abrigoData['lng']?.toDouble();
 
-     if (querySnapshot.docs.isNotEmpty) {
-       var abrigoData = querySnapshot.docs.first.data();
-       var lat = abrigoData['lat'];
-       var lng = abrigoData['lng'];
-      
-      if(lat != null && lng != null)
-      {
-        pet.distance = _calculateDistance(
-          currentPosition.latitude,
-          currentPosition.longitude,
-          abrigoData['lat'],
-          abrigoData['lng'],
-        );
-      }else{
-        pet.distance = 10000000000000;
+            if (lat != null && lng != null) {
+              pet.distance = _calculateDistance(
+                currentPosition.latitude,
+                currentPosition.longitude,
+                lat,
+                lng,
+              );
+            } else {
+              pet.distance = double.infinity;
+            }
+          } else {
+            pet.distance = double.infinity;
+          }
+        } catch (e) {
+          pet.distance = double.infinity;
+        }
+        petsWithDistance.add(pet);
       }
 
+      petsWithDistance.sort((a, b) => (a.distance ?? double.infinity).compareTo(b.distance ?? double.infinity));
+
+      setState(() {
+        sortedPets = petsWithDistance;
+        isSorted = true;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao calcular distâncias: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
- 
   }
-
-  setState(() {
-    pets.sort((a, b) => a.distance!.compareTo(b.distance!));
-  });
-
-  print(pets[0].name);
-
-}
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
     return Scaffold(
       key: _scaffoldKey,
-      body: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.black,
-                  const Color.fromARGB(255, 0, 13, 32).withAlpha(200)
-                ],
-              ),
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        title: const Text(
+          'Pets Próximos',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color(0xFF0F172A),
+                Color(0xFF1E293B),
+              ],
             ),
           ),
-          StreamBuilder(
+        ),
+      ),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF0F172A),
+              Color(0xFF1E293B),
+              Color(0xFF334155),
+            ],
+            stops: [0.0, 0.6, 1.0],
+          ),
+        ),
+        child: SafeArea(
+          child: StreamBuilder(
             stream: FirebaseFirestore.instance.collection('pets').snapshots(),
             builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasError) {
-                return const Center(
-                  child: Text('Ocorreu um erro ao carregar os animais.'),
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.error_outline,
+                        color: Colors.red[300],
+                        size: 64,
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Ocorreu um erro ao carregar os animais.',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
                 );
               }
 
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
+                return const Center(
+                  child: CircularProgressIndicator(
+                    color: Color(0xFF3B82F6),
+                  ),
+                );
               }
 
               if (snapshot.data!.docs.isEmpty) {
-                return const Center(child: Text('Nenhum pet encontrado.'));
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.pets_outlined,
+                        color: Colors.white.withOpacity(0.5),
+                        size: 64,
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Nenhum pet encontrado.',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
               }
 
-              var pets = snapshot.data!.docs.map((doc) {
+              List<Animal> pets = snapshot.data!.docs.map((doc) {
+                Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
                 return Animal(
                   id: doc.id,
-                  name: doc['name'],
-                  location: doc['shelterId'], // ou outra propriedade que represente o local
-                  imageUrl: doc['imageUrl'],
-                  description: doc['description'],
-                  age: doc['age'],
-                  weight: doc['weight'],
-                  animalType: doc['animalType'],
-                  userId: doc['userId'], 
+                  name: data['name'] ?? 'Sem nome',
+                  location: data['shelterId'] ?? 'Local não informado',
+                  imageUrl: data['imageUrl'] ?? '',
+                  description: data['description'] ?? 'Sem descrição',
+                  age: data['age'] ?? 'Idade não informada',
+                  weight: data['weight'] ?? 'Peso não informado',
+                  animalType: data['animalType'] ?? 'Tipo não informado',
+                  userId: data['userId'] ?? '',
                 );
               }).toList();
 
-              return SingleChildScrollView(
-                child: Column(
-                  children: [
-                    ElevatedButton(
-                      onPressed: (){
-                        _sortPetsByDistance(pets);
-                      },
-                    style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 40, vertical: 20),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
+              return Column(
+                children: [
+                  const SizedBox(height: 20),
+                  
+                  // Botão para ordenar por distância
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
+                    child: ElevatedButton.icon(
+                      onPressed: isLoading ? null : () => _sortPetsByDistance(pets),
+                      icon: isLoading 
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Icon(Icons.location_on),
+                      label: Text(
+                        isLoading 
+                            ? 'Calculando distâncias...'
+                            : isSorted 
+                                ? 'Recalcular distâncias'
+                                : 'Encontrar animais próximos',
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF3B82F6),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        elevation: 4,
+                      ),
                     ),
-                    child: Text('Encontrar animais próximos',style: TextStyle(color: Colors.white))
                   ),
-                    GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
+                  
+                  const SizedBox(height: 20),
+                  
+                  // Lista de pets
+                  Expanded(
+                    child: GridView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         childAspectRatio: 0.75,
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 12,
                       ),
-                      itemCount: pets.length,
+                      itemCount: isSorted ? sortedPets.length : pets.length,
                       itemBuilder: (context, index) {
+                        Animal animal = isSorted ? sortedPets[index] : pets[index];
                         return AnimalCard(
-                          animal: pets[index],
-                          isFavorite:
-                              _favoriteController.isFavorite(pets[index]),
+                          animal: animal,
+                          isFavorite: _favoriteController.isFavorite(animal),
                           toggleFavorite: _favoriteController.toggleFavorite,
                           isVolunteer: isVolunteer,
                         );
                       },
                     ),
-                  ],
-                ),
+                  ),
+                ],
               );
             },
           ),
-        ],
+        ),
       ),
     );
   }

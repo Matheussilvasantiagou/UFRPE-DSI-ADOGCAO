@@ -24,7 +24,6 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
   String? _nomeError;
   String? _idadeError;
   String? _pesoError;
-  String? _descricaoError;
   String? selectedAnimalType;
   String? selectedShelter;
   List<String> animalTypes = [
@@ -119,17 +118,6 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
         _pesoError = 'Peso do pet é obrigatório';
       } else {
         _pesoError = null;
-      }
-    });
-  }
-
-  void _validateDescricao() {
-    setState(() {
-      String descricao = _descricaoController.text;
-      if (descricao.isEmpty) {
-        _descricaoError = 'Descrição é obrigatória';
-      } else {
-        _descricaoError = null;
       }
     });
   }
@@ -398,14 +386,13 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
                           ),
                         ),
                         const SizedBox(height: 25),
-                        Text('Descrição',
+                        Text('Descrição (opcional)',
                             style: TextStyle(color: Colors.grey.shade500)),
                         const SizedBox(height: 3),
                         TextField(
                           controller: _descricaoController,
                           decoration: InputDecoration(
-                            hintText: 'Digite a descrição do pet',
-                            errorText: _descricaoError,
+                            hintText: 'Digite a descrição do pet (opcional)',
                             hintStyle: const TextStyle(color: Colors.white),
                             filled: true,
                             fillColor: Colors.grey.shade800,
@@ -439,13 +426,11 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
                               _validateNome();
                               _validateIdade();
                               _validatePeso();
-                              _validateDescricao();
                               await _uploadImage(); // Upload da imagem
 
                               if (_nomeError == null &&
                                   _idadeError == null &&
                                   _pesoError == null &&
-                                  _descricaoError == null &&
                                   selectedAnimalType != null &&
                                   selectedShelter != null) {
                                 try {
@@ -479,7 +464,7 @@ class _CadastrarPetScreenState extends State<CadastrarPetScreen> {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text(
-                                        'Por favor, preencha todos os campos.'),
+                                        'Por favor, preencha todos os campos obrigatórios.'),
                                   ),
                                 );
                               }

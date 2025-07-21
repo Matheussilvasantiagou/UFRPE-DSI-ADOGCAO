@@ -28,7 +28,7 @@ class CadastrarPetController {
     required String weight,
     required String animalType,
     required String shelterId,
-    required String description,
+    String? description,
     String? imageUrl, 
   }) async {
     User? user = FirebaseAuth.instance.currentUser;
@@ -39,7 +39,7 @@ class CadastrarPetController {
         'weight': weight,
         'animalType': animalType,
         'shelterId': shelterId,
-        'description': description,
+        'description': description ?? '',
         'imageUrl': imageUrl,
         'userId': user.uid,
         'timestamp': FieldValue.serverTimestamp(),

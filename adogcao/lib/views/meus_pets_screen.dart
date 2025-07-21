@@ -70,10 +70,20 @@ class PetsScreen extends StatelessWidget {
                         final pet = pets[index];
                         final docId = pet.id; // Obtenha o docId do Firestore
 
+                        // Adiciona verificações de null e valores padrão
+                        final name = pet['name']?.toString() ?? 'Nome não informado';
+                        final imageUrl = pet['imageUrl']?.toString() ?? '';
+                        final shelterId = pet['shelterId']?.toString() ?? 'Abrigo não informado';
+                        final description = pet['description']?.toString() ?? 'Descrição não informada';
+                        final age = pet['age']?.toString() ?? 'Idade não informada';
+                        final weight = pet['weight']?.toString() ?? 'Peso não informado';
+                        final animalType = pet['animalType']?.toString() ?? 'Tipo não informado';
+                        final userId = pet['userId']?.toString() ?? '';
+
                         return ListTile(
                           leading: const Icon(Icons.pets, color: Colors.white),
                           title: Text(
-                            pet['name'],
+                            name,
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 20,
@@ -90,14 +100,14 @@ class PetsScreen extends StatelessWidget {
                                       builder: (context) => AnimalDetailsScreen(
                                         animal: Animal(
                                           id: docId, // Adiciona o ID do documento ao modelo
-                                          name: pet['name'],
-                                          imageUrl: pet['imageUrl'],
-                                          location: pet['shelterId'],
-                                          description: pet['description'],
-                                          age: pet['age'],
-                                          weight: pet['weight'],
-                                          animalType: pet['animalType'],
-                                          userId: pet['userId'],
+                                          name: name,
+                                          imageUrl: imageUrl,
+                                          location: shelterId,
+                                          description: description,
+                                          age: age,
+                                          weight: weight,
+                                          animalType: animalType,
+                                          userId: userId,
                                         ),
                                         isFavorite: false,
                                         toggleFavorite: (Animal animal) {},

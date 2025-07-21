@@ -56,11 +56,28 @@ class _AnimalDetailsScreenState extends State<AnimalDetailsScreen> {
                   child: Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: NetworkImage(widget.animal.imageUrl),
-                        fit: BoxFit.cover,
-                      ),
+                      image: widget.animal.imageUrl.isNotEmpty
+                          ? DecorationImage(
+                              image: NetworkImage(widget.animal.imageUrl),
+                              fit: BoxFit.cover,
+                              onError: (exception, stackTrace) {
+                                // Fallback para imagem padrão em caso de erro
+                              },
+                            )
+                          : null,
+                      color: widget.animal.imageUrl.isEmpty 
+                          ? Colors.grey[800] 
+                          : null,
                     ),
+                    child: widget.animal.imageUrl.isEmpty
+                        ? const Center(
+                            child: Icon(
+                              Icons.pets,
+                              size: 100,
+                              color: Colors.white54,
+                            ),
+                          )
+                        : null,
                   ),
                 ),
                 // Seção inferior para detalhes e botões de ação
